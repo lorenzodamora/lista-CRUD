@@ -42,12 +42,14 @@ namespace lista_CRUD
 
         private void UpdateButton_Click(object sender, EventArgs e)
         {
-            
+            (TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible,
+                ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true, true, true);
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-
+            (TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible,
+                ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true, true, true);
         }
 
         private void ConfirmButton_Click(object sender, EventArgs e)

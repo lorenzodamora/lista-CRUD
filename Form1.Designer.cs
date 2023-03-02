@@ -230,7 +230,7 @@
             this.Lista.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Lista.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.830189F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Lista.HideSelection = false;
-            this.Lista.Location = new System.Drawing.Point(517, 83);
+            this.Lista.Location = new System.Drawing.Point(517, 76);
             this.Lista.Name = "Lista";
             this.Lista.Size = new System.Drawing.Size(387, 639);
             this.Lista.TabIndex = 16;

@@ -98,6 +98,7 @@
             this.DeleteButton.TabIndex = 3;
             this.DeleteButton.Text = "Delete";
             this.DeleteButton.UseVisualStyleBackColor = false;
+            this.DeleteButton.Visible = false;
             this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
             // 
             // UpdateButton
@@ -111,6 +112,7 @@
             this.UpdateButton.TabIndex = 2;
             this.UpdateButton.Text = "Update";
             this.UpdateButton.UseVisualStyleBackColor = false;
+            this.UpdateButton.Visible = false;
             this.UpdateButton.Click += new System.EventHandler(this.UpdateButton_Click);
             // 
             // TextBox
@@ -135,10 +137,19 @@
             // SearchBox
             // 
             this.SearchBox.AutoCompleteCustomSource.AddRange(new string[] {
-            "Pane",
-            "Pasta",
-            "Tonno",
-            "Pomodori"});
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13"});
             this.SearchBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.SearchBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.SearchBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;

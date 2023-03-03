@@ -17,8 +17,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace lista_CRUD
 {
-	public partial class CRUD : Form
-	{
+    public partial class CRUD : Form
+    {
         public struct Prodotto
         {
             public int ind;
@@ -27,42 +27,93 @@ namespace lista_CRUD
         }
         public Prodotto[] pro;
         public int dim;
-        
+        public int fun;
         public CRUD()
-		{
+        {
             InitializeComponent();
             pro = new Prodotto[100];
             dim = 0;
+            fun = 0; // 1 Add ; 2 Edit ; 3 Delete
         }
         private void CRUD_Load(object sender, EventArgs e)
-		{
-           DescrizioneCreate.SetToolTip(CreateButton, "Aggiungi un prodotto alla lista");
+        {
+            DescrizioneCreate.SetToolTip(CreateButton, "Aggiungi un prodotto alla lista");
         }
 
-		private void CreateButton_Click(object sender, EventArgs e)
-		{
+        private void CreateButton_Click(object sender, EventArgs e)
+        {
+            (SearchBox.Visible, SearchLabel.Visible) = (false, false);
             (TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, CleareButton.Visible, ClearLabel.Visible,
                 ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true, true, true);
-		}
+
+            fun = 1;
+        }
 
         private void ReadButton_Click(object sender, EventArgs e)
         {
-
+            Lista.Items.Clear();
+            for (int i = 0; i < dim; i++)
+            {
+                Lista.Items.Add(pro[i].ind + ". Nome:" + pro[i].nome + " | prezzo:" + pro[i].prezzo.ToString());
+            }
         }
 
         private void UpdateButton_Click(object sender, EventArgs e)
         {
             (TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible, CleareButton.Visible,
                 ClearLabel.Visible, ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true, true, true, true, true);
+
+            fun = 2;
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
             (TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible, CleareButton.Visible,
-                ClearLabel.Visible, ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true, true, true, true, true);
+                ClearLabel.Visible, ConfirmButton.Visible, CancelButton1.Visible) = (false, false, false, false, true, true, true, true, true, true);
+
+            fun = 3;
         }
 
         private void ConfirmButton_Click(object sender, EventArgs e)
+        {
+            switch (fun)
+            {
+                case 1:
+                    AddProd();
+                    break;
+
+                case 2:
+                    EditProd();
+                    break;
+
+                case 3:
+                    DelProd();
+                    break;
+            }
+
+            if (dim == 0 && fun == 3)
+            {
+                (UpdateButton.Visible, DeleteButton.Visible) = (false, false);
+                CancelButton1_Click(sender, e);
+            }
+            ReadButton_Click(sender, e);
+        }
+
+        private void CancelButton1_Click(object sender, EventArgs e)
+        {
+            ClearButton_Click(sender, e);
+            (TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible, CleareButton.Visible,
+                ClearLabel.Visible, ConfirmButton.Visible, CancelButton1.Visible) = (false, false, false, false, false, false, false, false, false, false);
+        }
+
+        private void ClearButton_Click(object sender, EventArgs e)
+        {
+            TextBox.Text = "";
+            PriceBox.Text = "";
+            SearchBox.Text = "";
+        }
+
+        private void AddProd()
         {
             pro[dim].nome = TextBox.Text;
             while (TextBox.Text == "")
@@ -77,23 +128,48 @@ namespace lista_CRUD
             }
             dim++;
             pro[dim - 1].ind = dim;
-            Lista.Items.Clear();
-            for (int i = 0; i < dim; i++)
-            {
-                Lista.Items.Add(pro[i].ind + ". Nome:" + pro[i].nome + " | prezzo:" + pro[i].prezzo.ToString());
+
+            (UpdateButton.Visible, DeleteButton.Visible )= (true,true);
+        }
+        private void EditProd()
+        {
+            int sea;
+            while (!int.TryParse(SearchBox.Text, out sea) || sea < 1)
+            {//bad input
+                MessageBox.Show("inserisci un indice che appare in lista");
+                return;
             }
+            //int sea;
+            //while (!int.TryParse(SearchBox.Text, out sea) || sea < 1)
+            //{//bad input
+            //    MessageBox.Show("inserisci un intero positivo");
+            //    return;
+            //}
+            //while (sea > dim)
+            //{//bad input
+            //    MessageBox.Show("inserisci un indice che appare in lista");
+            //    return;
+            //}
         }
-
-        private void CancelButton1_Click(object sender, EventArgs e)
+        private void DelProd()
         {
-            (TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible, CleareButton.Visible,
-                ClearLabel.Visible, ConfirmButton.Visible, CancelButton1.Visible) = (false, false, false, false, false, false, false, false, false, false);
-        }
-
-        private void ClearButton_Click(object sender, EventArgs e)
-        {
-            TextBox.Text = "";
-            PriceBox.Text = "";
+            int sea;
+            while (!int.TryParse(SearchBox.Text, out sea) || sea < 1)
+            {//bad input
+                MessageBox.Show("inserisci un intero positivo");
+                return;
+            }
+            while (sea > dim)
+            {//bad input
+                MessageBox.Show("inserisci un indice che appare in lista");
+                return;
+            }
+            for (int i = sea - 1; i < dim; i++)
+            {
+                pro[i] = pro[i + 1];
+                pro[i].ind--;
+            }
+            dim--;
         }
     }
 }

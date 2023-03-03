@@ -44,6 +44,8 @@
             this.TextLabel = new System.Windows.Forms.Label();
             this.Lista = new System.Windows.Forms.ListView();
             this.DescrizioneCreate = new System.Windows.Forms.ToolTip(this.components);
+            this.CleareButton = new System.Windows.Forms.Button();
+            this.ClearLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // CreateButton
@@ -126,7 +128,7 @@
             this.TextBox.Location = new System.Drawing.Point(100, 400);
             this.TextBox.MaxLength = 20;
             this.TextBox.Name = "TextBox";
-            this.TextBox.Size = new System.Drawing.Size(125, 24);
+            this.TextBox.Size = new System.Drawing.Size(125, 23);
             this.TextBox.TabIndex = 5;
             this.TextBox.Visible = false;
             // 
@@ -145,7 +147,7 @@
             this.SearchBox.Location = new System.Drawing.Point(100, 350);
             this.SearchBox.MaxLength = 20;
             this.SearchBox.Name = "SearchBox";
-            this.SearchBox.Size = new System.Drawing.Size(125, 24);
+            this.SearchBox.Size = new System.Drawing.Size(125, 23);
             this.SearchBox.TabIndex = 4;
             this.SearchBox.Visible = false;
             // 
@@ -163,7 +165,7 @@
             this.PriceBox.Location = new System.Drawing.Point(300, 400);
             this.PriceBox.MaxLength = 20;
             this.PriceBox.Name = "PriceBox";
-            this.PriceBox.Size = new System.Drawing.Size(125, 24);
+            this.PriceBox.Size = new System.Drawing.Size(125, 23);
             this.PriceBox.TabIndex = 6;
             this.PriceBox.Visible = false;
             // 
@@ -227,7 +229,6 @@
             // 
             // Lista
             // 
-            this.Lista.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Lista.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.830189F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Lista.HideSelection = false;
             this.Lista.Location = new System.Drawing.Point(517, 76);
@@ -235,6 +236,32 @@
             this.Lista.Size = new System.Drawing.Size(387, 639);
             this.Lista.TabIndex = 16;
             this.Lista.UseCompatibleStateImageBehavior = false;
+            this.Lista.View = System.Windows.Forms.View.List;
+            // 
+            // CleareButton
+            // 
+            this.CleareButton.BackColor = System.Drawing.Color.Black;
+            this.CleareButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CleareButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CleareButton.ForeColor = System.Drawing.Color.Snow;
+            this.CleareButton.Location = new System.Drawing.Point(246, 400);
+            this.CleareButton.Name = "CleareButton";
+            this.CleareButton.Size = new System.Drawing.Size(30, 30);
+            this.CleareButton.TabIndex = 17;
+            this.CleareButton.Text = "C";
+            this.CleareButton.UseVisualStyleBackColor = false;
+            this.CleareButton.Visible = false;
+            this.CleareButton.Click += new System.EventHandler(this.ClearButton_Click);
+            // 
+            // ClearLabel
+            // 
+            this.ClearLabel.AutoSize = true;
+            this.ClearLabel.Location = new System.Drawing.Point(245, 384);
+            this.ClearLabel.Name = "ClearLabel";
+            this.ClearLabel.Size = new System.Drawing.Size(31, 13);
+            this.ClearLabel.TabIndex = 18;
+            this.ClearLabel.Text = "Clear";
+            this.ClearLabel.Visible = false;
             // 
             // CRUD
             // 
@@ -242,6 +269,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(984, 759);
+            this.Controls.Add(this.ClearLabel);
+            this.Controls.Add(this.CleareButton);
             this.Controls.Add(this.Lista);
             this.Controls.Add(this.TextLabel);
             this.Controls.Add(this.PriceLabel);
@@ -283,6 +312,8 @@
 		private System.Windows.Forms.Label TextLabel;
         private System.Windows.Forms.ListView Lista;
         private System.Windows.Forms.ToolTip DescrizioneCreate;
+        private System.Windows.Forms.Button CleareButton;
+        private System.Windows.Forms.Label ClearLabel;
     }
 }
 

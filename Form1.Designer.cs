@@ -165,9 +165,9 @@
             // PriceBox
             // 
             this.PriceBox.AutoCompleteCustomSource.AddRange(new string[] {
-            "1.00",
-            "50.34",
-            "23.56"});
+            "1,00",
+            "50,34",
+            "23,56"});
             this.PriceBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.PriceBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.PriceBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;

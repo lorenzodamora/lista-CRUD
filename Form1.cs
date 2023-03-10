@@ -47,7 +47,7 @@ namespace lista_CRUD
 			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, CleareButton.Visible, ClearLabel.Visible,
 				ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true, true, true);
 
-			fun = 1;
+            fun = 1;
 		}
 
 		private void ReadButton_Click(object sender, EventArgs e)
@@ -62,6 +62,7 @@ namespace lista_CRUD
 			Lista.Items.Add($"-------------------");
 			Lista.Items.Add($"numero di prodotti: {dim}");
 			Lista.Items.Add($"prezzo totale: {sum}");
+			// File
 		}
 
 		private void UpdateButton_Click(object sender, EventArgs e)
@@ -122,12 +123,12 @@ namespace lista_CRUD
 		private void AddProd()
 		{
 			pro[dim].nome = TextBox.Text;
-			while (TextBox.Text == "")
+            if (TextBox.Text == "")
 			{//bad input
 				MessageBox.Show("Scrivi qualcosa", "errore nel nome del prodotto");
 				return;
 			}
-			while (!float.TryParse(PriceBox.Text, out pro[dim].prezzo) || pro[dim].prezzo < 0)
+            if (!float.TryParse(PriceBox.Text, out pro[dim].prezzo) || pro[dim].prezzo < 0)
 			{//bad input
 				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
 				return;
@@ -140,23 +141,23 @@ namespace lista_CRUD
 		private void EditProd()
 		{
 			int sea;
-			while (!int.TryParse(SearchBox.Text, out sea) || sea < 1)
+            if (!int.TryParse(SearchBox.Text, out sea) || sea < 1)
 			{//bad input
 				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
 				return;
 			}
-			while (sea > dim)
+            if (sea > dim)
 			{//bad input
 				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
 				return;
 			}
 			sea--;
-			while (TextBox.Text == "" || PriceBox.Text == "")
+            if (TextBox.Text == "" || PriceBox.Text == "")
 			{//bad input
 				MessageBox.Show("Scrivi qualcosa", "errore");
 				return;
 			}
-			while (!float.TryParse(PriceBox.Text, out pro[sea].prezzo) || pro[sea].prezzo < 0)
+			if (!float.TryParse(PriceBox.Text, out pro[sea].prezzo) || pro[sea].prezzo < 0)
 			{//bad input
 				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
 				return;
@@ -169,12 +170,12 @@ namespace lista_CRUD
 		private void DelProd()
 		{
 			int sea;
-			while (!int.TryParse(SearchBox.Text, out sea) || sea < 1)
+			if (!int.TryParse(SearchBox.Text, out sea) || sea < 1)
 			{//bad input
 				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
 				return;
 			}
-			while (sea > dim)
+			if (sea > dim)
 			{//bad input
 				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
 				return;

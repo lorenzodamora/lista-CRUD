@@ -140,8 +140,7 @@ namespace lista_CRUD
 		}
 		private void EditProd()
 		{
-			int sea;
-            if (!int.TryParse(SearchBox.Text, out sea) || sea < 1)
+            if (!int.TryParse(SearchBox.Text, out int sea) || sea < 1)
 			{//bad input
 				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
 				return;
@@ -169,8 +168,7 @@ namespace lista_CRUD
 
 		private void DelProd()
 		{
-			int sea;
-			if (!int.TryParse(SearchBox.Text, out sea) || sea < 1)
+			if (!int.TryParse(SearchBox.Text, out int sea) || sea < 1)
 			{//bad input
 				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
 				return;

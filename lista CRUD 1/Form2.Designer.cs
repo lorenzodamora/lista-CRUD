@@ -29,9 +29,10 @@
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CRUD));
             this.CreateButton = new System.Windows.Forms.Button();
             this.GraphicTitle = new System.Windows.Forms.Label();
-            this.ReadButton = new System.Windows.Forms.Button();
+            this.TwinButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
             this.UpdateButton = new System.Windows.Forms.Button();
             this.TextBox = new System.Windows.Forms.TextBox();
@@ -46,14 +47,22 @@
             this.DescrizioneCreate = new System.Windows.Forms.ToolTip(this.components);
             this.CleareButton = new System.Windows.Forms.Button();
             this.ClearLabel = new System.Windows.Forms.Label();
+            this.file_esterno = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.NameList = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // CreateButton
             // 
             this.CreateButton.BackColor = System.Drawing.Color.Fuchsia;
+            this.CreateButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("CreateButton.BackgroundImage")));
+            this.CreateButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.CreateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CreateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CreateButton.Location = new System.Drawing.Point(100, 150);
+            this.CreateButton.Location = new System.Drawing.Point(100, 125);
             this.CreateButton.Name = "CreateButton";
             this.CreateButton.Size = new System.Drawing.Size(120, 30);
             this.CreateButton.TabIndex = 0;
@@ -74,25 +83,26 @@
             this.GraphicTitle.Text = "GESTIONE PRODOTTI CRUD";
             this.GraphicTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // ReadButton
+            // TwinButton
             // 
-            this.ReadButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
-            this.ReadButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ReadButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ReadButton.Location = new System.Drawing.Point(300, 150);
-            this.ReadButton.Name = "ReadButton";
-            this.ReadButton.Size = new System.Drawing.Size(120, 30);
-            this.ReadButton.TabIndex = 1;
-            this.ReadButton.Text = "Read";
-            this.ReadButton.UseVisualStyleBackColor = false;
-            this.ReadButton.Click += new System.EventHandler(this.ReadButton_Click);
+            this.TwinButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
+            this.TwinButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("TwinButton.BackgroundImage")));
+            this.TwinButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.TwinButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TwinButton.Location = new System.Drawing.Point(300, 125);
+            this.TwinButton.Name = "TwinButton";
+            this.TwinButton.Size = new System.Drawing.Size(120, 30);
+            this.TwinButton.TabIndex = 1;
+            this.TwinButton.Text = "Twin";
+            this.TwinButton.UseVisualStyleBackColor = false;
+            this.TwinButton.Click += new System.EventHandler(this.ReadButton_Click);
             // 
             // DeleteButton
             // 
             this.DeleteButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.DeleteButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.DeleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DeleteButton.Location = new System.Drawing.Point(300, 250);
+            this.DeleteButton.Location = new System.Drawing.Point(300, 200);
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(120, 30);
             this.DeleteButton.TabIndex = 3;
@@ -103,10 +113,10 @@
             // 
             // UpdateButton
             // 
-            this.UpdateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.UpdateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
             this.UpdateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.UpdateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UpdateButton.Location = new System.Drawing.Point(100, 250);
+            this.UpdateButton.Location = new System.Drawing.Point(100, 200);
             this.UpdateButton.Name = "UpdateButton";
             this.UpdateButton.Size = new System.Drawing.Size(120, 30);
             this.UpdateButton.TabIndex = 2;
@@ -127,10 +137,10 @@
             this.TextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.TextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TextBox.Location = new System.Drawing.Point(100, 400);
+            this.TextBox.Location = new System.Drawing.Point(100, 550);
             this.TextBox.MaxLength = 20;
             this.TextBox.Name = "TextBox";
-            this.TextBox.Size = new System.Drawing.Size(125, 23);
+            this.TextBox.Size = new System.Drawing.Size(125, 24);
             this.TextBox.TabIndex = 5;
             this.TextBox.Visible = false;
             // 
@@ -155,10 +165,10 @@
             this.SearchBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SearchBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.SearchBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SearchBox.Location = new System.Drawing.Point(100, 350);
+            this.SearchBox.Location = new System.Drawing.Point(100, 500);
             this.SearchBox.MaxLength = 20;
             this.SearchBox.Name = "SearchBox";
-            this.SearchBox.Size = new System.Drawing.Size(125, 23);
+            this.SearchBox.Size = new System.Drawing.Size(125, 24);
             this.SearchBox.TabIndex = 4;
             this.SearchBox.Visible = false;
             // 
@@ -173,10 +183,10 @@
             this.PriceBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PriceBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.PriceBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PriceBox.Location = new System.Drawing.Point(300, 400);
+            this.PriceBox.Location = new System.Drawing.Point(300, 550);
             this.PriceBox.MaxLength = 20;
             this.PriceBox.Name = "PriceBox";
-            this.PriceBox.Size = new System.Drawing.Size(125, 23);
+            this.PriceBox.Size = new System.Drawing.Size(125, 24);
             this.PriceBox.TabIndex = 6;
             this.PriceBox.Visible = false;
             // 
@@ -185,7 +195,7 @@
             this.ConfirmButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.ConfirmButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ConfirmButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ConfirmButton.Location = new System.Drawing.Point(100, 470);
+            this.ConfirmButton.Location = new System.Drawing.Point(100, 620);
             this.ConfirmButton.Name = "ConfirmButton";
             this.ConfirmButton.Size = new System.Drawing.Size(120, 30);
             this.ConfirmButton.TabIndex = 7;
@@ -199,7 +209,7 @@
             this.CancelButton1.BackColor = System.Drawing.Color.Red;
             this.CancelButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CancelButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CancelButton1.Location = new System.Drawing.Point(300, 470);
+            this.CancelButton1.Location = new System.Drawing.Point(300, 620);
             this.CancelButton1.Name = "CancelButton1";
             this.CancelButton1.Size = new System.Drawing.Size(120, 30);
             this.CancelButton1.TabIndex = 8;
@@ -211,7 +221,7 @@
             // SearchLabel
             // 
             this.SearchLabel.AutoSize = true;
-            this.SearchLabel.Location = new System.Drawing.Point(100, 331);
+            this.SearchLabel.Location = new System.Drawing.Point(100, 481);
             this.SearchLabel.Name = "SearchLabel";
             this.SearchLabel.Size = new System.Drawing.Size(41, 13);
             this.SearchLabel.TabIndex = 10;
@@ -221,7 +231,7 @@
             // PriceLabel
             // 
             this.PriceLabel.AutoSize = true;
-            this.PriceLabel.Location = new System.Drawing.Point(394, 384);
+            this.PriceLabel.Location = new System.Drawing.Point(394, 534);
             this.PriceLabel.Name = "PriceLabel";
             this.PriceLabel.Size = new System.Drawing.Size(31, 13);
             this.PriceLabel.TabIndex = 11;
@@ -231,7 +241,7 @@
             // TextLabel
             // 
             this.TextLabel.AutoSize = true;
-            this.TextLabel.Location = new System.Drawing.Point(100, 427);
+            this.TextLabel.Location = new System.Drawing.Point(100, 577);
             this.TextLabel.Name = "TextLabel";
             this.TextLabel.Size = new System.Drawing.Size(47, 13);
             this.TextLabel.TabIndex = 12;
@@ -242,9 +252,9 @@
             // 
             this.Lista.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.830189F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Lista.HideSelection = false;
-            this.Lista.Location = new System.Drawing.Point(517, 76);
+            this.Lista.Location = new System.Drawing.Point(525, 150);
             this.Lista.Name = "Lista";
-            this.Lista.Size = new System.Drawing.Size(387, 639);
+            this.Lista.Size = new System.Drawing.Size(400, 575);
             this.Lista.TabIndex = 16;
             this.Lista.UseCompatibleStateImageBehavior = false;
             this.Lista.View = System.Windows.Forms.View.List;
@@ -255,7 +265,7 @@
             this.CleareButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CleareButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CleareButton.ForeColor = System.Drawing.Color.Snow;
-            this.CleareButton.Location = new System.Drawing.Point(246, 400);
+            this.CleareButton.Location = new System.Drawing.Point(246, 550);
             this.CleareButton.Name = "CleareButton";
             this.CleareButton.Size = new System.Drawing.Size(30, 30);
             this.CleareButton.TabIndex = 17;
@@ -267,12 +277,95 @@
             // ClearLabel
             // 
             this.ClearLabel.AutoSize = true;
-            this.ClearLabel.Location = new System.Drawing.Point(245, 384);
+            this.ClearLabel.Location = new System.Drawing.Point(245, 534);
             this.ClearLabel.Name = "ClearLabel";
             this.ClearLabel.Size = new System.Drawing.Size(31, 13);
             this.ClearLabel.TabIndex = 18;
             this.ClearLabel.Text = "Clear";
             this.ClearLabel.Visible = false;
+            // 
+            // file_esterno
+            // 
+            this.file_esterno.Location = new System.Drawing.Point(882, -1);
+            this.file_esterno.Name = "file_esterno";
+            this.file_esterno.Size = new System.Drawing.Size(100, 20);
+            this.file_esterno.TabIndex = 20;
+            this.file_esterno.Text = "con file esterno";
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.Fuchsia;
+            this.button1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button1.BackgroundImage")));
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(100, 300);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(120, 30);
+            this.button1.TabIndex = 21;
+            this.button1.Text = "Add";
+            this.button1.UseVisualStyleBackColor = false;
+            // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.Fuchsia;
+            this.button2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button2.BackgroundImage")));
+            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(100, 375);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(120, 30);
+            this.button2.TabIndex = 22;
+            this.button2.Text = "Edit";
+            this.button2.UseVisualStyleBackColor = false;
+            // 
+            // button3
+            // 
+            this.button3.BackColor = System.Drawing.Color.Fuchsia;
+            this.button3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button3.BackgroundImage")));
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(300, 375);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(120, 30);
+            this.button3.TabIndex = 23;
+            this.button3.Text = "Remove";
+            this.button3.UseVisualStyleBackColor = false;
+            // 
+            // button4
+            // 
+            this.button4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
+            this.button4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button4.BackgroundImage")));
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.Location = new System.Drawing.Point(300, 300);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(120, 30);
+            this.button4.TabIndex = 24;
+            this.button4.Text = "Duplicate";
+            this.button4.UseVisualStyleBackColor = false;
+            // 
+            // NameList
+            // 
+            this.NameList.AutoCompleteCustomSource.AddRange(new string[] {
+            "1,00",
+            "50,34",
+            "23,56"});
+            this.NameList.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.NameList.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.NameList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.NameList.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.NameList.Enabled = false;
+            this.NameList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NameList.Location = new System.Drawing.Point(525, 120);
+            this.NameList.MaxLength = 20;
+            this.NameList.Name = "NameList";
+            this.NameList.Size = new System.Drawing.Size(400, 24);
+            this.NameList.TabIndex = 25;
+            this.NameList.Text = "Non è aperta nessuna lista";
+            this.NameList.Visible = false;
             // 
             // CRUD
             // 
@@ -280,6 +373,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(984, 759);
+            this.Controls.Add(this.NameList);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.file_esterno);
             this.Controls.Add(this.ClearLabel);
             this.Controls.Add(this.CleareButton);
             this.Controls.Add(this.Lista);
@@ -293,7 +392,7 @@
             this.Controls.Add(this.TextBox);
             this.Controls.Add(this.UpdateButton);
             this.Controls.Add(this.DeleteButton);
-            this.Controls.Add(this.ReadButton);
+            this.Controls.Add(this.TwinButton);
             this.Controls.Add(this.GraphicTitle);
             this.Controls.Add(this.CreateButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -310,7 +409,7 @@
 
 		private System.Windows.Forms.Button CreateButton;
 		private System.Windows.Forms.Label GraphicTitle;
-		private System.Windows.Forms.Button ReadButton;
+		private System.Windows.Forms.Button TwinButton;
 		private System.Windows.Forms.Button DeleteButton;
 		private System.Windows.Forms.Button UpdateButton;
 		private System.Windows.Forms.TextBox TextBox;
@@ -325,6 +424,12 @@
         private System.Windows.Forms.ToolTip DescrizioneCreate;
         private System.Windows.Forms.Button CleareButton;
         private System.Windows.Forms.Label ClearLabel;
+        private System.Windows.Forms.TextBox file_esterno;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.TextBox NameList;
     }
 }
 

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Net.NetworkInformation;
+//using System.Net.NetworkInformation;
 //lo ha aggiunto il codice
 
 /* using System.Collections.Generic;

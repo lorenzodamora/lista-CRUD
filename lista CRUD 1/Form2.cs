@@ -9,14 +9,14 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
+//using System.Linq;
 using System.Net.Http;
 using System.Threading; */
 //using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-
+using System.Linq; //.ToArray();
 
 namespace lista_CRUD
 {
@@ -32,7 +32,9 @@ namespace lista_CRUD
 		public int dim;
 		public int fun;
 		public string path;
+		public string filepath;
 		public StreamWriter swl;
+		public string[] lines;
 
 		public CRUD()
 		{
@@ -68,20 +70,19 @@ namespace lista_CRUD
 		//da spostare, questo dovrebbe essere TwinButton
 		private void ReadButton_Click(object sender, EventArgs e)
 		{ //fun 3
-			float sum = 0;
-			Lista.Items.Clear();
-			for (int i = 0; i < dim; i++)
-			{
-				Lista.Items.Add($"{pro[i].ind}.    Nome: {pro[i].nome}     Prezzo: {pro[i].prezzo}");
-				sum += pro[i].prezzo;
-			}
-			Lista.Items.Add($"-------------------");
-			Lista.Items.Add($"numero di prodotti: {dim}");
-			Lista.Items.Add($"prezzo totale: {sum}");
+			//float sum = 0;
+			//Lista.Items.Clear();
+			//for (int i = 0; i < dim; i++)
+			//{
+			//	Lista.Items.Add($"{pro[i].ind}.    Nome: {pro[i].nome}|    Prezzo: {pro[i].prezzo}");
+			//	sum += pro[i].prezzo;
+			//}
+			//Lista.Items.Add($"-------------------");
+			//Lista.Items.Add($"numero di prodotti: {dim}");
+			//Lista.Items.Add($"prezzo totale: {sum}");
 		}
 
 		//modifica un file, perciò va a compilare la struct prodotti coi nuovi dati
-		//rinominare
 		private void UpdateButton_Click(object sender, EventArgs e)
 		{
 			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible, CleareButton.Visible,
@@ -106,15 +107,18 @@ namespace lista_CRUD
 			{
 				case 1:
 					CreateFile();
-					//AddProd();
 					break;
 
 				case 2:
-					//EditProd();
+					OpenFile();
 					break;
 
 				case 3:
-					//DelProd();
+					//
+					break;
+
+				case 5:
+					AddProd();
 					break;
 			}
 
@@ -123,7 +127,8 @@ namespace lista_CRUD
 				(UpdateButton.Visible, DeleteButton.Visible) = (false, false);
 				CancelButton1_Click(sender, e);
 			}
-			ReadButton_Click(sender, e);
+			//ReadButton_Click(sender, e);
+			Stampa();
 		}
 
 		//finito? nop. attenzione swl
@@ -143,31 +148,92 @@ namespace lista_CRUD
 		}
 
 		//finito?
+		//fun 1
 		private void CreateFile()
 		{
 			//if (!File.Exists(path)) //+ $"\\lista{{}}.txt"
 			Directory.CreateDirectory(path);
-			// Directory.GetFileSystemEntries(path).Lenght;
+			// Directory.GetFileSystemEntries(path).Lenght; //tanto non ci sono folder, basta GetFiles()
 			//swl stream writer lista
-			swl = new StreamWriter($"{path}\\lista{Directory.GetFileSystemEntries(path).Length + 1}.txt",false); //crea \lista1.txt
+			filepath = $"{path}\\lista{Directory.GetFiles(path).Length + 1}.txt";
+			swl = new StreamWriter(filepath, false); //crea \lista1.txt
 			//swl stream writer lista
 			//copiato StreamWriter sw = new StreamWriter(path + "\\Test.txt", false);
 			//di base append è false
 			//se streamwriter è false sovrascrive la prima riga, se true aggiunge alla fine del file
 
 			AddProd();
-			swl.WriteLine($"{dim}.    Nome: {TextBox.Text}     Prezzo: {PriceBox.Text}");//la riga è lunga 24 + Length
-            swl.WriteLine($"-------------------");
-            swl.WriteLine($"numero di prodotti: {dim}");
-            swl.WriteLine($"prezzo totale: {PriceBox.Text}");
+			swl.WriteLine($"{dim}.    Nome: {TextBox.Text}|    Prezzo: {PriceBox.Text}");
+			swl.WriteLine($"-------------------");
+			swl.WriteLine($"numero di prodotti: {dim}");
+			swl.WriteLine($"prezzo totale: {PriceBox.Text}"); // 15 char
 
-            swl.Close();
+			swl.Close();
+			OpenFile();
+			//UpdateButton_Click()
 		}
 
-		//finito?
+		//azzera e aggiorna la struct e poi apre in modifica
+		//fun 2
+		private void OpenFile()
+		{
+			if (fun != 1)
+			{
+				if (!int.TryParse(SearchBox.Text, out int sea) || sea < 1)
+				{//bad input
+					MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
+					return;
+				}
+				if (sea > Directory.GetFiles(path).Length)
+				{//bad input
+					MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
+					return;
+				}
+				filepath = $"{path}\\lista{sea}.txt";
+			}
+			//else //fun 1 ha già fatto
+
+			StreamReader srl = new StreamReader(filepath);
+			pro = new Prodotto[100];
+			dim = 0;
+			lines = File.ReadLines(filepath).ToArray();
+			for (int i = 0; i < lines.Length - 3; i++)
+			{
+				int chp; //char position
+
+				string str = ""; //stringa d'appoggio
+				for (chp = 0; chp < (i + 1).ToString().Length; chp++)
+					str += lines[i][chp];
+				pro[dim].ind = int.Parse(str);
+
+				chp += 11;//.    Nome: //11 char
+
+				str = "";
+				while (lines[i][chp] != '|')
+				{
+					str += lines[i][chp];
+					chp++;
+				}
+				pro[dim].nome = str;
+
+				str = "";
+				// |    Prezzo: // 13 char - 1 perchè '|' già fatto
+				for (chp += 12; chp < lines[i].Length; chp++)
+					str += lines[i][chp];
+				pro[dim].prezzo = float.Parse(str);
+
+				dim++;
+			}
+			//le ultime 3 righe non servono alla struct
+			Stampa();
+			fun = 5;
+			srl.Close();
+		}
+
+		//finito? // aggiungere controllo dove non può scrivere '|'
+		//fun 5
 		private void AddProd()
 		{
-			pro[dim].nome = TextBox.Text;
 			if (TextBox.Text == "")
 			{//bad input
 				MessageBox.Show("Scrivi qualcosa", "errore nel nome del prodotto");
@@ -178,13 +244,40 @@ namespace lista_CRUD
 				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
 				return;
 			}
+			pro[dim].nome = TextBox.Text;
 			dim++;
 			pro[dim - 1].ind = dim;
 
-			(UpdateButton.Visible, DeleteButton.Visible )= (true,true);
+			if (fun != 1)
+			{
+				swl = new StreamWriter(filepath);
+				//int csum = 0; //char somma
+				//for (int i = 0; i < lines.Length - 3; i++)
+				//	csum += lines[i].Length;
+				//swl.BaseStream.Position = csum; //mi posiziono all'inizio del separatore //non cambia riga, rimane sulla prima
+
+				for (int i = 0; i < lines.Length - 3; i++) //mi posiziono all'inizio del separatore
+                    swl.WriteLine(lines[i]); //purtroppo riscrivo tutto
+
+				string str = ""; //il fondo del file ha la somma dei prezzi
+				//conteggio char 15, 15 - 1 per la posizione, 15 il carattere successivo
+				for (int c = 15; c < lines[lines.Length - 1].Length; c++)
+					str += lines[lines.Length - 1][c];
+				float sum = float.Parse(str) + float.Parse(PriceBox.Text);
+				swl.WriteLine($"{dim}.    Nome: {TextBox.Text}|    Prezzo: {PriceBox.Text}");
+                swl.WriteLine($"-------------------");
+                swl.WriteLine($"numero di prodotti: {dim}");
+                swl.WriteLine($"prezzo totale: {sum}");
+
+				swl.Close();
+                lines = File.ReadLines(filepath).ToArray();
+            } //end if
+
+			(UpdateButton.Visible, DeleteButton.Visible) = (true, true);
 		}
 
 		//finito?
+		//fun 6
 		private void EditProd()
 		{
 			if (!int.TryParse(SearchBox.Text, out int sea) || sea < 1)
@@ -213,6 +306,7 @@ namespace lista_CRUD
 		}
 
 		//finito?
+		//fun 8
 		private void DelProd()
 		{
 			
@@ -232,6 +326,14 @@ namespace lista_CRUD
 				pro[i].ind--;
 			}
 			dim--;
+		}
+
+		//stampa dal file alla listview
+		private void Stampa()
+		{
+			Lista.Items.Clear();
+			for (int i = 0; i < lines.Length; i++)
+				Lista.Items.Add(lines[i]);
 		}
 	}
 }

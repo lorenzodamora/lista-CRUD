@@ -16,7 +16,7 @@ using System.Threading; */
 using System.IO;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Linq; //.ToArray();
+//using System.Linq; //ha .ToArray();
 
 namespace lista_CRUD
 {
@@ -196,7 +196,7 @@ namespace lista_CRUD
 			StreamReader srl = new StreamReader(filepath);
 			pro = new Prodotto[100];
 			dim = 0;
-			lines = File.ReadLines(filepath).ToArray();
+			lines = File.ReadAllLines(filepath);
 			for (int i = 0; i < lines.Length - 3; i++)
 			{
 				int chp; //char position
@@ -270,7 +270,7 @@ namespace lista_CRUD
                 swl.WriteLine($"prezzo totale: {sum}");
 
 				swl.Close();
-                lines = File.ReadLines(filepath).ToArray();
+				lines = File.ReadAllLines(filepath);
             } //end if
 
 			(UpdateButton.Visible, DeleteButton.Visible) = (true, true);

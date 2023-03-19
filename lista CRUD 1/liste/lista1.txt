@@ -1,0 +1,4 @@
+1.    Nome: file 1|    Prezzo: 100
+-------------------
+numero di prodotti: 1
+prezzo totale: 100

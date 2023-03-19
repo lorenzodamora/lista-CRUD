@@ -43,7 +43,7 @@
             this.SearchLabel = new System.Windows.Forms.Label();
             this.PriceLabel = new System.Windows.Forms.Label();
             this.TextLabel = new System.Windows.Forms.Label();
-            this.Lista = new System.Windows.Forms.ListView();
+            this.ListaProdotti = new System.Windows.Forms.ListView();
             this.DescrizioneCreate = new System.Windows.Forms.ToolTip(this.components);
             this.CleareButton = new System.Windows.Forms.Button();
             this.ClearLabel = new System.Windows.Forms.Label();
@@ -95,7 +95,8 @@
             this.TwinButton.TabIndex = 1;
             this.TwinButton.Text = "Twin";
             this.TwinButton.UseVisualStyleBackColor = false;
-            this.TwinButton.Click += new System.EventHandler(this.ReadButton_Click);
+            this.TwinButton.Visible = false;
+            this.TwinButton.Click += new System.EventHandler(this.TwinButton_Click);
             // 
             // DeleteButton
             // 
@@ -248,16 +249,16 @@
             this.TextLabel.Text = "Prodotto";
             this.TextLabel.Visible = false;
             // 
-            // Lista
+            // ListaProdotti
             // 
-            this.Lista.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.830189F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Lista.HideSelection = false;
-            this.Lista.Location = new System.Drawing.Point(525, 150);
-            this.Lista.Name = "Lista";
-            this.Lista.Size = new System.Drawing.Size(400, 575);
-            this.Lista.TabIndex = 16;
-            this.Lista.UseCompatibleStateImageBehavior = false;
-            this.Lista.View = System.Windows.Forms.View.List;
+            this.ListaProdotti.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.830189F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ListaProdotti.HideSelection = false;
+            this.ListaProdotti.Location = new System.Drawing.Point(525, 150);
+            this.ListaProdotti.Name = "ListaProdotti";
+            this.ListaProdotti.Size = new System.Drawing.Size(400, 575);
+            this.ListaProdotti.TabIndex = 16;
+            this.ListaProdotti.UseCompatibleStateImageBehavior = false;
+            this.ListaProdotti.View = System.Windows.Forms.View.List;
             // 
             // CleareButton
             // 
@@ -305,6 +306,7 @@
             this.button1.TabIndex = 21;
             this.button1.Text = "Add";
             this.button1.UseVisualStyleBackColor = false;
+            this.button1.Visible = false;
             // 
             // button2
             // 
@@ -319,6 +321,7 @@
             this.button2.TabIndex = 22;
             this.button2.Text = "Edit";
             this.button2.UseVisualStyleBackColor = false;
+            this.button2.Visible = false;
             // 
             // button3
             // 
@@ -333,6 +336,7 @@
             this.button3.TabIndex = 23;
             this.button3.Text = "Remove";
             this.button3.UseVisualStyleBackColor = false;
+            this.button3.Visible = false;
             // 
             // button4
             // 
@@ -346,6 +350,7 @@
             this.button4.TabIndex = 24;
             this.button4.Text = "Duplicate";
             this.button4.UseVisualStyleBackColor = false;
+            this.button4.Visible = false;
             // 
             // NameList
             // 
@@ -355,17 +360,18 @@
             "23,56"});
             this.NameList.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.NameList.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.NameList.BackColor = System.Drawing.Color.White;
             this.NameList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.NameList.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.NameList.Enabled = false;
+            this.NameList.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.NameList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NameList.ForeColor = System.Drawing.Color.Black;
             this.NameList.Location = new System.Drawing.Point(525, 120);
-            this.NameList.MaxLength = 20;
+            this.NameList.MaxLength = 100;
             this.NameList.Name = "NameList";
+            this.NameList.ReadOnly = true;
             this.NameList.Size = new System.Drawing.Size(400, 24);
             this.NameList.TabIndex = 25;
             this.NameList.Text = "Non è aperta nessuna lista";
-            this.NameList.Visible = false;
             // 
             // CRUD
             // 
@@ -381,7 +387,7 @@
             this.Controls.Add(this.file_esterno);
             this.Controls.Add(this.ClearLabel);
             this.Controls.Add(this.CleareButton);
-            this.Controls.Add(this.Lista);
+            this.Controls.Add(this.ListaProdotti);
             this.Controls.Add(this.TextLabel);
             this.Controls.Add(this.PriceLabel);
             this.Controls.Add(this.SearchLabel);
@@ -420,7 +426,7 @@
 		private System.Windows.Forms.Label SearchLabel;
 		private System.Windows.Forms.Label PriceLabel;
 		private System.Windows.Forms.Label TextLabel;
-        private System.Windows.Forms.ListView Lista;
+        private System.Windows.Forms.ListView ListaProdotti;
         private System.Windows.Forms.ToolTip DescrizioneCreate;
         private System.Windows.Forms.Button CleareButton;
         private System.Windows.Forms.Label ClearLabel;

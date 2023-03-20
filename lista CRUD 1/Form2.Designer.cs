@@ -45,7 +45,7 @@
             this.TextLabel = new System.Windows.Forms.Label();
             this.ListaProdotti = new System.Windows.Forms.ListView();
             this.DescrizioneCreate = new System.Windows.Forms.ToolTip(this.components);
-            this.CleareButton = new System.Windows.Forms.Button();
+            this.ClearButton = new System.Windows.Forms.Button();
             this.ClearLabel = new System.Windows.Forms.Label();
             this.file_esterno = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -260,20 +260,20 @@
             this.ListaProdotti.UseCompatibleStateImageBehavior = false;
             this.ListaProdotti.View = System.Windows.Forms.View.List;
             // 
-            // CleareButton
+            // ClearButton
             // 
-            this.CleareButton.BackColor = System.Drawing.Color.Black;
-            this.CleareButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CleareButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CleareButton.ForeColor = System.Drawing.Color.Snow;
-            this.CleareButton.Location = new System.Drawing.Point(246, 550);
-            this.CleareButton.Name = "CleareButton";
-            this.CleareButton.Size = new System.Drawing.Size(30, 30);
-            this.CleareButton.TabIndex = 17;
-            this.CleareButton.Text = "C";
-            this.CleareButton.UseVisualStyleBackColor = false;
-            this.CleareButton.Visible = false;
-            this.CleareButton.Click += new System.EventHandler(this.ClearButton_Click);
+            this.ClearButton.BackColor = System.Drawing.Color.Black;
+            this.ClearButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ClearButton.ForeColor = System.Drawing.Color.Snow;
+            this.ClearButton.Location = new System.Drawing.Point(246, 550);
+            this.ClearButton.Name = "ClearButton";
+            this.ClearButton.Size = new System.Drawing.Size(30, 30);
+            this.ClearButton.TabIndex = 17;
+            this.ClearButton.Text = "C";
+            this.ClearButton.UseVisualStyleBackColor = false;
+            this.ClearButton.Visible = false;
+            this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // ClearLabel
             // 
@@ -386,7 +386,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.file_esterno);
             this.Controls.Add(this.ClearLabel);
-            this.Controls.Add(this.CleareButton);
+            this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.ListaProdotti);
             this.Controls.Add(this.TextLabel);
             this.Controls.Add(this.PriceLabel);
@@ -428,7 +428,7 @@
 		private System.Windows.Forms.Label TextLabel;
         private System.Windows.Forms.ListView ListaProdotti;
         private System.Windows.Forms.ToolTip DescrizioneCreate;
-        private System.Windows.Forms.Button CleareButton;
+        private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Label ClearLabel;
         private System.Windows.Forms.TextBox file_esterno;
         private System.Windows.Forms.Button button1;

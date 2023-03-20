@@ -38,7 +38,7 @@ namespace lista_CRUD
 		public CRUD()
 		{
 			InitializeComponent();
-			dim = 0; sel = 0;
+			dim = 0;
 			fun = 0; // 1 Create ; 2 Update ; 3 Twin ; 4 Delete ; 5 Add ; 6 Edit ; 7 Duplicate ; 8 Remove
 
 			path = Path.GetFullPath(".");
@@ -47,6 +47,7 @@ namespace lista_CRUD
 				path = Path.GetDirectoryName(path);
 			}
 			path += @"\liste";
+			sel = Directory.GetFiles(path).Length;
 
 		}
 		private void CRUD_Load(object sender, EventArgs e)
@@ -69,35 +70,32 @@ namespace lista_CRUD
 				ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true, true, true);
 
 			fun = 1;
-
-            ListaProdotti.Items.Clear();
-			NameList.Text = $"Stai creando la lista{sel + 1} :";
-        }
-
-		//da spostare, questo dovrebbe essere TwinButton
-		private void TwinButton_Click(object sender, EventArgs e)
-		{ //fun 3
-			//float sum = 0;
-			//Lista.Items.Clear();
-			//for (int i = 0; i < dim; i++)
-			//{
-			//	Lista.Items.Add($"{pro[i].ind}.    Nome: {pro[i].nome}|    Prezzo: {pro[i].prezzo}");
-			//	sum += pro[i].prezzo;
-			//}
-			//Lista.Items.Add($"-------------------");
-			//Lista.Items.Add($"numero di prodotti: {dim}");
-			//Lista.Items.Add($"prezzo totale: {sum}");
+			ListaProdotti.Items.Clear();
+			NameList.Text = $"Stai creando la Lista{sel + 1} :";
 		}
 
-		//modifica un file, perciò va a compilare la struct prodotti coi nuovi dati
+		//duplica file
+		private void TwinButton_Click(object sender, EventArgs e)
+		{ //fun 3
+			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible) = (false, false, false, false);
+			(SearchBox.Visible, SearchLabel.Visible, ClearButton.Visible, ClearLabel.Visible,
+				ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true);
+
+			fun = 3;
+			ListaProdotti.Items.Clear();
+			NameList.Text = $"Scegli la lista da duplicare digitando il numero in search (verrà duplicata in Lista{sel + 1}";
+			for (int i = 1; i <= Directory.GetFiles(path).Length; i++)
+				ListaProdotti.Items.Add($"{i}. Lista{i}");
+		}
+
+		//scegli file
 		private void UpdateButton_Click(object sender, EventArgs e)
-		{
+		{//fun 2
 			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible) = (false, false, false, false);
 			(SearchBox.Visible, SearchLabel.Visible, ClearButton.Visible, ClearLabel.Visible,
 				ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true);
 
 			fun = 2;
-
 			ListaProdotti.Items.Clear();
 			NameList.Text = "Scegli la lista da aprire digitando il numero in search :";
 			for (int i = 1; i <= Directory.GetFiles(path).Length; i++)
@@ -117,7 +115,7 @@ namespace lista_CRUD
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
 			switch (fun)
-			{
+			{ 
 				case 1:
 					CreateFile();
 					if (sel == 0)
@@ -129,7 +127,7 @@ namespace lista_CRUD
 					break;
 
 				case 3:
-					//
+					//twinfile
 					break;
 
 				case 5:
@@ -142,6 +140,8 @@ namespace lista_CRUD
 			//	(UpdateButton.Visible, DeleteButton.Visible) = (false, false);
 			//	CancelButton1_Click(sender, e);
 			//}
+			if (fun == 2 || fun == 0)
+				return;
 			if (lines != null)
 				Stampa();
 			else
@@ -152,8 +152,12 @@ namespace lista_CRUD
 		private void CancelButton1_Click(object sender, EventArgs e)
 		{
 			ClearButton_Click(sender, e);
+
 			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible, ClearButton.Visible,
 				ClearLabel.Visible, ConfirmButton.Visible, CancelButton1.Visible) = (false, false, false, false, false, false, false, false, false, false);
+
+			fun = 0;
+			NameList.Text = "Non è aperta nessuna lista";
 		}
 
 		private void ClearButton_Click(object sender, EventArgs e)
@@ -163,7 +167,6 @@ namespace lista_CRUD
 			SearchBox.Text = "";
 		}
 
-		//finito?
 		//fun 1
 		private void CreateFile()
 		{
@@ -189,32 +192,31 @@ namespace lista_CRUD
 			swl.WriteLine($"-------------------");
 			swl.WriteLine($"numero di prodotti: {dim}");
 			sum = float.Parse(PriceBox.Text);
-			swl.WriteLine($"prezzo totale: {sum}"); // 15 char + prezzo
+			swl.WriteLine($"prezzo totale: {sum}"); // 15 char + somma
 
 			swl.Close();
 			lines = File.ReadAllLines(filepath);
 
-            (TwinButton.Visible, UpdateButton.Visible, DeleteButton.Visible) = (true, true, true);
+			(TwinButton.Visible, UpdateButton.Visible, DeleteButton.Visible) = (true, true, true);
 
-            fun = 5;
+			fun = 5;
+			NameList.Text = $"Stai aggiungendo alla Lista{sel} :";
 		}
 
-		//azzera e aggiorna la struct e poi apre in modifica
 		//fun 2
-
 		private void OpenFile()
 		{
-
-			if (!int.TryParse(SearchBox.Text, out sel) || sel < 1)
+			if (!int.TryParse(SearchBox.Text, out int sea) || sea < 1)
 			{//bad input
 				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
 				return;
 			}
-			if (sel > Directory.GetFiles(path).Length)
+			if (sea > Directory.GetFiles(path).Length)
 			{//bad input
 				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
 				return;
 			}
+			sel = sea;
 			filepath = $"{path}\\lista{sel}.txt";
 			lines = File.ReadAllLines(filepath);
 			dim = lines.Length - 3;
@@ -259,9 +261,14 @@ namespace lista_CRUD
 			*/
 
 			fun = 5;
+			NameList.Text = $"Stai aggiungendo alla Lista{sel} :";
+
+			(SearchBox.Visible, SearchLabel.Visible) = (false, false);
+			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible,
+				PriceLabel.Visible) = (true, true, true, true);
 		}
 
-		//finito? // aggiungere controllo: non si può scrivere '|'
+		// aggiungere controllo: non si può scrivere '|'
 		//fun 5
 		private void AddProd()
 		{
@@ -348,7 +355,6 @@ namespace lista_CRUD
 		//stampa dal file alla listview
 		private void Stampa()
 		{
-			NameList.Text = $"Stai modificando la Lista{sel} :";
 			ListaProdotti.Items.Clear();
 			for (int i = 0; i < lines.Length; i++)
 				ListaProdotti.Items.Add(lines[i]);

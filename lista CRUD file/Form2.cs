@@ -42,11 +42,12 @@ namespace lista_CRUD
 			fun = 0; // 1 Create ; 2 Update ; 3 Twin ; 4 Delete ; 5 Add ; 6 Edit ; 7 Duplicate ; 8 Remove
 
 			path = Path.GetFullPath(".");
-			for (int i = 2; i > 0; i--) //il 2 dipende dalla gestione della cartella della soluzione
+			for (int i = 3; i > 0; i--) //il 2 dipende dalla gestione della cartella della soluzione
 			{ //in breve: torna indietro di una cartella per ciclo
 				path = Path.GetDirectoryName(path);
 			}
 			path += @"\liste";
+			//Directory.CreateDirectory(path);
 			sel = Directory.GetFiles(path).Length;
 
 		}

@@ -1,0 +1,5 @@
+4 quante liste
+5 delimitatore, quante righe è lunga la lista
+5
+5
+5

@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CRUD));
             this.CreateButton = new System.Windows.Forms.Button();
             this.GraphicTitle = new System.Windows.Forms.Label();
-            this.TwinButton = new System.Windows.Forms.Button();
+            this.MoveButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
             this.UpdateButton = new System.Windows.Forms.Button();
             this.TextBox = new System.Windows.Forms.TextBox();
@@ -48,10 +48,10 @@
             this.ClearButton = new System.Windows.Forms.Button();
             this.ClearLabel = new System.Windows.Forms.Label();
             this.file_esterno = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.AddButton = new System.Windows.Forms.Button();
+            this.EditButton = new System.Windows.Forms.Button();
+            this.RemoveButton = new System.Windows.Forms.Button();
+            this.DuplicateButton = new System.Windows.Forms.Button();
             this.NameList = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -83,20 +83,20 @@
             this.GraphicTitle.Text = "GESTIONE PRODOTTI CRUD";
             this.GraphicTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // TwinButton
+            // MoveButton
             // 
-            this.TwinButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
-            this.TwinButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("TwinButton.BackgroundImage")));
-            this.TwinButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.TwinButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TwinButton.Location = new System.Drawing.Point(300, 125);
-            this.TwinButton.Name = "TwinButton";
-            this.TwinButton.Size = new System.Drawing.Size(120, 30);
-            this.TwinButton.TabIndex = 1;
-            this.TwinButton.Text = "Twin";
-            this.TwinButton.UseVisualStyleBackColor = false;
-            this.TwinButton.Visible = false;
-            this.TwinButton.Click += new System.EventHandler(this.TwinButton_Click);
+            this.MoveButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
+            this.MoveButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("MoveButton.BackgroundImage")));
+            this.MoveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.MoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MoveButton.Location = new System.Drawing.Point(300, 125);
+            this.MoveButton.Name = "MoveButton";
+            this.MoveButton.Size = new System.Drawing.Size(120, 30);
+            this.MoveButton.TabIndex = 1;
+            this.MoveButton.Text = "Move";
+            this.MoveButton.UseVisualStyleBackColor = false;
+            this.MoveButton.Visible = false;
+            this.MoveButton.Click += new System.EventHandler(this.MoveButton_Click);
             // 
             // DeleteButton
             // 
@@ -293,64 +293,68 @@
             this.file_esterno.TabIndex = 20;
             this.file_esterno.Text = "con file esterno";
             // 
-            // button1
+            // AddButton
             // 
-            this.button1.BackColor = System.Drawing.Color.Fuchsia;
-            this.button1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button1.BackgroundImage")));
-            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(100, 300);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(120, 30);
-            this.button1.TabIndex = 21;
-            this.button1.Text = "Add";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Visible = false;
+            this.AddButton.BackColor = System.Drawing.Color.Fuchsia;
+            this.AddButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("AddButton.BackgroundImage")));
+            this.AddButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.AddButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.AddButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AddButton.Location = new System.Drawing.Point(100, 300);
+            this.AddButton.Name = "AddButton";
+            this.AddButton.Size = new System.Drawing.Size(120, 30);
+            this.AddButton.TabIndex = 21;
+            this.AddButton.Text = "Add";
+            this.AddButton.UseVisualStyleBackColor = false;
+            this.AddButton.Visible = false;
+            this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
             // 
-            // button2
+            // EditButton
             // 
-            this.button2.BackColor = System.Drawing.Color.Fuchsia;
-            this.button2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button2.BackgroundImage")));
-            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(100, 375);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(120, 30);
-            this.button2.TabIndex = 22;
-            this.button2.Text = "Edit";
-            this.button2.UseVisualStyleBackColor = false;
-            this.button2.Visible = false;
+            this.EditButton.BackColor = System.Drawing.Color.Fuchsia;
+            this.EditButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("EditButton.BackgroundImage")));
+            this.EditButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.EditButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.EditButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EditButton.Location = new System.Drawing.Point(100, 375);
+            this.EditButton.Name = "EditButton";
+            this.EditButton.Size = new System.Drawing.Size(120, 30);
+            this.EditButton.TabIndex = 22;
+            this.EditButton.Text = "Edit";
+            this.EditButton.UseVisualStyleBackColor = false;
+            this.EditButton.Visible = false;
+            this.EditButton.Click += new System.EventHandler(this.EditButton_Click);
             // 
-            // button3
+            // RemoveButton
             // 
-            this.button3.BackColor = System.Drawing.Color.Fuchsia;
-            this.button3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button3.BackgroundImage")));
-            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(300, 375);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(120, 30);
-            this.button3.TabIndex = 23;
-            this.button3.Text = "Remove";
-            this.button3.UseVisualStyleBackColor = false;
-            this.button3.Visible = false;
+            this.RemoveButton.BackColor = System.Drawing.Color.Fuchsia;
+            this.RemoveButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("RemoveButton.BackgroundImage")));
+            this.RemoveButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.RemoveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.RemoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RemoveButton.Location = new System.Drawing.Point(300, 375);
+            this.RemoveButton.Name = "RemoveButton";
+            this.RemoveButton.Size = new System.Drawing.Size(120, 30);
+            this.RemoveButton.TabIndex = 23;
+            this.RemoveButton.Text = "Remove";
+            this.RemoveButton.UseVisualStyleBackColor = false;
+            this.RemoveButton.Visible = false;
+            this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
             // 
-            // button4
+            // DuplicateButton
             // 
-            this.button4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
-            this.button4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button4.BackgroundImage")));
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(300, 300);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(120, 30);
-            this.button4.TabIndex = 24;
-            this.button4.Text = "Duplicate";
-            this.button4.UseVisualStyleBackColor = false;
-            this.button4.Visible = false;
+            this.DuplicateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
+            this.DuplicateButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("DuplicateButton.BackgroundImage")));
+            this.DuplicateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DuplicateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DuplicateButton.Location = new System.Drawing.Point(300, 300);
+            this.DuplicateButton.Name = "DuplicateButton";
+            this.DuplicateButton.Size = new System.Drawing.Size(120, 30);
+            this.DuplicateButton.TabIndex = 24;
+            this.DuplicateButton.Text = "Duplicate";
+            this.DuplicateButton.UseVisualStyleBackColor = false;
+            this.DuplicateButton.Visible = false;
+            this.DuplicateButton.Click += new System.EventHandler(this.DuplicateButton_Click);
             // 
             // NameList
             // 
@@ -380,10 +384,10 @@
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(984, 759);
             this.Controls.Add(this.NameList);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.DuplicateButton);
+            this.Controls.Add(this.RemoveButton);
+            this.Controls.Add(this.EditButton);
+            this.Controls.Add(this.AddButton);
             this.Controls.Add(this.file_esterno);
             this.Controls.Add(this.ClearLabel);
             this.Controls.Add(this.ClearButton);
@@ -398,7 +402,7 @@
             this.Controls.Add(this.TextBox);
             this.Controls.Add(this.UpdateButton);
             this.Controls.Add(this.DeleteButton);
-            this.Controls.Add(this.TwinButton);
+            this.Controls.Add(this.MoveButton);
             this.Controls.Add(this.GraphicTitle);
             this.Controls.Add(this.CreateButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -415,7 +419,7 @@
 
 		private System.Windows.Forms.Button CreateButton;
 		private System.Windows.Forms.Label GraphicTitle;
-		private System.Windows.Forms.Button TwinButton;
+		private System.Windows.Forms.Button MoveButton;
 		private System.Windows.Forms.Button DeleteButton;
 		private System.Windows.Forms.Button UpdateButton;
 		private System.Windows.Forms.TextBox TextBox;
@@ -431,10 +435,10 @@
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Label ClearLabel;
         private System.Windows.Forms.TextBox file_esterno;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button AddButton;
+        private System.Windows.Forms.Button EditButton;
+        private System.Windows.Forms.Button RemoveButton;
+        private System.Windows.Forms.Button DuplicateButton;
         private System.Windows.Forms.TextBox NameList;
     }
 }

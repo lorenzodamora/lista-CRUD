@@ -1,0 +1,20 @@
+1.    Nome: 11|    Prezzo: 11
+-------------------
+numero di prodotti: 1
+prezzo totale: 11
+###################
+1.    Nome: 22|    Prezzo: 22
+-------------------
+numero di prodotti: 1
+prezzo totale: 12
+###################
+1.    Nome: 33|    Prezzo: 33
+-------------------
+numero di prodotti: 1
+prezzo totale: 33
+###################
+1.    Nome: 44|    Prezzo: 44
+-------------------
+numero di prodotti: 1
+prezzo totale: 44
+###################

@@ -27,7 +27,7 @@ namespace lista_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//ho appena updatebutton click, fare la fun 2
+		//ho appena updatebutton click, fare la fun 2.
 		public int fun, numlis; //fun funzione //numlis numero lista
 		public string path;
 		public CRUD()

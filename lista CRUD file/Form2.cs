@@ -27,8 +27,9 @@ namespace lista_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//ho appena updatebutton click, fare la fun 2.
-		public int fun, numlis; //fun funzione //numlis numero lista
+		//ho appena updatebutton click, fare la fun 2. //controllare la differenza tra lista selezionata e totale liste.
+		public int fun, numlis; /*fun funzione //numlis numero lista */
+		//public int totlis; //totlis totale liste
 		public string path;
 		public CRUD()
 		{
@@ -119,7 +120,7 @@ namespace lista_CRUD
 			fun = 2;
 			ListaProdotti.Items.Clear();
 			NameList.Text = "Scegli la lista da aprire digitando il numero in search :";
-			for (int i = 1; i <= numlis; i++)
+			for (int i = 1; i <= numlis; i++)//errore
 				ListaProdotti.Items.Add($"{i}. Lista{i}");
 		}
 		private void DeleteButton_Click(object sender, EventArgs e)
@@ -163,6 +164,10 @@ namespace lista_CRUD
 						else ListActionVisible(true);
 						fun = 5; //add
 						break;
+					case 2:
+						//visible
+						//fun
+						break;
 				}
 			Stampa();
 		}
@@ -193,6 +198,9 @@ namespace lista_CRUD
 					//false se non ha creato
 					//fun = 5;
 					break;
+				case 2:
+					//control = OpenFile();
+					break;
 				case 5:
 					AddLine(nome, prezzo, path, numlis);
 					break;
@@ -219,12 +227,12 @@ namespace lista_CRUD
 
 		private bool CheckNomePrezzo(string nome, string prezzo)
 		{
-			if (TextBox.Text == "")
+			if (nome == "")
 			{//bad input
 				MessageBox.Show("Scrivi qualcosa", "errore nel nome del prodotto");
 				return false;
 			}
-			if (!double.TryParse(PriceBox.Text, out double price) || price < 0)
+			if (!double.TryParse(prezzo, out double price) || price < 0)
 			{//bad input
 				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
 				return false;
@@ -239,7 +247,6 @@ namespace lista_CRUD
 				return false;
 
 			string[] lines = File.ReadAllLines(path +"\\delimitatori.txt");
-			//int numlis = int.Parse(lines[0]) + 1;
 
 			StreamWriter swliste = new StreamWriter(path +"\\liste.txt", true);
 			swliste.WriteLine($"1.    Nome: {nome}|    Prezzo: {prezzo}");
@@ -259,9 +266,31 @@ namespace lista_CRUD
 			return true;
 		}
 
-		private void OpenFile()
+		private bool CheckCerca(string cerca, string totlis)
 		{
+			if (!int.TryParse(cerca, out int cer) || cer < 1)
+			{//bad input
+				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
+				return false;
+			}
+			if (cer > int.Parse(totlis)) //il totale liste si trova nel file
+			{//bad input
+				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
+				return false;
+			}
 
+			return true;
+		}
+
+		private bool OpenFile(string cerca, string path, int numlis)
+		{
+			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
+			if (!CheckCerca(cerca, lines[0])) //bad input
+				return false;
+
+
+
+			return true;
 		}
 
 		private void AddLine(string nome, string prezzo, string path, int numlis)

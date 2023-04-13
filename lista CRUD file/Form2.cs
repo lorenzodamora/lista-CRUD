@@ -27,16 +27,15 @@ namespace lista_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//ho appena updatebutton click, fare la fun 2. //controllare la differenza tra lista selezionata e totale liste.
-		public int fun, numlis; /*fun funzione //numlis numero lista */
-		//public int totlis; //totlis totale liste
+		//ho appena updatebutton click, fare la fun 2.
+		public int fun, totlis, selis; //fun funzione //totlis totale liste //lista selezionata
 		public string path;
 		public CRUD()
 		{
 			InitializeComponent();
 			fun = 0;
 			path = GetPath();
-			numlis = GetListCount(path + "\\delimitatori.txt");
+			totlis = GetListCount(path + "\\delimitatori.txt");
 		}
 		//{
 		private string GetPath()
@@ -100,7 +99,7 @@ namespace lista_CRUD
 
 			fun = 1;
 			ListaProdotti.Items.Clear();
-			NameList.Text = $"Stai creando la Lista{numlis + 1} :";
+			NameList.Text = $"Stai creando la Lista{totlis + 1} :";
 		}
 		private void MoveButton_Click(object sender, EventArgs e)
 		{
@@ -120,7 +119,7 @@ namespace lista_CRUD
 			fun = 2;
 			ListaProdotti.Items.Clear();
 			NameList.Text = "Scegli la lista da aprire digitando il numero in search :";
-			for (int i = 1; i <= numlis; i++)//errore
+			for (int i = 1; i <= totlis; i++)//errore
 				ListaProdotti.Items.Add($"{i}. Lista{i}");
 		}
 		private void DeleteButton_Click(object sender, EventArgs e)
@@ -136,7 +135,7 @@ namespace lista_CRUD
 			TextPriceVisible(true);
 
 			fun = 5;
-			NameList.Text = $"Stai aggiungendo alla Lista{numlis} :";
+			NameList.Text = $"Stai aggiungendo alla Lista{selis} :";
 		}
 		private void DuplicateButton_Click(object sender, EventArgs e)
 		{
@@ -152,16 +151,17 @@ namespace lista_CRUD
 		}
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
-			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, path, numlis);
+			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, path, selis);
 			if (control == true)
 				switch (fun)
 				{
-					case 1:
-						numlis += 1;
-						// numlis = GetListCount(path + "\\delimitatori.txt");
-						NameList.Text = $"Stai aggiungendo alla Lista{numlis} :";
-						if (numlis == 0) ListActionVisible(false);
-						else ListActionVisible(true);
+					case 1: //create
+						totlis += 1;
+						// totlis = GetListCount(path + "\\delimitatori.txt");
+						NameList.Text = $"Stai aggiungendo alla Lista{totlis} :";
+						//if (totlis == 0) ListActionVisible(false);
+						//else ListActionVisible(true); //non può essere 0 se crea una lista
+						ListActionVisible(true);
 						fun = 5; //add
 						break;
 					case 2:
@@ -169,7 +169,7 @@ namespace lista_CRUD
 						//fun
 						break;
 				}
-			Stampa();
+			StampaForm();
 		}
 		private void CancelButton1_Click(object sender, EventArgs e)
 		{
@@ -188,7 +188,7 @@ namespace lista_CRUD
 		}
 		//}
 
-		private bool SwitchFun(int fun, string nome, string prezzo, string path, int numlis)
+		private bool SwitchFun(int fun, string nome, string prezzo, string path, int selis)
 		{
 			bool control = true; // false se qualcosa è andato storto
 			switch (fun)
@@ -202,7 +202,7 @@ namespace lista_CRUD
 					//control = OpenFile();
 					break;
 				case 5:
-					AddLine(nome, prezzo, path, numlis);
+					AddLine(nome, prezzo, path, selis);
 					break;
 					/*
 						case 2:
@@ -266,14 +266,14 @@ namespace lista_CRUD
 			return true;
 		}
 
-		private bool CheckCerca(string cerca, string totlis)
+		private bool CheckCerca(string cerca, int totlis)
 		{
 			if (!int.TryParse(cerca, out int cer) || cer < 1)
 			{//bad input
 				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
 				return false;
 			}
-			if (cer > int.Parse(totlis)) //il totale liste si trova nel file
+			if (cer > totlis) //il totale liste si trova nel file
 			{//bad input
 				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
 				return false;
@@ -282,10 +282,10 @@ namespace lista_CRUD
 			return true;
 		}
 
-		private bool OpenFile(string cerca, string path, int numlis)
+		private bool OpenFile(string cerca, string path, int selis)
 		{
-			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
-			if (!CheckCerca(cerca, lines[0])) //bad input
+			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt"); //legge il totale liste
+			if (!CheckCerca(cerca, int.Parse(lines[0]))) //bad input
 				return false;
 
 
@@ -293,7 +293,7 @@ namespace lista_CRUD
 			return true;
 		}
 
-		private void AddLine(string nome, string prezzo, string path, int numlis)
+		private void AddLine(string nome, string prezzo, string path, int selis)
 		{//fun 5
 			if (!CheckNomePrezzo(nome, prezzo)) //bad input
 				return;
@@ -302,14 +302,14 @@ namespace lista_CRUD
 			//in lines[0] c'è la riga che conta quante liste ci sono
 			// in lines 1 c'è la riga che dice quante linee è lunga la lista1
 			//in ogni linea precedente tranne 0 si calcola la somma delle linee da trascrivere
-			int numpro = int.Parse(lines[numlis]) - 4; //numero righe di prodotti
-			int line = 0; //riga dove inizia la lista
-			for (int i = 1; i < numlis; i++)
-				line += int.Parse(lines[i]);
+			int numpro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // 4 sono =  prodotti + somma + 2 separatori.
+			int line = 0; //numero riga dove inizia la lista
+			for (int i = 1; i < selis; i++)
+				line += int.Parse(lines[i]); //fa la somma di tutti i delimitatori (tranne il primo in lines[0])
 
 			//aggiungo un prodotto
 			StreamWriter sw = new StreamWriter(path + "\\delimitatori.txt");
-			lines[numlis] = (int.Parse(lines[numlis])+1).ToString(); ; //aggiungo una riga al conteggio
+			lines[selis] = (int.Parse(lines[selis])+1).ToString(); ; //aggiungo già una riga al conteggio righe della lista
 
 			sw.Write(lines[0]); //prima riga senza \n iniziale
 			for (int i = 1; i < lines.Length; i++)
@@ -341,15 +341,15 @@ namespace lista_CRUD
 			sw.Close();
 		}
 
-		private void Stampa()
+		private void StampaForm()
 		{
-			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
+			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt"); //trovo delimitatori
 
-			int line = 0; //riga dove inizia la lista
-			for (int i = 1; i < numlis; i++)
+			int line = 0; //numero riga dove inizia la lista
+			for (int i = 1; i < selis; i++)
 				line += int.Parse(lines[i]);
 
-			int length = int.Parse(lines[numlis]);
+			int length = int.Parse(lines[selis]);
 
 			lines = File.ReadAllLines(path + "\\liste.txt");
 

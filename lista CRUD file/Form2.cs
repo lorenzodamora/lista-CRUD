@@ -1,5 +1,6 @@
 ﻿#region using
 using System;
+using System.Diagnostics.Eventing.Reader;
 //using System.Net.NetworkInformation;
 //lo ha aggiunto il codice
 
@@ -28,11 +29,14 @@ namespace lista_CRUD
 	{
 		#endregion
 		//ho appena updatebutton click, fare la fun 2.
+		//ref selis in switchfun non mi ispira.
+		//setvisible e checkvisible
 		public int fun, totlis, selis; //fun funzione //totlis totale liste //lista selezionata
 		public string path;
 		public CRUD()
 		{
 			InitializeComponent();
+			ListActionVisible(true); //!
 			fun = 0;
 			path = GetPath();
 			totlis = GetListCount(path + "\\delimitatori.txt");
@@ -67,6 +71,7 @@ namespace lista_CRUD
 		}
 
 		//{
+		//TextAction
 		private void SearchVisible(bool vis)
 		{
 			(SearchBox.Visible, SearchLabel.Visible) = (vis, vis);
@@ -83,6 +88,7 @@ namespace lista_CRUD
 		{
 			(ConfirmButton.Visible, CancelButton1.Visible) = (vis, vis);
 		}
+		//
 		private void ListActionVisible(bool vis)
 		{
 			(MoveButton.Visible, UpdateButton.Visible, DeleteButton.Visible) = (vis, vis, vis);
@@ -113,7 +119,7 @@ namespace lista_CRUD
 		{
 			SearchVisible(true);
 			TextPriceVisible(false);
-			ClearVisible(true);
+			ClearVisible(true); //considera se riapri il programma con già delle liste
 			ConfirmVisible(true);
 
 			fun = 2;
@@ -127,7 +133,7 @@ namespace lista_CRUD
 			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible, ClearButton.Visible,
 				ClearLabel.Visible, ConfirmButton.Visible, CancelButton1.Visible) = (false, false, false, false, true, true, true, true, true, true);
 
-			//fun = 3;
+			//fun = 4;
 		}
 		private void AddButton_Click(object sender, EventArgs e)
 		{
@@ -151,24 +157,29 @@ namespace lista_CRUD
 		}
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
-			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, path, selis);
+			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, SearchBox.Text, path, ref selis, totlis);
 			if (control == true)
 				switch (fun)
 				{
 					case 1: //create
 						totlis += 1;
-						// totlis = GetListCount(path + "\\delimitatori.txt");
-						NameList.Text = $"Stai aggiungendo alla Lista{totlis} :";
+						selis = totlis;
+
+						//NameList.Text = $"Stai aggiungendo alla Lista{selis} :";
+						//fun = 5; //add
+						AddButton_Click(sender, e);
+
 						//if (totlis == 0) ListActionVisible(false);
 						//else ListActionVisible(true); //non può essere 0 se crea una lista
-						ListActionVisible(true);
-						fun = 5; //add
+						// ListActionVisible(true);
 						break;
-					case 2:
+					case 2: //open
+						AddButton_Click(sender, e);
+						//selis cambiato con ref
 						//visible
-						//fun
 						break;
 				}
+			//setvisible //checkvisible
 			StampaForm();
 		}
 		private void CancelButton1_Click(object sender, EventArgs e)
@@ -188,7 +199,7 @@ namespace lista_CRUD
 		}
 		//}
 
-		private bool SwitchFun(int fun, string nome, string prezzo, string path, int selis)
+		private bool SwitchFun(int fun, string nome, string prezzo, string cerca, string path, ref int selis, int totlis)
 		{
 			bool control = true; // false se qualcosa è andato storto
 			switch (fun)
@@ -199,7 +210,9 @@ namespace lista_CRUD
 					//fun = 5;
 					break;
 				case 2:
-					//control = OpenFile();
+					int temp = OpenFile(cerca, totlis);
+					if (temp != 0) selis = temp;
+					else control = false;
 					break;
 				case 5:
 					AddLine(nome, prezzo, path, selis);
@@ -266,31 +279,21 @@ namespace lista_CRUD
 			return true;
 		}
 
-		private bool CheckCerca(string cerca, int totlis)
+		//openfile controlla se la lista cercata esiste, e modifica la variabile selis(lista selezionata), con selis si stampa la lista e va in fun 5(add)
+		private int OpenFile(string cerca, int totlis)
 		{
-			if (!int.TryParse(cerca, out int cer) || cer < 1)
+			if (!int.TryParse(cerca, out int selis) || selis < 1)
 			{//bad input
 				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
-				return false;
+				return 0; // 0 = false, se ritorna 0 non ha selezionato nessuna lista
 			}
-			if (cer > totlis) //il totale liste si trova nel file
+			if (selis > totlis) //il totale liste si trova nel file
 			{//bad input
 				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
-				return false;
+				return 0;
 			}
 
-			return true;
-		}
-
-		private bool OpenFile(string cerca, string path, int selis)
-		{
-			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt"); //legge il totale liste
-			if (!CheckCerca(cerca, int.Parse(lines[0]))) //bad input
-				return false;
-
-
-
-			return true;
+			return selis; //ritorna la lista selezionata
 		}
 
 		private void AddLine(string nome, string prezzo, string path, int selis)

@@ -17,7 +17,7 @@ using System.IO;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 //using System.Linq; //ha .ToArray();
-
+//search
 namespace lista_CRUD
 {
 	public partial class CRUD : Form

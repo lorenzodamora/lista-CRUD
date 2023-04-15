@@ -28,19 +28,22 @@ namespace lista_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//ho appena updatebutton click, fare la fun 2.
 		//ref selis in switchfun non mi ispira.
-		//setvisible e checkvisible
+		//Move
+		//Delete
+		//Duplicate
+		//Edit
+		//Remove
 		public int fun, totlis, selis; //fun funzione //totlis totale liste //lista selezionata
 		public string path;
 		public CRUD()
 		{
 			InitializeComponent();
-			ListActionVisible(true); //!
-			fun = 0;
-			path = GetPath();
+            path = GetPath();
 			totlis = GetListCount(path + "\\delimitatori.txt");
-		}
+            fun = 0;
+            SetVisible();
+        }
 		//{
 		private string GetPath()
 		{
@@ -71,7 +74,6 @@ namespace lista_CRUD
 		}
 
 		//{
-		//TextAction
 		private void SearchVisible(bool vis)
 		{
 			(SearchBox.Visible, SearchLabel.Visible) = (vis, vis);
@@ -80,82 +82,101 @@ namespace lista_CRUD
 		{
 			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible) = (vis, vis, vis, vis);
 		}
-		private void ClearVisible(bool vis)
+		private void ClearConfirmVisible(bool vis)
 		{
 			(ClearButton.Visible, ClearLabel.Visible) = (vis, vis);
-		}
-		private void ConfirmVisible(bool vis)
-		{
 			(ConfirmButton.Visible, CancelButton1.Visible) = (vis, vis);
 		}
-		//
-		private void ListActionVisible(bool vis)
-		{
-			(MoveButton.Visible, UpdateButton.Visible, DeleteButton.Visible) = (vis, vis, vis);
-			(AddButton.Visible, DuplicateButton.Visible, EditButton.Visible, RemoveButton.Visible) = (vis, vis, vis, vis);
-		}
 		//}
-		//{
+		private void SetVisible()
+		{
+            //bool 0 update, 1 move, 0 delete, 2 add, 2 edit, 2 dupl, 2 remove, 3 search, 4 textprice, 5 clear, 5 confirm
+            bool[] vis = new bool[5];
+            vis[0] = totlis != 0;
+            vis[1] = !(totlis < 2 || selis == 0);
+            vis[2] = selis != 0;
+            //vis[3] search = update2 o move3 o delete4 o edit6 o duplicate7 o remove8
+            //vis[4] textprice = create1 o add5 o edit6
+            vis[3] = !(fun == 1 || fun == 5 || fun == 0);
+            vis[4] = (fun == 1 || fun == 5 || fun == 6);
+            //vis[5] = vis[4] || vis[3];
+
+            //bool 0 update, 1 move, 0 delete, 2 add, 2 edit, 2 dupl, 2 remove, 3 search, 4 textprice, 5 clear, 5 confirm
+            UpdateButton.Visible = vis[0];
+			MoveButton.Visible = vis[1];
+			DeleteButton.Visible = vis[0];
+			AddButton.Visible = vis[2];
+			EditButton.Visible = vis[2];
+			DuplicateButton.Visible = vis[2];
+			RemoveButton.Visible = vis[2];
+			SearchVisible(vis[3]);
+			TextPriceVisible(vis[4]);
+			ClearConfirmVisible(vis[4] || vis[3]);
+		}
+
 		private void CreateButton_Click(object sender, EventArgs e)
 		{
-			SearchVisible(false);
-			TextPriceVisible(true);
-			ClearVisible(true);
-			ConfirmVisible(true);
-
 			fun = 1;
+			SetVisible();
 			ListaProdotti.Items.Clear();
 			NameList.Text = $"Stai creando la Lista{totlis + 1} :";
 		}
 		private void MoveButton_Click(object sender, EventArgs e)
 		{
-			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible) = (false, false, false, false);
-			(SearchBox.Visible, SearchLabel.Visible, ClearButton.Visible, ClearLabel.Visible,
-				ConfirmButton.Visible, CancelButton1.Visible) = (true, true, true, true, true, true);
-
+			//muove la lista aperta al posto di un altra
 			//fun = 3;
+			//SetVisible();
 		}
 		private void UpdateButton_Click(object sender, EventArgs e)
 		{
-			SearchVisible(true);
-			TextPriceVisible(false);
-			ClearVisible(true); //considera se riapri il programma con già delle liste
-			ConfirmVisible(true);
-
+			selis = 0;
 			fun = 2;
+			SetVisible();
 			ListaProdotti.Items.Clear();
 			NameList.Text = "Scegli la lista da aprire digitando il numero in search :";
-			for (int i = 1; i <= totlis; i++)//errore
+			for (int i = 1; i <= totlis; i++)
 				ListaProdotti.Items.Add($"{i}. Lista{i}");
 		}
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
-			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible, ClearButton.Visible,
-				ClearLabel.Visible, ConfirmButton.Visible, CancelButton1.Visible) = (false, false, false, false, true, true, true, true, true, true);
-
 			//fun = 4;
+			SetVisible();
 		}
 		private void AddButton_Click(object sender, EventArgs e)
 		{
-			SearchVisible(false);
-			TextPriceVisible(true);
-
 			fun = 5;
+			SetVisible();
 			NameList.Text = $"Stai aggiungendo alla Lista{selis} :";
 		}
 		private void DuplicateButton_Click(object sender, EventArgs e)
 		{
-
+			//fun = 7;
+			//SetVisible();
 		}
 		private void EditButton_Click(object sender, EventArgs e)
 		{
-
+			//fun = 6;
+			//SetVisible();
 		}
 		private void RemoveButton_Click(object sender, EventArgs e)
 		{
-
+			//fun = 8;
+			//SetVisible();
 		}
-		private void ConfirmButton_Click(object sender, EventArgs e)
+        private void CancelButton1_Click(object sender, EventArgs e)
+        {
+            ClearButton_Click(sender, e);
+			//fun = 0;
+			//SetVisible();
+        }
+        private void ClearButton_Click(object sender, EventArgs e)
+        {
+            TextBox.Text = "";
+            PriceBox.Text = "";
+            SearchBox.Text = "";
+        }
+        //}
+        private void ConfirmButton_Click(object sender, EventArgs e)
 		{
 			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, SearchBox.Text, path, ref selis, totlis);
 			if (control == true)
@@ -168,36 +189,16 @@ namespace lista_CRUD
 						//NameList.Text = $"Stai aggiungendo alla Lista{selis} :";
 						//fun = 5; //add
 						AddButton_Click(sender, e);
-
-						//if (totlis == 0) ListActionVisible(false);
-						//else ListActionVisible(true); //non può essere 0 se crea una lista
-						// ListActionVisible(true);
 						break;
 					case 2: //open
 						AddButton_Click(sender, e);
-						//selis cambiato con ref
-						//visible
+						//selis già cambiato con ref
 						break;
 				}
-			//setvisible //checkvisible
-			StampaForm();
+			if(selis != 0)
+				StampaForm();
 		}
-		private void CancelButton1_Click(object sender, EventArgs e)
-		{
-			ClearButton_Click(sender, e);
-
-			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible, SearchBox.Visible, SearchLabel.Visible, ClearButton.Visible,
-				ClearLabel.Visible, ConfirmButton.Visible, CancelButton1.Visible) = (false, false, false, false, false, false, false, false, false, false);
-
-			//fun = 0;
-		}
-		private void ClearButton_Click(object sender, EventArgs e)
-		{
-			TextBox.Text = "";
-			PriceBox.Text = "";
-			SearchBox.Text = "";
-		}
-		//}
+		
 
 		private bool SwitchFun(int fun, string nome, string prezzo, string cerca, string path, ref int selis, int totlis)
 		{

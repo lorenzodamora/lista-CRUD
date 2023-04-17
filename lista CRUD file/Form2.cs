@@ -28,9 +28,7 @@ namespace lista_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//ref selis in switchfun non mi ispira.
 		//Move
-		//Delete
 		//Duplicate
 		//Edit
 		//Remove
@@ -39,11 +37,11 @@ namespace lista_CRUD
 		public CRUD()
 		{
 			InitializeComponent();
-            path = GetPath();
+			path = GetPath();
 			totlis = GetListCount(path + "\\delimitatori.txt");
-            fun = 0;
-            SetVisible();
-        }
+			fun = 0;
+			SetVisible();
+		}
 		//{
 		private string GetPath()
 		{
@@ -90,19 +88,19 @@ namespace lista_CRUD
 		//}
 		private void SetVisible()
 		{
-            //bool 0 update, 1 move, 0 delete, 2 add, 2 edit, 2 dupl, 2 remove, 3 search, 4 textprice, 5 clear, 5 confirm
-            bool[] vis = new bool[5];
-            vis[0] = totlis != 0;
-            vis[1] = !(totlis < 2 || selis == 0);
-            vis[2] = selis != 0;
-            //vis[3] search = update2 o move3 o delete4 o edit6 o duplicate7 o remove8
-            //vis[4] textprice = create1 o add5 o edit6
-            vis[3] = !(fun == 1 || fun == 5 || fun == 0);
-            vis[4] = (fun == 1 || fun == 5 || fun == 6);
-            //vis[5] = vis[4] || vis[3];
+			//bool 0 update, 1 move, 0 delete, 2 add, 2 edit, 2 dupl, 2 remove, 3 search, 4 textprice, 5 clear, 5 confirm
+			bool[] vis = new bool[5];
+			vis[0] = totlis != 0;
+			vis[1] = !(totlis < 2 || selis == 0);
+			vis[2] = selis != 0;
+			//vis[3] search = update2 o move3 o delete4 o edit6 o duplicate7 o remove8
+			//vis[4] textprice = create1 o add5 o edit6
+			vis[3] = !(fun == 1 || fun == 5 || fun == 0);
+			vis[4] = (fun == 1 || fun == 5 || fun == 6);
+			//vis[5] = vis[4] || vis[3];
 
-            //bool 0 update, 1 move, 0 delete, 2 add, 2 edit, 2 dupl, 2 remove, 3 search, 4 textprice, 5 clear, 5 confirm
-            UpdateButton.Visible = vis[0];
+			//bool 0 update, 1 move, 0 delete, 2 add, 2 edit, 2 dupl, 2 remove, 3 search, 4 textprice, 5 clear, 5 confirm
+			UpdateButton.Visible = vis[0];
 			MoveButton.Visible = vis[1];
 			DeleteButton.Visible = vis[0];
 			AddButton.Visible = vis[2];
@@ -139,8 +137,13 @@ namespace lista_CRUD
 		}
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
-			//fun = 4;
+			selis = 0;
+			fun = 4;
 			SetVisible();
+			ListaProdotti.Items.Clear();
+			NameList.Text = "Scegli la lista da cancellare digitando il numero in search :";
+			for (int i = 1; i <= totlis; i++)
+				ListaProdotti.Items.Add($"{i}. Lista{i}");
 		}
 		private void AddButton_Click(object sender, EventArgs e)
 		{
@@ -163,20 +166,20 @@ namespace lista_CRUD
 			//fun = 8;
 			//SetVisible();
 		}
-        private void CancelButton1_Click(object sender, EventArgs e)
-        {
-            ClearButton_Click(sender, e);
+		private void CancelButton1_Click(object sender, EventArgs e)
+		{
+			ClearButton_Click(sender, e);
 			//fun = 0;
 			//SetVisible();
-        }
-        private void ClearButton_Click(object sender, EventArgs e)
-        {
-            TextBox.Text = "";
-            PriceBox.Text = "";
-            SearchBox.Text = "";
-        }
-        //}
-        private void ConfirmButton_Click(object sender, EventArgs e)
+		}
+		private void ClearButton_Click(object sender, EventArgs e)
+		{
+			TextBox.Text = "";
+			PriceBox.Text = "";
+			SearchBox.Text = "";
+		}
+		//}
+		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
 			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, SearchBox.Text, path, ref selis, totlis);
 			if (control == true)
@@ -194,11 +197,18 @@ namespace lista_CRUD
 						AddButton_Click(sender, e);
 						//selis già cambiato con ref
 						break;
+					case 4:
+						ListaProdotti.Items.Clear();
+						NameList.Text = "Non è aperta nessuna lista";
+						fun = 0;
+						totlis -= 1;
+                        SetVisible();
+                        break;
 				}
-			if(selis != 0)
+			if (selis != 0)
 				StampaForm();
 		}
-		
+
 
 		private bool SwitchFun(int fun, string nome, string prezzo, string cerca, string path, ref int selis, int totlis)
 		{
@@ -214,6 +224,9 @@ namespace lista_CRUD
 					int temp = OpenFile(cerca, totlis);
 					if (temp != 0) selis = temp;
 					else control = false;
+					break;
+				case 4:
+					DeleteFile(cerca, totlis);
 					break;
 				case 5:
 					AddLine(nome, prezzo, path, selis);
@@ -255,6 +268,21 @@ namespace lista_CRUD
 			return true;
 		}
 
+		private bool CheckCercaFile(string cerca, int totlis)
+		{
+			if (!int.TryParse(cerca, out int selis) || selis < 1)
+			{//bad input
+				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
+				return false;
+			}
+			if (selis > totlis) //il totale liste si trova nel file
+			{//bad input
+				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
+				return false;
+			}
+			return true;
+		}
+
 		private bool CreaFile(string nome, string prezzo, string path)
 		{ //fun 1
 			if (!CheckNomePrezzo(nome, prezzo)) //bad input
@@ -282,19 +310,45 @@ namespace lista_CRUD
 
 		//openfile controlla se la lista cercata esiste, e modifica la variabile selis(lista selezionata), con selis si stampa la lista e va in fun 5(add)
 		private int OpenFile(string cerca, int totlis)
-		{
-			if (!int.TryParse(cerca, out int selis) || selis < 1)
-			{//bad input
-				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
-				return 0; // 0 = false, se ritorna 0 non ha selezionato nessuna lista
-			}
-			if (selis > totlis) //il totale liste si trova nel file
-			{//bad input
-				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
-				return 0;
-			}
+		{//fun 2
+			if (CheckCercaFile(cerca, totlis)) return int.Parse(cerca);//ritorna la lista selezionata
+			else return 0; // 0 = false, se ritorna 0 non ha selezionato nessuna lista
+		}
 
-			return selis; //ritorna la lista selezionata
+		private void DeleteFile(string cerca, int totlis)
+		{//fun 4
+			if (!CheckCercaFile(cerca, totlis)) //bad input
+				return;
+			int selis = int.Parse(cerca);
+			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
+			// in lines 1 c'è la riga che dice quante linee è lunga la lista1
+			//in ogni linea precedente tranne 0 si calcola la somma delle linee da trascrivere
+			int linesdel = int.Parse(lines[selis]); //numero righe lista
+			int line = 0; //numero riga dove inizia la lista
+			for (int i = 1; i < selis; i++)
+				line += int.Parse(lines[i]); //fa la somma di tutti i delimitatori (tranne il primo in lines[0])
+
+			//rimuovo la lista eliminata
+			StreamWriter sw = new StreamWriter(path + "\\delimitatori.txt");
+			//in lines 0 c'è anche la lunghezza -1 del file, e lines 0 = totlis
+			for (int i = selis; i < totlis; i++) //l'ultima riga non viene fatta in ogni caso
+				lines[i] = lines[i+1];
+			lines[totlis]=""; //ultima riga è inutile in ogni caso;
+
+			sw.Write(totlis-1); //prima riga senza \n iniziale
+			for (int i = 1; i < lines.Length; i++)
+				sw.Write("\n"+lines[i]); //nessuna riga vuota alla fine del file
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\liste.txt");
+
+			//trascrive tutto fino alla lista da eliminare, poi la salta e trascrive il resto
+			sw = new StreamWriter(path + "\\liste.txt");
+			for (int i = 0; i < line; i++)
+				sw.WriteLine(lines[i]);
+			for (int i = line+linesdel; i < lines.Length; i++)
+				sw.WriteLine(lines[i]);
+			sw.Close();
 		}
 
 		private void AddLine(string nome, string prezzo, string path, int selis)

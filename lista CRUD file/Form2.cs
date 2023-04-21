@@ -16,6 +16,7 @@ using System.Net.Http;
 using System.Threading; */
 //using System.Threading.Tasks;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Xml.Schema;
@@ -32,6 +33,9 @@ namespace lista_CRUD
 		//Duplicate
 		//Edit
 		//Remove
+		//cancellazione logica
+		//file accesso diretto
+		//
 		public int fun, totlis, selis; //fun funzione //totlis totale liste //lista selezionata
 		public string path;
 		public CRUD()
@@ -122,8 +126,12 @@ namespace lista_CRUD
 		private void MoveButton_Click(object sender, EventArgs e)
 		{
 			//muove la lista aperta al posto di un altra
-			//fun = 3;
-			//SetVisible();
+			fun = 3;
+			SetVisible();
+			ListaProdotti.Items.Clear();
+			NameList.Text = $"Scegli la lista da scambiare digitando il numero in search(verrà scambiata con la lista{selis}) :";
+			for (int i = 1; i <= totlis; i++)
+				ListaProdotti.Items.Add($"{i}. Lista{i}");
 		}
 		private void UpdateButton_Click(object sender, EventArgs e)
 		{
@@ -181,10 +189,11 @@ namespace lista_CRUD
 		//}
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
-			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, SearchBox.Text, path, ref selis, totlis);
+			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, SearchBox.Text, path, selis, totlis);
 			if (control == true)
 				switch (fun)
 				{
+					case 3: //twin
 					case 1: //create
 						totlis += 1;
 						selis = totlis;
@@ -195,22 +204,22 @@ namespace lista_CRUD
 						break;
 					case 2: //open
 						AddButton_Click(sender, e);
-						//selis già cambiato con ref
+						selis = int.Parse(SearchBox.Text);//controlli già fatti con switchfun
 						break;
-					case 4:
+					case 4: //deletefile
 						ListaProdotti.Items.Clear();
 						NameList.Text = "Non è aperta nessuna lista";
 						fun = 0;
 						totlis -= 1;
-                        SetVisible();
-                        break;
+						SetVisible();
+						break;
 				}
 			if (selis != 0)
 				StampaForm();
 		}
 
 
-		private bool SwitchFun(int fun, string nome, string prezzo, string cerca, string path, ref int selis, int totlis)
+		private bool SwitchFun(int fun, string nome, string prezzo, string cerca, string path, int selis, int totlis)
 		{
 			bool control = true; // false se qualcosa è andato storto
 			switch (fun)
@@ -221,25 +230,21 @@ namespace lista_CRUD
 					//fun = 5;
 					break;
 				case 2:
-					int temp = OpenFile(cerca, totlis);
-					if (temp != 0) selis = temp;
-					else control = false;
+					//int temp = OpenFile(cerca, totlis, path);
+					//if (temp != 0) selis = temp;
+					//else control = false;
+					control = CheckCercaFile(cerca, totlis);// se ritorna false non ha selezionato nessuna lista
+					break;
+				case 3:
+					//control = TwinFile(cerca, totlis, path);
 					break;
 				case 4:
-					DeleteFile(cerca, totlis);
+					control = DeleteFile(cerca, totlis, path);
 					break;
 				case 5:
 					AddLine(nome, prezzo, path, selis);
 					break;
 					/*
-						case 2:
-							//OpenFile();
-							break;
-
-						case 3:
-							//twin file
-							break;
-
 						case 4:
 							//delete file
 							break;
@@ -309,16 +314,51 @@ namespace lista_CRUD
 		}
 
 		//openfile controlla se la lista cercata esiste, e modifica la variabile selis(lista selezionata), con selis si stampa la lista e va in fun 5(add)
-		private int OpenFile(string cerca, int totlis)
-		{//fun 2
-			if (CheckCercaFile(cerca, totlis)) return int.Parse(cerca);//ritorna la lista selezionata
-			else return 0; // 0 = false, se ritorna 0 non ha selezionato nessuna lista
-		}
+		//private int OpenFile(string cerca, int totlis, string path)
+		//{//fun 2
+		//	if (CheckCercaFile(cerca, totlis)) return int.Parse(cerca);//ritorna la lista selezionata
+		//	else return 0; // 0 = false, se ritorna 0 non ha selezionato nessuna lista
+		//}
 
-		private void DeleteFile(string cerca, int totlis)
+		private bool MoveFile(string cerca, int totlis, int selis, string path)
+		{//fun 3
+			if (!CheckCercaFile(cerca, totlis)) //bad input
+				return false;
+			int movelis = int.Parse(cerca);
+			if (movelis == selis) return false;
+			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
+			int linesmove1 = int.Parse(lines[selis]); //numero righe da scambiare, lista1
+			int linesmove2 = int.Parse(lines[movelis]); //numero righe da scambiare, lista2
+
+			int line1 = 0; //numero riga dove inizia la lista1
+			int line2 = 0; //numero riga dove inizia la lista2
+			for (int i = 1; i < selis; i++)
+				line1 += int.Parse(lines[i]); //fa la somma di tutti i delimitatori (tranne il primo in lines[0])
+            for (int i = 1; i < movelis; i++)
+                line2 += int.Parse(lines[i]);
+
+            //scambio le liste
+            StreamWriter sw = new StreamWriter(path + "\\delimitatori.txt");
+			(lines[selis], lines[movelis]) = (lines[movelis], lines[selis]); //tupla, assegna i valori, evita l'uso di variabili temp
+			sw.Write(totlis); //prima riga senza \n iniziale
+			for (int i = 1; i < lines.Length; i++)
+				sw.Write("\n"+lines[i]); //nessuna riga vuota alla fine del file
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\liste.txt");
+
+			//!!!!!!!!! come faccio sto scambio???????
+			sw = new StreamWriter(path + "\\liste.txt");
+			for (int i = line; i < line+linestwin; i++)
+				sw.WriteLine(lines[i]);
+			sw.Close();
+
+			return true;
+		}
+		private bool DeleteFile(string cerca, int totlis, string path)
 		{//fun 4
 			if (!CheckCercaFile(cerca, totlis)) //bad input
-				return;
+				return false;
 			int selis = int.Parse(cerca);
 			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
 			// in lines 1 c'è la riga che dice quante linee è lunga la lista1
@@ -349,6 +389,8 @@ namespace lista_CRUD
 			for (int i = line+linesdel; i < lines.Length; i++)
 				sw.WriteLine(lines[i]);
 			sw.Close();
+
+			return true;
 		}
 
 		private void AddLine(string nome, string prezzo, string path, int selis)

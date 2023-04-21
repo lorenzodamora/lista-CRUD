@@ -1,0 +1,5 @@
+1.    Nome: 1|    Prezzo: 111
+-------------------
+numero di prodotti: 1
+prezzo totale: 111
+###################

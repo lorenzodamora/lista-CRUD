@@ -28,15 +28,15 @@ namespace lista_CRUD
 {
 	public partial class CRUD : Form
 	{
-		#endregion
-		//Move
-		//Duplicate
-		//Edit
-		//Remove
-		//cancellazione logica
-		//file accesso diretto
-		//
-		public int fun, totlis, selis; //fun funzione //totlis totale liste //lista selezionata
+        #endregion
+        //Edit
+        //Duplicate
+        //Remove
+        //cancellazione logica
+        //file accesso diretto
+        //funzioni esterne
+
+        public int fun, totlis, selis; //fun funzione //totlis totale liste //lista selezionata
 		public string path;
 		public CRUD()
 		{
@@ -70,9 +70,6 @@ namespace lista_CRUD
 		private void CRUD_Load(object sender, EventArgs e)
 		{
 			DescrizioneCreate.SetToolTip(CreateButton, "Crea una nuova lista");
-			//
-			//if (Directory.GetFiles("path").Length != 0) // !!
-			//	(TwinButton.Visible, UpdateButton.Visible, DeleteButton.Visible) = (true, true, true);
 		}
 
 		//{
@@ -166,8 +163,9 @@ namespace lista_CRUD
 		}
 		private void EditButton_Click(object sender, EventArgs e)
 		{
-			//fun = 6;
-			//SetVisible();
+			fun = 6;
+			SetVisible();
+			NameList.Text = $"Stai modificando una linea nella Lista{selis} :";
 		}
 		private void RemoveButton_Click(object sender, EventArgs e)
 		{
@@ -193,7 +191,6 @@ namespace lista_CRUD
 			if (control == true)
 				switch (fun)
 				{
-					case 3: //twin
 					case 1: //create
 						totlis += 1;
 						selis = totlis;
@@ -203,8 +200,12 @@ namespace lista_CRUD
 						AddButton_Click(sender, e);
 						break;
 					case 2: //open
-						AddButton_Click(sender, e);
 						selis = int.Parse(SearchBox.Text);//controlli già fatti con switchfun
+						AddButton_Click(sender, e);
+						break;
+					case 3: //move
+						selis = int.Parse(SearchBox.Text); //rimane sulla lista spostata, "la rincorre"
+						AddButton_Click(sender, e);
 						break;
 					case 4: //deletefile
 						ListaProdotti.Items.Clear();
@@ -212,6 +213,14 @@ namespace lista_CRUD
 						fun = 0;
 						totlis -= 1;
 						SetVisible();
+						break;
+					//case 5: //addline //non serve nulla
+					case 6: //edit
+
+						break;
+
+					case 7: //duplicate
+
 						break;
 				}
 			if (selis != 0)
@@ -236,7 +245,7 @@ namespace lista_CRUD
 					control = CheckCercaFile(cerca, totlis);// se ritorna false non ha selezionato nessuna lista
 					break;
 				case 3:
-					//control = TwinFile(cerca, totlis, path);
+					control = MoveFile(cerca, totlis, selis, path);
 					break;
 				case 4:
 					control = DeleteFile(cerca, totlis, path);
@@ -244,15 +253,9 @@ namespace lista_CRUD
 				case 5:
 					AddLine(nome, prezzo, path, selis);
 					break;
-					/*
-						case 4:
-							//delete file
-							break;
-
-						case 5:
-							//AddProd();
-							break;
-					*/
+				case 6:
+					//EditLine( nome, prezzo, cerca, totlis, selis, path);
+					break;
 			}
 			return control;
 		}
@@ -324,21 +327,21 @@ namespace lista_CRUD
 		{//fun 3
 			if (!CheckCercaFile(cerca, totlis)) //bad input
 				return false;
-			int movelis = int.Parse(cerca);
-			if (movelis == selis) return false;
+			int movelis = int.Parse(cerca); //dove spostare la selis
+			if (movelis == selis) return true;
 			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
-			int linesmove1 = int.Parse(lines[selis]); //numero righe da scambiare, lista1
-			int linesmove2 = int.Parse(lines[movelis]); //numero righe da scambiare, lista2
+			int nlines1 = int.Parse(lines[selis]); //numero righe da scambiare, lista1
+			int nlines2 = int.Parse(lines[movelis]); //numero righe da scambiare, lista2
 
-			int line1 = 0; //numero riga dove inizia la lista1
-			int line2 = 0; //numero riga dove inizia la lista2
+			int start1 = 0; //numero riga dove inizia la lista1
+			int start2 = 0; //numero riga dove inizia la lista2
 			for (int i = 1; i < selis; i++)
-				line1 += int.Parse(lines[i]); //fa la somma di tutti i delimitatori (tranne il primo in lines[0])
-            for (int i = 1; i < movelis; i++)
-                line2 += int.Parse(lines[i]);
+				start1 += int.Parse(lines[i]); //fa la somma di tutti i delimitatori (tranne il primo in lines[0])
+			for (int i = 1; i < movelis; i++)
+				start2 += int.Parse(lines[i]);
 
-            //scambio le liste
-            StreamWriter sw = new StreamWriter(path + "\\delimitatori.txt");
+			//scambio le liste
+			StreamWriter sw = new StreamWriter(path + "\\delimitatori.txt");
 			(lines[selis], lines[movelis]) = (lines[movelis], lines[selis]); //tupla, assegna i valori, evita l'uso di variabili temp
 			sw.Write(totlis); //prima riga senza \n iniziale
 			for (int i = 1; i < lines.Length; i++)
@@ -346,11 +349,49 @@ namespace lista_CRUD
 			sw.Close();
 
 			lines = File.ReadAllLines(path + "\\liste.txt");
+			string[] lines1 = new string[lines.Length];
 
-			//!!!!!!!!! come faccio sto scambio???????
+			//swap
+
+			if (start1 > start2) //if start2 is before to start1, swap variable
+				(start1, start2, nlines1, nlines2) = (start2, start1, nlines2, nlines1);
+
+			int ind = 0;
+			while (ind < start1) //pos from 0 to 0 //here is where i write positions and values based on the values in the initial comment
+				lines1[ind] = lines[ind++]; //print 0
+
+			//how much for print group 2?
+			//start from start1, print nelem2 time
+			while (ind < start1 + nlines2) //pos from 1 to 2
+			{
+				lines1[ind] = lines[ind + start2 - start1]; //print 8 9
+															//now pos to i, i = start1; start 2 is start for print group 2
+				ind++;
+			}
+			//how much for print from end of group 2 and start of group 1?
+
+			//start 2 + nelem2 is where is stop to print group 1, -nelem1 is where is start to print
+			while (ind < start2 + nlines2 - nlines1) //pos from 3 to 5
+			{
+				lines1[ind]=lines[ind + nlines1 - nlines2]; //print 5 6 7
+															//now pos to i, i = start1+nelem2; start1 + nelem 1 is where start the value to print, -nelem2 for the space is already used
+				ind++;
+			}
+
+			//start2 + nelem2 is end of print all variation
+			while (ind <  start2 + nlines2) //pos from 6 to 9 
+			{
+				lines1[ind]= lines[ind + start1 - start2 - nlines2 + nlines1];//print 1 2 3 4 
+																			  //now pos to i, print from start1, in the start of while i = -(-start2-nelem2 + nelem1)
+				ind++;
+			}
+
+			while (ind< lines.Length)
+				lines1[ind] = lines[ind++]; //print the rest
+
 			sw = new StreamWriter(path + "\\liste.txt");
-			for (int i = line; i < line+linestwin; i++)
-				sw.WriteLine(lines[i]);
+			for (int i = 0; i < lines1.Length; i++)
+				sw.WriteLine(lines1[i]);
 			sw.Close();
 
 			return true;
@@ -402,7 +443,7 @@ namespace lista_CRUD
 			//in lines[0] c'è la riga che conta quante liste ci sono
 			// in lines 1 c'è la riga che dice quante linee è lunga la lista1
 			//in ogni linea precedente tranne 0 si calcola la somma delle linee da trascrivere
-			int numpro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // 4 sono =  prodotti + somma + 2 separatori.
+			int numpro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // 4 sono =  tot prodotti + somma + 2 separatori.
 			int line = 0; //numero riga dove inizia la lista
 			for (int i = 1; i < selis; i++)
 				line += int.Parse(lines[i]); //fa la somma di tutti i delimitatori (tranne il primo in lines[0])
@@ -439,6 +480,11 @@ namespace lista_CRUD
 			for (int i = line+numpro+4; i < lines.Length; i++)
 				sw.WriteLine(lines[i]);
 			sw.Close();
+		}
+		//dupli
+		private void EditLine(string nome, string prezzo, string cerca, int totlis, int selis, string path)
+		{
+
 		}
 
 		private void StampaForm()

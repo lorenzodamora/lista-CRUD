@@ -29,7 +29,7 @@ namespace lista_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//Duplicate
+		//twin
 		//Remove
 		//cancellazione logica
 		//file accesso diretto
@@ -93,7 +93,7 @@ namespace lista_CRUD
 			vis[0] = totlis != 0;
 			vis[1] = !(totlis < 2 || selis == 0);
 			vis[2] = selis != 0;
-			//vis[3] search = update2 o move3 o delete4 o edit6 o duplicate7 o remove8
+			//vis[3] search = update2 o move3 o delete4 o edit6 o twin7 o remove8
 			//vis[4] textprice = create1 o add5 o edit6
 			vis[3] = !(fun == 1 || fun == 5 || fun == 0);
 			vis[4] = (fun == 1 || fun == 5 || fun == 6);
@@ -105,7 +105,7 @@ namespace lista_CRUD
 			DeleteButton.Visible = vis[0];
 			AddButton.Visible = vis[2];
 			EditButton.Visible = vis[2];
-			DuplicateButton.Visible = vis[2];
+			TwinButton.Visible = vis[2];
 			RemoveButton.Visible = vis[2];
 			SearchVisible(vis[3]);
 			TextPriceVisible(vis[4]);
@@ -155,7 +155,7 @@ namespace lista_CRUD
 			SetVisible();
 			NameList.Text = $"Stai aggiungendo alla Lista{selis} :";
 		}
-		private void DuplicateButton_Click(object sender, EventArgs e)
+		private void TwinButton_Click(object sender, EventArgs e)
 		{
 			//fun = 7;
 			//SetVisible();
@@ -218,7 +218,7 @@ namespace lista_CRUD
 						AddButton_Click(sender, e);
 						break;
 
-					case 7: //duplicate
+					case 7: //twin
 
 						break;
 				}
@@ -494,7 +494,10 @@ namespace lista_CRUD
 				sw.WriteLine(lines[i]);
 			sw.Close();
 		}
-		//dupli
+		private void TwinLine(string path)
+		{
+
+		}
 		private void EditLine(string nome, string prezzo, string cerca, int selis, string path)
 		{//fun 6
 			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");

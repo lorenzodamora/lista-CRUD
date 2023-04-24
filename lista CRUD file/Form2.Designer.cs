@@ -51,7 +51,7 @@
             this.AddButton = new System.Windows.Forms.Button();
             this.EditButton = new System.Windows.Forms.Button();
             this.RemoveButton = new System.Windows.Forms.Button();
-            this.DuplicateButton = new System.Windows.Forms.Button();
+            this.TwinButton = new System.Windows.Forms.Button();
             this.NameList = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -343,18 +343,18 @@
             // 
             // DuplicateButton
             // 
-            this.DuplicateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
-            this.DuplicateButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("DuplicateButton.BackgroundImage")));
-            this.DuplicateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.DuplicateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DuplicateButton.Location = new System.Drawing.Point(300, 300);
-            this.DuplicateButton.Name = "DuplicateButton";
-            this.DuplicateButton.Size = new System.Drawing.Size(120, 30);
-            this.DuplicateButton.TabIndex = 24;
-            this.DuplicateButton.Text = "Duplicate";
-            this.DuplicateButton.UseVisualStyleBackColor = false;
-            this.DuplicateButton.Visible = false;
-            this.DuplicateButton.Click += new System.EventHandler(this.DuplicateButton_Click);
+            this.TwinButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
+            this.TwinButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("DuplicateButton.BackgroundImage")));
+            this.TwinButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.TwinButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TwinButton.Location = new System.Drawing.Point(300, 300);
+            this.TwinButton.Name = "DuplicateButton";
+            this.TwinButton.Size = new System.Drawing.Size(120, 30);
+            this.TwinButton.TabIndex = 24;
+            this.TwinButton.Text = "Twin";
+            this.TwinButton.UseVisualStyleBackColor = false;
+            this.TwinButton.Visible = false;
+            this.TwinButton.Click += new System.EventHandler(this.TwinButton_Click);
             // 
             // NameList
             // 
@@ -384,7 +384,7 @@
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(984, 759);
             this.Controls.Add(this.NameList);
-            this.Controls.Add(this.DuplicateButton);
+            this.Controls.Add(this.TwinButton);
             this.Controls.Add(this.RemoveButton);
             this.Controls.Add(this.EditButton);
             this.Controls.Add(this.AddButton);
@@ -438,7 +438,7 @@
         private System.Windows.Forms.Button AddButton;
         private System.Windows.Forms.Button EditButton;
         private System.Windows.Forms.Button RemoveButton;
-        private System.Windows.Forms.Button DuplicateButton;
+        private System.Windows.Forms.Button TwinButton;
         private System.Windows.Forms.TextBox NameList;
     }
 }

@@ -1,11 +1,10 @@
-1.    Nome: 2|    Prezzo: 22
-2.    Nome: 22|    Prezzo: 2222
--------------------
-numero di prodotti: 2
-prezzo totale: 2244
-###################
 1.    Nome: 1|    Prezzo: 111
 -------------------
 numero di prodotti: 1
 prezzo totale: 111
 ###################
+1.    Nome: 1|    Prezzo: 1
+2.    Nome: 4|    Prezzo: 20
+-------------------
+numero di prodotti: 2
+prezzo totale: 21

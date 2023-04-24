@@ -28,15 +28,14 @@ namespace lista_CRUD
 {
 	public partial class CRUD : Form
 	{
-        #endregion
-        //Edit
-        //Duplicate
-        //Remove
-        //cancellazione logica
-        //file accesso diretto
-        //funzioni esterne
+		#endregion
+		//Duplicate
+		//Remove
+		//cancellazione logica
+		//file accesso diretto
+		//funzioni esterne
 
-        public int fun, totlis, selis; //fun funzione //totlis totale liste //lista selezionata
+		public int fun, totlis, selis; //fun funzione //totlis totale liste //lista selezionata
 		public string path;
 		public CRUD()
 		{
@@ -191,7 +190,7 @@ namespace lista_CRUD
 			if (control == true)
 				switch (fun)
 				{
-					case 1: //create
+					case 1: //create file
 						totlis += 1;
 						selis = totlis;
 
@@ -207,16 +206,16 @@ namespace lista_CRUD
 						selis = int.Parse(SearchBox.Text); //rimane sulla lista spostata, "la rincorre"
 						AddButton_Click(sender, e);
 						break;
-					case 4: //deletefile
+					case 4: //delete file
 						ListaProdotti.Items.Clear();
 						NameList.Text = "Non è aperta nessuna lista";
 						fun = 0;
 						totlis -= 1;
 						SetVisible();
 						break;
-					//case 5: //addline //non serve nulla
+					//case 5: //add line //non serve nulla
 					case 6: //edit
-
+						AddButton_Click(sender, e);
 						break;
 
 					case 7: //duplicate
@@ -254,7 +253,7 @@ namespace lista_CRUD
 					AddLine(nome, prezzo, path, selis);
 					break;
 				case 6:
-					//EditLine( nome, prezzo, cerca, totlis, selis, path);
+					EditLine(nome, prezzo, cerca, selis, path);
 					break;
 			}
 			return control;
@@ -267,7 +266,7 @@ namespace lista_CRUD
 				MessageBox.Show("Scrivi qualcosa", "errore nel nome del prodotto");
 				return false;
 			}
-			if (!double.TryParse(prezzo, out double price) || price < 0)
+			if (!float.TryParse(prezzo, out float price) || price < 0)
 			{//bad input
 				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
 				return false;
@@ -291,6 +290,20 @@ namespace lista_CRUD
 			return true;
 		}
 
+		private bool CheckCercaLine(string cerca, int totline)
+		{
+			if (!int.TryParse(cerca, out int seline) || seline < 1) //seleziona riga select + line
+			{//bad input
+				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
+				return false;
+			}
+			if (seline > totline)
+			{//bad input
+				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
+				return false;
+			}
+			return true;
+		}
 		private bool CreaFile(string nome, string prezzo, string path)
 		{ //fun 1
 			if (!CheckNomePrezzo(nome, prezzo)) //bad input
@@ -443,7 +456,7 @@ namespace lista_CRUD
 			//in lines[0] c'è la riga che conta quante liste ci sono
 			// in lines 1 c'è la riga che dice quante linee è lunga la lista1
 			//in ogni linea precedente tranne 0 si calcola la somma delle linee da trascrivere
-			int numpro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // 4 sono =  tot prodotti + somma + 2 separatori.
+			int npro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // 4 sono =  tot prodotti + somma + 2 separatori.
 			int line = 0; //numero riga dove inizia la lista
 			for (int i = 1; i < selis; i++)
 				line += int.Parse(lines[i]); //fa la somma di tutti i delimitatori (tranne il primo in lines[0])
@@ -464,27 +477,73 @@ namespace lista_CRUD
 			//conteggio char 15, 15 - 1 per la posizione, +1 = 15 il carattere successivo
 			//line + numpro + 3 è dove si trova la somma
 			string str = "";
-			for (int c = 15; c < lines[line+numpro+2].Length; c++)
-				str += lines[line+numpro+2][c];
-			double sum = double.Parse(str) + double.Parse(prezzo);
+			for (int c = 15; c < lines[line+npro+2].Length; c++)
+				str += lines[line+npro+2][c];
+			float sum = float.Parse(str) + float.Parse(prezzo);
 
 			sw = new StreamWriter(path + "\\liste.txt");
-			for (int i = 0; i < line+numpro; i++)
+			for (int i = 0; i < line+npro; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{numpro + 1}.    Nome: {nome}|    Prezzo: {prezzo}");
+			sw.WriteLine($"{npro + 1}.    Nome: {nome}|    Prezzo: {prezzo}");
 			sw.WriteLine("-------------------");
-			sw.WriteLine($"numero di prodotti: {numpro + 1}");
+			sw.WriteLine($"numero di prodotti: {npro + 1}");
 			sw.WriteLine($"prezzo totale: {sum}"); // 15 char + somma
 			sw.WriteLine("###################");
 
-			for (int i = line+numpro+4; i < lines.Length; i++)
+			for (int i = line+npro+4; i < lines.Length; i++)
 				sw.WriteLine(lines[i]);
 			sw.Close();
 		}
 		//dupli
-		private void EditLine(string nome, string prezzo, string cerca, int totlis, int selis, string path)
-		{
+		private void EditLine(string nome, string prezzo, string cerca, int selis, string path)
+		{//fun 6
+			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
+			int npro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // -4 =  tot prodotti + somma + 2 separatori.
 
+			if (!CheckCercaLine(cerca, npro)) //bad input
+				return;
+			if (!CheckNomePrezzo(nome, prezzo)) //bad input
+				return;
+
+			int line = 0; //numero riga dove inizia la lista
+			for (int i = 1; i < selis; i++)
+				line += int.Parse(lines[i]);
+
+			lines = File.ReadAllLines(path + "\\liste.txt");
+
+			string strSum = "";
+			for (int c = 15; c < lines[line+npro+2].Length; c++)
+				strSum += lines[line+npro+2][c];
+
+			string strSeline = "";
+			for (int c = lines[line+ int.Parse(cerca) - 1].Length - 1; true; c--)
+			{
+				strSeline = lines[line+ int.Parse(cerca) - 1][c] + strSeline;
+				if (!float.TryParse(strSeline, out _))
+				{ //bad input
+					strSeline = strSeline.Substring(2); // ": "
+					break;
+				}
+			}
+
+			float sum = float.Parse(strSum) - float.Parse(strSeline) + float.Parse(prezzo);
+
+			StreamWriter sw = new StreamWriter(path + "\\liste.txt");
+			//for (int i = 0; i < line+npro; i++)
+			for (int i = 0; i < line+ int.Parse(cerca) - 1; i++)
+				sw.WriteLine(lines[i]);
+			//sw.WriteLine($"{npro + 1}.    Nome: {nome}|    Prezzo: {prezzo}");
+			sw.WriteLine($"{cerca}.    Nome: {nome}|    Prezzo: {prezzo}");
+			//sw.WriteLine("-------------------");
+			//sw.WriteLine($"numero di prodotti: {npro + 1}");
+			for (int i = line + int.Parse(cerca); i < line+npro+2; i++)
+                sw.WriteLine(lines[i]);
+            sw.WriteLine($"prezzo totale: {sum}"); // 15 char + somma
+													   //sw.WriteLine("###################");
+
+			for (int i = line+npro+4; i < lines.Length; i++)
+				sw.WriteLine(lines[i]);
+			sw.Close();
 		}
 
 		private void StampaForm()

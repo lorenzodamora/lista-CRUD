@@ -30,13 +30,11 @@ namespace lista_CRUD
 	{
 		#endregion
 		//cancellazione logica
-		//edit logico?? //files di cronologia?
-							//pensavo a due stack (ctrl z  ctrl y)
-
 		//file accesso diretto
 		//menu a comparsa
 		//elementi cliccabili in listview
 		//funzioni esterne
+		//edit logico?? //cronologia?? //pensavo a due stack (ctrl z  ctrl y)
 
 		public int fun, totlis, selis; //fun funzione //totlis totale liste //lista selezionata
 		public string path;
@@ -47,6 +45,7 @@ namespace lista_CRUD
 			totlis = GetListCount(path + "\\delimitatori.txt");
 			fun = 0;
 			SetVisible();
+			File.Create(path + "\\logic remove.txt").Close(); //svuota
 		}
 		//{
 		private string GetPath()
@@ -72,8 +71,14 @@ namespace lista_CRUD
 		private void CRUD_Load(object sender, EventArgs e)
 		{
 			DescrizioneCreate.SetToolTip(CreateButton, "Crea una nuova lista");
+			DescrizioneHistoryR.SetToolTip(HistoryRButton, "Guarda la lista delle linee rimosse");
+			//Close();
 		}
-
+		private void ChiudiFormButton_Click(object sender, EventArgs e)
+		{
+			File.Delete(path + "\\logic remove.txt");
+			Close();
+		}
 		//{
 		private void SearchVisible(bool vis)
 		{
@@ -182,14 +187,27 @@ namespace lista_CRUD
 			fun = 0;
 			selis = 0;
 			SetVisible();
-            ListaProdotti.Items.Clear();
+			ListaProdotti.Items.Clear();
 			NameList.Text = "Non è aperta nessuna lista";
-        }
-        private void ClearButton_Click(object sender, EventArgs e)
+		}
+		private void ClearButton_Click(object sender, EventArgs e)
 		{
 			TextBox.Text = "";
 			PriceBox.Text = "";
 			SearchBox.Text = "";
+		}
+		private void HistoryRButton_Click(object sender, EventArgs e)
+		{
+			fun = 0;
+			selis = 0;
+			SetVisible();
+			ListaProdotti.Items.Clear();
+			NameList.Text = "Queste sono le linee rimosse";
+
+			string[] lines = File.ReadAllLines(path + "\\logic remove.txt");
+			int i = 0;
+			while(i < lines.Length)
+				ListaProdotti.Items.Add(lines[i++]);
 		}
 		//}
 		private void ConfirmButton_Click(object sender, EventArgs e)
@@ -231,6 +249,7 @@ namespace lista_CRUD
 						break;
 
 					case 8: //remove
+						HistoryRButton.Visible = true;
 						RemoveButton_Click(sender, e);
 						break;
 				}
@@ -513,7 +532,7 @@ namespace lista_CRUD
 			sw.Close();
 		}
 		private void TwinLine(string cerca, int selis, string path)
-		{
+		{// fun 7
 			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
 			int npro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // -4 =  tot prodotti + somma + 2 separatori
 
@@ -628,7 +647,7 @@ namespace lista_CRUD
 			sw.Close();
 		}
 		private void RemoveLine(string cerca, int selis, string path)
-		{
+		{//fun 8
 			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
 			int npro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // -4 =  tot prodotti + somma + 2 separatori
 
@@ -674,7 +693,10 @@ namespace lista_CRUD
 			while (ind < line + seline)
 				sw.WriteLine(lines[ind++]);
 
-			ind++; //salto la linea selezionata
+			//ind++; //salto la linea selezionata
+			StreamWriter swr = new StreamWriter(path + "\\logic remove.txt", true);
+			swr.WriteLine($"lista{selis}: {lines[ind++]}");
+			swr.Close();
 
 			while (ind < line + npro)
 			{ //a tutti l'identificativo - 1
@@ -695,7 +717,6 @@ namespace lista_CRUD
 			sw.Close();
 		}
 
-
 		private void StampaForm()
 		{
 			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt"); //trovo delimitatori
@@ -704,12 +725,12 @@ namespace lista_CRUD
 			for (int i = 1; i < selis; i++)
 				line += int.Parse(lines[i]);
 
-			int length = int.Parse(lines[selis]);
+			int length = int.Parse(lines[selis]) - 1;
 
 			lines = File.ReadAllLines(path + "\\liste.txt");
 
 			ListaProdotti.Items.Clear();
-			for (int i = line; i < line + length - 1; i++)
+			for (int i = line; i < line + length; i++)
 				ListaProdotti.Items.Add(lines[i]);
 		}
 	}

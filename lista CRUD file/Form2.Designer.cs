@@ -53,6 +53,9 @@
             this.RemoveButton = new System.Windows.Forms.Button();
             this.TwinButton = new System.Windows.Forms.Button();
             this.NameList = new System.Windows.Forms.TextBox();
+            this.HistoryRButton = new System.Windows.Forms.Button();
+            this.DescrizioneHistoryR = new System.Windows.Forms.ToolTip(this.components);
+            this.ChiudiFormButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // CreateButton
@@ -341,14 +344,13 @@
             this.RemoveButton.Visible = false;
             this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
             // 
-            // DuplicateButton
+            // TwinButton
             // 
             this.TwinButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
-            this.TwinButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("DuplicateButton.BackgroundImage")));
             this.TwinButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.TwinButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TwinButton.Location = new System.Drawing.Point(300, 300);
-            this.TwinButton.Name = "DuplicateButton";
+            this.TwinButton.Name = "TwinButton";
             this.TwinButton.Size = new System.Drawing.Size(120, 30);
             this.TwinButton.TabIndex = 24;
             this.TwinButton.Text = "Twin";
@@ -377,12 +379,44 @@
             this.NameList.TabIndex = 25;
             this.NameList.Text = "Non è aperta nessuna lista";
             // 
+            // HistoryRButton
+            // 
+            this.HistoryRButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.HistoryRButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.HistoryRButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.HistoryRButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HistoryRButton.ForeColor = System.Drawing.Color.White;
+            this.HistoryRButton.Location = new System.Drawing.Point(430, 375);
+            this.HistoryRButton.Name = "HistoryRButton";
+            this.HistoryRButton.Size = new System.Drawing.Size(30, 30);
+            this.HistoryRButton.TabIndex = 26;
+            this.HistoryRButton.Text = "H";
+            this.HistoryRButton.UseVisualStyleBackColor = false;
+            this.HistoryRButton.Visible = false;
+            this.HistoryRButton.Click += new System.EventHandler(this.HistoryRButton_Click);
+            // 
+            // ChiudiFormButton
+            // 
+            this.ChiudiFormButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ChiudiFormButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ChiudiFormButton.BackgroundImage")));
+            this.ChiudiFormButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ChiudiFormButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ChiudiFormButton.Location = new System.Drawing.Point(0, 0);
+            this.ChiudiFormButton.Name = "ChiudiFormButton";
+            this.ChiudiFormButton.Size = new System.Drawing.Size(20, 20);
+            this.ChiudiFormButton.TabIndex = 27;
+            this.ChiudiFormButton.UseVisualStyleBackColor = false;
+            this.ChiudiFormButton.Visible = false;
+            this.ChiudiFormButton.Click += new System.EventHandler(this.ChiudiFormButton_Click);
+            // 
             // CRUD
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(984, 759);
+            this.Controls.Add(this.ChiudiFormButton);
+            this.Controls.Add(this.HistoryRButton);
             this.Controls.Add(this.NameList);
             this.Controls.Add(this.TwinButton);
             this.Controls.Add(this.RemoveButton);
@@ -440,6 +474,9 @@
         private System.Windows.Forms.Button RemoveButton;
         private System.Windows.Forms.Button TwinButton;
         private System.Windows.Forms.TextBox NameList;
+        private System.Windows.Forms.Button HistoryRButton;
+        private System.Windows.Forms.ToolTip DescrizioneHistoryR;
+        private System.Windows.Forms.Button ChiudiFormButton;
     }
 }
 

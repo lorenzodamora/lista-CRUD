@@ -10,9 +10,7 @@ prezzo totale: 0
 6.    Nome: 22     Prezzo: 22
 7.    Nome: 22     Prezzo: 22
 8.    Nome: 22     Prezzo: 22
-9.    Nome: 22     Prezzo: 22
-10.    Nome: 22     Prezzo: 22
 -------------------
-numero di prodotti: 10
-prezzo totale: 220
+numero di prodotti: 8
+prezzo totale: 176
 ###################

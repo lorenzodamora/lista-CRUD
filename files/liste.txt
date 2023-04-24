@@ -1,10 +1,25 @@
-1.    Nome: 1|    Prezzo: 111
--------------------
-numero di prodotti: 1
-prezzo totale: 111
-###################
 1.    Nome: 1|    Prezzo: 1
-2.    Nome: 4|    Prezzo: 20
+2.    Nome: 1|    Prezzo: 1
+3.    Nome: 1|    Prezzo: 1
+4.    Nome: 2|    Prezzo: 2
+5.    Nome: 2|    Prezzo: 2
+6.    Nome: 3|    Prezzo: 3
+7.    Nome: 3|    Prezzo: 3
 -------------------
-numero di prodotti: 2
-prezzo totale: 21
+numero di prodotti: 7
+prezzo totale: 13
+###################
+1.    Nome: 22     Prezzo: 22
+2.    Nome: 22     Prezzo: 22
+3.    Nome: 22     Prezzo: 22
+4.    Nome: 22     Prezzo: 22
+5.    Nome: 22     Prezzo: 22
+6.    Nome: 22     Prezzo: 22
+7.    Nome: 22     Prezzo: 22
+8.    Nome: 22     Prezzo: 22
+9.    Nome: 22     Prezzo: 22
+10.    Nome: 22     Prezzo: 22
+-------------------
+numero di prodotti: 10
+prezzo totale: 220
+###################

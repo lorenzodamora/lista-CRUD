@@ -29,8 +29,8 @@ namespace lista_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//twin
 		//Remove
+		//cancel
 		//cancellazione logica
 		//file accesso diretto
 		//funzioni esterne
@@ -157,8 +157,9 @@ namespace lista_CRUD
 		}
 		private void TwinButton_Click(object sender, EventArgs e)
 		{
-			//fun = 7;
-			//SetVisible();
+			fun = 7;
+			SetVisible();
+			NameList.Text = $"Stai duplicando una linea nella Lista{selis} (verrà aggiunta accanto alla linea duplicata):";
 		}
 		private void EditButton_Click(object sender, EventArgs e)
 		{
@@ -219,7 +220,7 @@ namespace lista_CRUD
 						break;
 
 					case 7: //twin
-
+						TwinButton_Click(sender, e);
 						break;
 				}
 			if (selis != 0)
@@ -254,6 +255,9 @@ namespace lista_CRUD
 					break;
 				case 6:
 					EditLine(nome, prezzo, cerca, selis, path);
+					break;
+				case 7:
+					TwinLine(cerca, selis, path);
 					break;
 			}
 			return control;
@@ -309,21 +313,22 @@ namespace lista_CRUD
 			if (!CheckNomePrezzo(nome, prezzo)) //bad input
 				return false;
 
-			string[] lines = File.ReadAllLines(path +"\\delimitatori.txt");
 
 			StreamWriter swliste = new StreamWriter(path +"\\liste.txt", true);
-			swliste.WriteLine($"1.    Nome: {nome}|    Prezzo: {prezzo}");
+			swliste.WriteLine($"1.    Nome: {nome}     Prezzo: {prezzo}");
 			swliste.WriteLine("-------------------");
 			swliste.WriteLine("numero di prodotti: 1");
 			swliste.WriteLine($"prezzo totale: {prezzo}"); // 15 char + somma
 			swliste.WriteLine("###################");
 			swliste.Close();
 
+            string[] lines = File.ReadAllLines(path +"\\delimitatori.txt");
 			StreamWriter swdel = new StreamWriter(path +"\\delimitatori.txt");
-			swdel.WriteLine(int.Parse(lines[0]) + 1);
+
+			swdel.WriteLine(int.Parse(lines[0]) + 1); //aggiungo una nuova lista
 			for (int i = 1; i < lines.Length; i++)
 				swdel.WriteLine(lines[i]);
-			swdel.Write("5");
+			swdel.Write("5"); //conteggio righe lista
 			swdel.Close();
 
 			return true;
@@ -484,7 +489,7 @@ namespace lista_CRUD
 			sw = new StreamWriter(path + "\\liste.txt");
 			for (int i = 0; i < line+npro; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{npro + 1}.    Nome: {nome}|    Prezzo: {prezzo}");
+			sw.WriteLine($"{npro + 1}.    Nome: {nome}     Prezzo: {prezzo}");
 			sw.WriteLine("-------------------");
 			sw.WriteLine($"numero di prodotti: {npro + 1}");
 			sw.WriteLine($"prezzo totale: {sum}"); // 15 char + somma
@@ -494,9 +499,69 @@ namespace lista_CRUD
 				sw.WriteLine(lines[i]);
 			sw.Close();
 		}
-		private void TwinLine(string path)
+		private void TwinLine(string cerca, int selis, string path)
 		{
+			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
+			int npro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // -4 =  tot prodotti + somma + 2 separatori
 
+			if (!CheckCercaLine(cerca, npro)) //bad input
+				return;
+
+			int line = 0; //numero riga dove inizia la lista
+			for (int i = 1; i < selis; i++)
+				line += int.Parse(lines[i]);
+
+            //aggiungo un prodotto
+            StreamWriter sw = new StreamWriter(path + "\\delimitatori.txt");
+            lines[selis] = (int.Parse(lines[selis])+1).ToString(); ; //aggiungo già una riga al conteggio righe della lista
+
+            sw.Write(lines[0]); //prima riga senza \n iniziale
+            for (int i = 1; i < lines.Length; i++)
+                sw.Write("\n"+lines[i]); //nessuna riga vuota alla fine del file
+            sw.Close();
+			lines = File.ReadAllLines(path + "\\liste.txt");
+
+			string strSum = "";
+			for (int c = 15; c < lines[line+npro+2].Length; c++)
+				strSum += lines[line+npro+2][c];
+
+			int seline = int.Parse(cerca);
+
+			string strSeline = "";
+			for (int c = lines[line+ seline - 1].Length - 1; true; c--)
+			{
+				strSeline = lines[line+ seline - 1][c] + strSeline;
+				if (!float.TryParse(strSeline, out _))
+				{ //bad input
+					strSeline = strSeline.Substring(2); // ": "
+					break;
+				}
+			}
+
+			float sum = float.Parse(strSum) + float.Parse(strSeline);
+
+			sw = new StreamWriter(path + "\\liste.txt");
+			int ind = 0;
+			while (ind < line + seline - 1)
+				sw.WriteLine(lines[ind++]);
+
+			sw.WriteLine(lines[ind]); //scrivo la linea selezionata senza ind++
+
+			while (ind < line + npro)
+            { //a tutti l'identificativo + 1, parte cambiando quello appena stampato per ristamparlo
+                seline++;
+				lines[ind] = seline + lines[ind].Substring((seline-1).ToString().Length); // se è "10." allora scrive dall index 2, parte da '.'
+				sw.WriteLine(lines[ind++]);
+			}
+			//sw.WriteLine("-------------------");
+			sw.WriteLine(lines[ind++]);
+            sw.WriteLine($"numero di prodotti: {seline}");
+            sw.WriteLine($"prezzo totale: {sum}"); // 15 char + somma
+			ind += 2; //salta somma e npro
+			//sw.WriteLine("###################");
+			while (ind < lines.Length) //scrive tutto il resto
+                sw.WriteLine(lines[ind++]);
+			sw.Close();
 		}
 		private void EditLine(string nome, string prezzo, string cerca, int selis, string path)
 		{//fun 6
@@ -540,9 +605,10 @@ namespace lista_CRUD
 			//sw.WriteLine("-------------------");
 			//sw.WriteLine($"numero di prodotti: {npro + 1}");
 			for (int i = line + int.Parse(cerca); i < line+npro+2; i++)
-                sw.WriteLine(lines[i]);
-            sw.WriteLine($"prezzo totale: {sum}"); // 15 char + somma
-													   //sw.WriteLine("###################");
+				sw.WriteLine(lines[i]);
+			sw.WriteLine($"prezzo totale: {sum}"); // 15 char + somma
+
+			//sw.WriteLine("###################");
 
 			for (int i = line+npro+4; i < lines.Length; i++)
 				sw.WriteLine(lines[i]);

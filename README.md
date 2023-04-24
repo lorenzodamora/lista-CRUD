@@ -1,7 +1,7 @@
-in questa soluzione ci sono 3 progetti:
+qui ci sono 2 soluzioni, nella prima soluzione ( es 24 e 25) ci sono 2 progetti:
 
-la lista crud base è il progetto semplice senza files esterni;
+la lista crud base è il progetto semplice senza files esterni; (es 24)
 
-la lista crud file ha i files esterni (non è finito);
+la lista crud file ha i files esterni; (es 25)
 
-// !!! il terzo progetto cancella tutte le liste ( i files esterni), lo sto usando per i vari test.
+nella seconda soluzione c'è un progetto (es 26 e 27)

@@ -29,7 +29,6 @@ namespace lista_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//cancel
 		//cancellazione logica
 		//edit logico?? //files di cronologia?
 							//pensavo a due stack (ctrl z  ctrl y)
@@ -180,10 +179,13 @@ namespace lista_CRUD
 		private void CancelButton1_Click(object sender, EventArgs e)
 		{
 			ClearButton_Click(sender, e);
-			//fun = 0;
-			//SetVisible();
-		}
-		private void ClearButton_Click(object sender, EventArgs e)
+			fun = 0;
+			selis = 0;
+			SetVisible();
+            ListaProdotti.Items.Clear();
+			NameList.Text = "Non è aperta nessuna lista";
+        }
+        private void ClearButton_Click(object sender, EventArgs e)
 		{
 			TextBox.Text = "";
 			PriceBox.Text = "";

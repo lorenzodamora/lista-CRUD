@@ -1,33 +1,35 @@
-﻿namespace lista_CRUD
+﻿using System.Windows.Forms;
+
+namespace progetto_CRUD
 {
-	partial class CRUD
-	{
-		/// <summary>
-		/// Variabile di progettazione necessaria.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+    partial class CRUD
+    {
+        /// <summary>
+        /// Variabile di progettazione necessaria.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// Pulire le risorse in uso.
-		/// </summary>
-		/// <param name="disposing">ha valore true se le risorse gestite devono essere eliminate, false in caso contrario.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (components != null))
-			{
-				components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+        /// <summary>
+        /// Pulire le risorse in uso.
+        /// </summary>
+        /// <param name="disposing">ha valore true se le risorse gestite devono essere eliminate, false in caso contrario.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Codice generato da Progettazione Windows Form
+        #region Codice generato da Progettazione Windows Form
 
-		/// <summary>
-		/// Metodo necessario per il supporto della finestra di progettazione. Non modificare
-		/// il contenuto del metodo con l'editor di codice.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Metodo necessario per il supporto della finestra di progettazione. Non modificare
+        /// il contenuto del metodo con l'editor di codice.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CRUD));
             this.CreateButton = new System.Windows.Forms.Button();
@@ -47,7 +49,6 @@
             this.DescrizioneCreate = new System.Windows.Forms.ToolTip(this.components);
             this.ClearButton = new System.Windows.Forms.Button();
             this.ClearLabel = new System.Windows.Forms.Label();
-            this.file_esterno = new System.Windows.Forms.TextBox();
             this.AddButton = new System.Windows.Forms.Button();
             this.EditButton = new System.Windows.Forms.Button();
             this.RemoveButton = new System.Windows.Forms.Button();
@@ -288,14 +289,6 @@
             this.ClearLabel.Text = "Clear";
             this.ClearLabel.Visible = false;
             // 
-            // file_esterno
-            // 
-            this.file_esterno.Location = new System.Drawing.Point(882, -1);
-            this.file_esterno.Name = "file_esterno";
-            this.file_esterno.Size = new System.Drawing.Size(100, 20);
-            this.file_esterno.TabIndex = 20;
-            this.file_esterno.Text = "con file esterno";
-            // 
             // AddButton
             // 
             this.AddButton.BackColor = System.Drawing.Color.Fuchsia;
@@ -330,7 +323,7 @@
             // 
             // RemoveButton
             // 
-            this.RemoveButton.BackColor = System.Drawing.Color.Fuchsia;
+            this.RemoveButton.BackColor = System.Drawing.Color.Red;
             this.RemoveButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("RemoveButton.BackgroundImage")));
             this.RemoveButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.RemoveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -347,6 +340,7 @@
             // TwinButton
             // 
             this.TwinButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(250)))));
+            this.TwinButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("TwinButton.BackgroundImage")));
             this.TwinButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.TwinButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TwinButton.Location = new System.Drawing.Point(300, 300);
@@ -401,9 +395,9 @@
             this.ChiudiFormButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ChiudiFormButton.BackgroundImage")));
             this.ChiudiFormButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ChiudiFormButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ChiudiFormButton.Location = new System.Drawing.Point(0, 0);
+            this.ChiudiFormButton.Location = new System.Drawing.Point(960, 0);
             this.ChiudiFormButton.Name = "ChiudiFormButton";
-            this.ChiudiFormButton.Size = new System.Drawing.Size(20, 20);
+            this.ChiudiFormButton.Size = new System.Drawing.Size(25, 25);
             this.ChiudiFormButton.TabIndex = 27;
             this.ChiudiFormButton.UseVisualStyleBackColor = false;
             this.ChiudiFormButton.Click += new System.EventHandler(this.ChiudiFormButton_Click);
@@ -421,7 +415,6 @@
             this.Controls.Add(this.RemoveButton);
             this.Controls.Add(this.EditButton);
             this.Controls.Add(this.AddButton);
-            this.Controls.Add(this.file_esterno);
             this.Controls.Add(this.ClearLabel);
             this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.ListaProdotti);
@@ -439,6 +432,7 @@
             this.Controls.Add(this.GraphicTitle);
             this.Controls.Add(this.CreateButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "CRUD";
             this.Text = "Lista CRUD";
@@ -446,28 +440,28 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+            this.KeyDown += new KeyEventHandler(Shortcut);
+        }
 
-		#endregion
+        #endregion
 
-		private System.Windows.Forms.Button CreateButton;
-		private System.Windows.Forms.Label GraphicTitle;
-		private System.Windows.Forms.Button MoveButton;
-		private System.Windows.Forms.Button DeleteButton;
-		private System.Windows.Forms.Button UpdateButton;
-		private System.Windows.Forms.TextBox TextBox;
-		private System.Windows.Forms.TextBox SearchBox;
-		private System.Windows.Forms.TextBox PriceBox;
-		private System.Windows.Forms.Button ConfirmButton;
-		private System.Windows.Forms.Button CancelButton1;
-		private System.Windows.Forms.Label SearchLabel;
-		private System.Windows.Forms.Label PriceLabel;
-		private System.Windows.Forms.Label TextLabel;
+        private System.Windows.Forms.Button CreateButton;
+        private System.Windows.Forms.Label GraphicTitle;
+        private System.Windows.Forms.Button MoveButton;
+        private System.Windows.Forms.Button DeleteButton;
+        private System.Windows.Forms.Button UpdateButton;
+        private System.Windows.Forms.TextBox TextBox;
+        private System.Windows.Forms.TextBox SearchBox;
+        private System.Windows.Forms.TextBox PriceBox;
+        private System.Windows.Forms.Button ConfirmButton;
+        private System.Windows.Forms.Button CancelButton1;
+        private System.Windows.Forms.Label SearchLabel;
+        private System.Windows.Forms.Label PriceLabel;
+        private System.Windows.Forms.Label TextLabel;
         private System.Windows.Forms.ListView ListaProdotti;
         private System.Windows.Forms.ToolTip DescrizioneCreate;
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Label ClearLabel;
-        private System.Windows.Forms.TextBox file_esterno;
         private System.Windows.Forms.Button AddButton;
         private System.Windows.Forms.Button EditButton;
         private System.Windows.Forms.Button RemoveButton;

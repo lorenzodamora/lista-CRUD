@@ -1,0 +1,3 @@
+lista3: 1.    Nome: 23     Prezzo: 2323
+lista3: 1.    Nome: 23     Prezzo: 2323
+lista3: 1.    Nome: 23     Prezzo: 2323

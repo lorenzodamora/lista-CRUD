@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Le informazioni generali relative a un assembly sono controllate dal seguente 
 // set di attributi. Modificare i valori di questi attributi per modificare le informazioni
 // associate a un assembly.
-[assembly: AssemblyTitle("funzione svuota cartella liste")]
+[assembly: AssemblyTitle("progetto CRUD")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("funzione svuota cartella liste")]
+[assembly: AssemblyProduct("progetto CRUD")]
 [assembly: AssemblyCopyright("Copyright ©  2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Se il progetto viene esposto a COM, il GUID seguente verrà utilizzato come ID della libreria dei tipi
-[assembly: Guid("7efbb7ab-c85f-4ea7-8874-39c445148dd2")]
+[assembly: Guid("b08d787e-3c92-40f3-8b42-4e8e9279d828")]
 
 // Le informazioni sulla versione di un assembly sono costituite dai seguenti quattro valori:
 //

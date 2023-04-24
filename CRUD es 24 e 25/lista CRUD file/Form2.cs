@@ -11,7 +11,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.ComponentModel;
 using System.Data;
-//using System.Linq;
+using System.Linq; //ha .ToArray();
 using System.Net.Http;
 using System.Threading; */
 //using System.Threading.Tasks;
@@ -22,7 +22,6 @@ using System.Windows.Forms.VisualStyles;
 using System.Xml.Schema;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-//using System.Linq; //ha .ToArray();
 
 namespace lista_CRUD
 {

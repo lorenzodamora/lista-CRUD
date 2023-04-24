@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lista CRUD 1", "lista CRUD base\lista CRUD 1.csproj", "{84D24405-BF50-451A-83C8-CF783B0BEF0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lista CRUD 1", "CRUD es 24 e 25\lista CRUD base\lista CRUD 1.csproj", "{84D24405-BF50-451A-83C8-CF783B0BEF0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lista CRUD 2", "lista CRUD file\lista CRUD 2.csproj", "{086EC991-5198-4661-9DC4-ED3F4BE077EE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "funzione svuota cartella liste", "lista CRUD file\funzione svuota cartella liste\funzione svuota cartella liste.csproj", "{7EFBB7AB-C85F-4EA7-8874-39C445148DD2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lista CRUD 2", "CRUD es 24 e 25\lista CRUD file\lista CRUD 2.csproj", "{086EC991-5198-4661-9DC4-ED3F4BE077EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{086EC991-5198-4661-9DC4-ED3F4BE077EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{086EC991-5198-4661-9DC4-ED3F4BE077EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{086EC991-5198-4661-9DC4-ED3F4BE077EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EFBB7AB-C85F-4EA7-8874-39C445148DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EFBB7AB-C85F-4EA7-8874-39C445148DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EFBB7AB-C85F-4EA7-8874-39C445148DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EFBB7AB-C85F-4EA7-8874-39C445148DD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

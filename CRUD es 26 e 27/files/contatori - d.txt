@@ -1,0 +1,3 @@
+9 somma contatori //il tot linee è la lunghezza di questo file - 1
+5 contatore, quanti prodotti ha questa linea
+4

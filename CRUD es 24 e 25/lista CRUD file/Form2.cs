@@ -134,6 +134,7 @@ namespace lista_CRUD
 
         private void CreateButton_Click(object sender, EventArgs e)
         {
+            //System.Diagnostics.Debug.WriteLine("test"); //avvia con debug >> apri output >> debug >> appare lì
             fun = 1;
             SetVisible();
             ListaProdotti.Items.Clear();

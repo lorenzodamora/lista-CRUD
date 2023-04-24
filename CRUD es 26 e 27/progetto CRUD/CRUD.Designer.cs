@@ -32,7 +32,6 @@ namespace progetto_CRUD
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CRUD));
-            this.CreateButton = new System.Windows.Forms.Button();
             this.GraphicTitle = new System.Windows.Forms.Label();
             this.MoveButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
@@ -46,7 +45,7 @@ namespace progetto_CRUD
             this.PriceLabel = new System.Windows.Forms.Label();
             this.TextLabel = new System.Windows.Forms.Label();
             this.ListaProdotti = new System.Windows.Forms.ListView();
-            this.DescrizioneCreate = new System.Windows.Forms.ToolTip(this.components);
+            this.DescrizioneAdd = new System.Windows.Forms.ToolTip(this.components);
             this.ClearButton = new System.Windows.Forms.Button();
             this.ClearLabel = new System.Windows.Forms.Label();
             this.AddButton = new System.Windows.Forms.Button();
@@ -58,21 +57,6 @@ namespace progetto_CRUD
             this.DescrizioneHistoryR = new System.Windows.Forms.ToolTip(this.components);
             this.ChiudiFormButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // CreateButton
-            // 
-            this.CreateButton.BackColor = System.Drawing.Color.Fuchsia;
-            this.CreateButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("CreateButton.BackgroundImage")));
-            this.CreateButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.CreateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CreateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CreateButton.Location = new System.Drawing.Point(100, 125);
-            this.CreateButton.Name = "CreateButton";
-            this.CreateButton.Size = new System.Drawing.Size(120, 30);
-            this.CreateButton.TabIndex = 0;
-            this.CreateButton.Text = "Create";
-            this.CreateButton.UseVisualStyleBackColor = false;
-            this.CreateButton.Click += new System.EventHandler(this.CreateButton_Click);
             // 
             // GraphicTitle
             // 
@@ -430,22 +414,19 @@ namespace progetto_CRUD
             this.Controls.Add(this.DeleteButton);
             this.Controls.Add(this.MoveButton);
             this.Controls.Add(this.GraphicTitle);
-            this.Controls.Add(this.CreateButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "CRUD";
             this.Text = "Lista CRUD";
             this.Load += new System.EventHandler(this.CRUD_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Shortcut);
             this.ResumeLayout(false);
             this.PerformLayout();
 
-            this.KeyDown += new KeyEventHandler(Shortcut);
         }
 
         #endregion
-
-        private System.Windows.Forms.Button CreateButton;
         private System.Windows.Forms.Label GraphicTitle;
         private System.Windows.Forms.Button MoveButton;
         private System.Windows.Forms.Button DeleteButton;
@@ -459,7 +440,7 @@ namespace progetto_CRUD
         private System.Windows.Forms.Label PriceLabel;
         private System.Windows.Forms.Label TextLabel;
         private System.Windows.Forms.ListView ListaProdotti;
-        private System.Windows.Forms.ToolTip DescrizioneCreate;
+        private System.Windows.Forms.ToolTip DescrizioneAdd;
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Label ClearLabel;
         private System.Windows.Forms.Button AddButton;

@@ -35,7 +35,7 @@ namespace progetto_CRUD
             this.GraphicTitle = new System.Windows.Forms.Label();
             this.MoveButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
-            this.UpdateButton = new System.Windows.Forms.Button();
+            this.SelectButton = new System.Windows.Forms.Button();
             this.TextBox = new System.Windows.Forms.TextBox();
             this.SearchBox = new System.Windows.Forms.TextBox();
             this.PriceBox = new System.Windows.Forms.TextBox();
@@ -53,9 +53,10 @@ namespace progetto_CRUD
             this.RemoveButton = new System.Windows.Forms.Button();
             this.TwinButton = new System.Windows.Forms.Button();
             this.NameList = new System.Windows.Forms.TextBox();
-            this.HistoryRButton = new System.Windows.Forms.Button();
+            this.HistoryButton = new System.Windows.Forms.Button();
             this.DescrizioneHistoryR = new System.Windows.Forms.ToolTip(this.components);
             this.ChiudiFormButton = new System.Windows.Forms.Button();
+            this.SwitchButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // GraphicTitle
@@ -77,7 +78,7 @@ namespace progetto_CRUD
             this.MoveButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("MoveButton.BackgroundImage")));
             this.MoveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.MoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MoveButton.Location = new System.Drawing.Point(300, 125);
+            this.MoveButton.Location = new System.Drawing.Point(100, 300);
             this.MoveButton.Name = "MoveButton";
             this.MoveButton.Size = new System.Drawing.Size(120, 30);
             this.MoveButton.TabIndex = 1;
@@ -89,6 +90,7 @@ namespace progetto_CRUD
             // DeleteButton
             // 
             this.DeleteButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.DeleteButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("DeleteButton.BackgroundImage")));
             this.DeleteButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.DeleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DeleteButton.Location = new System.Drawing.Point(300, 200);
@@ -100,19 +102,20 @@ namespace progetto_CRUD
             this.DeleteButton.Visible = false;
             this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
             // 
-            // UpdateButton
+            // SelectButton
             // 
-            this.UpdateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.UpdateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.UpdateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UpdateButton.Location = new System.Drawing.Point(100, 200);
-            this.UpdateButton.Name = "UpdateButton";
-            this.UpdateButton.Size = new System.Drawing.Size(120, 30);
-            this.UpdateButton.TabIndex = 2;
-            this.UpdateButton.Text = "Update";
-            this.UpdateButton.UseVisualStyleBackColor = false;
-            this.UpdateButton.Visible = false;
-            this.UpdateButton.Click += new System.EventHandler(this.UpdateButton_Click);
+            this.SelectButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.SelectButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SelectButton.BackgroundImage")));
+            this.SelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SelectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SelectButton.Location = new System.Drawing.Point(100, 200);
+            this.SelectButton.Name = "SelectButton";
+            this.SelectButton.Size = new System.Drawing.Size(120, 30);
+            this.SelectButton.TabIndex = 2;
+            this.SelectButton.Text = "Select";
+            this.SelectButton.UseVisualStyleBackColor = false;
+            this.SelectButton.Visible = false;
+            this.SelectButton.Click += new System.EventHandler(this.SelectButton_Click);
             // 
             // TextBox
             // 
@@ -280,13 +283,12 @@ namespace progetto_CRUD
             this.AddButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.AddButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.AddButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AddButton.Location = new System.Drawing.Point(100, 300);
+            this.AddButton.Location = new System.Drawing.Point(100, 125);
             this.AddButton.Name = "AddButton";
             this.AddButton.Size = new System.Drawing.Size(120, 30);
             this.AddButton.TabIndex = 21;
             this.AddButton.Text = "Add";
             this.AddButton.UseVisualStyleBackColor = false;
-            this.AddButton.Visible = false;
             this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
             // 
             // EditButton
@@ -296,7 +298,7 @@ namespace progetto_CRUD
             this.EditButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.EditButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.EditButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.EditButton.Location = new System.Drawing.Point(100, 375);
+            this.EditButton.Location = new System.Drawing.Point(300, 125);
             this.EditButton.Name = "EditButton";
             this.EditButton.Size = new System.Drawing.Size(120, 30);
             this.EditButton.TabIndex = 22;
@@ -327,7 +329,7 @@ namespace progetto_CRUD
             this.TwinButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("TwinButton.BackgroundImage")));
             this.TwinButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.TwinButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TwinButton.Location = new System.Drawing.Point(300, 300);
+            this.TwinButton.Location = new System.Drawing.Point(100, 375);
             this.TwinButton.Name = "TwinButton";
             this.TwinButton.Size = new System.Drawing.Size(120, 30);
             this.TwinButton.TabIndex = 24;
@@ -355,23 +357,23 @@ namespace progetto_CRUD
             this.NameList.ReadOnly = true;
             this.NameList.Size = new System.Drawing.Size(400, 24);
             this.NameList.TabIndex = 25;
-            this.NameList.Text = "Non è aperta nessuna lista";
+            this.NameList.Text = "Non è stata selezionata nessuna linea";
             // 
-            // HistoryRButton
+            // HistoryButton
             // 
-            this.HistoryRButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.HistoryRButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.HistoryRButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.HistoryRButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HistoryRButton.ForeColor = System.Drawing.Color.White;
-            this.HistoryRButton.Location = new System.Drawing.Point(430, 375);
-            this.HistoryRButton.Name = "HistoryRButton";
-            this.HistoryRButton.Size = new System.Drawing.Size(30, 30);
-            this.HistoryRButton.TabIndex = 26;
-            this.HistoryRButton.Text = "H";
-            this.HistoryRButton.UseVisualStyleBackColor = false;
-            this.HistoryRButton.Visible = false;
-            this.HistoryRButton.Click += new System.EventHandler(this.HistoryRButton_Click);
+            this.HistoryButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.HistoryButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.HistoryButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.HistoryButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HistoryButton.ForeColor = System.Drawing.Color.White;
+            this.HistoryButton.Location = new System.Drawing.Point(430, 375);
+            this.HistoryButton.Name = "HistoryButton";
+            this.HistoryButton.Size = new System.Drawing.Size(30, 30);
+            this.HistoryButton.TabIndex = 26;
+            this.HistoryButton.Text = "H";
+            this.HistoryButton.UseVisualStyleBackColor = false;
+            this.HistoryButton.Visible = false;
+            this.HistoryButton.Click += new System.EventHandler(this.HistoryButton_Click);
             // 
             // ChiudiFormButton
             // 
@@ -386,14 +388,30 @@ namespace progetto_CRUD
             this.ChiudiFormButton.UseVisualStyleBackColor = false;
             this.ChiudiFormButton.Click += new System.EventHandler(this.ChiudiFormButton_Click);
             // 
+            // SwitchButton
+            // 
+            this.SwitchButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.SwitchButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("SwitchButton.BackgroundImage")));
+            this.SwitchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SwitchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SwitchButton.Location = new System.Drawing.Point(300, 300);
+            this.SwitchButton.Name = "SwitchButton";
+            this.SwitchButton.Size = new System.Drawing.Size(120, 30);
+            this.SwitchButton.TabIndex = 28;
+            this.SwitchButton.Text = "Switch";
+            this.SwitchButton.UseVisualStyleBackColor = false;
+            this.SwitchButton.Visible = false;
+            this.SwitchButton.Click += new System.EventHandler(this.SwitchButton_Click);
+            // 
             // CRUD
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(984, 759);
+            this.Controls.Add(this.SwitchButton);
             this.Controls.Add(this.ChiudiFormButton);
-            this.Controls.Add(this.HistoryRButton);
+            this.Controls.Add(this.HistoryButton);
             this.Controls.Add(this.NameList);
             this.Controls.Add(this.TwinButton);
             this.Controls.Add(this.RemoveButton);
@@ -410,7 +428,7 @@ namespace progetto_CRUD
             this.Controls.Add(this.PriceBox);
             this.Controls.Add(this.SearchBox);
             this.Controls.Add(this.TextBox);
-            this.Controls.Add(this.UpdateButton);
+            this.Controls.Add(this.SelectButton);
             this.Controls.Add(this.DeleteButton);
             this.Controls.Add(this.MoveButton);
             this.Controls.Add(this.GraphicTitle);
@@ -430,7 +448,7 @@ namespace progetto_CRUD
         private System.Windows.Forms.Label GraphicTitle;
         private System.Windows.Forms.Button MoveButton;
         private System.Windows.Forms.Button DeleteButton;
-        private System.Windows.Forms.Button UpdateButton;
+        private System.Windows.Forms.Button SelectButton;
         private System.Windows.Forms.TextBox TextBox;
         private System.Windows.Forms.TextBox SearchBox;
         private System.Windows.Forms.TextBox PriceBox;
@@ -448,9 +466,10 @@ namespace progetto_CRUD
         private System.Windows.Forms.Button RemoveButton;
         private System.Windows.Forms.Button TwinButton;
         private System.Windows.Forms.TextBox NameList;
-        private System.Windows.Forms.Button HistoryRButton;
+        private System.Windows.Forms.Button HistoryButton;
         private System.Windows.Forms.ToolTip DescrizioneHistoryR;
         private System.Windows.Forms.Button ChiudiFormButton;
+        private Button SwitchButton;
     }
 }
 

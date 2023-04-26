@@ -1,9 +1,5 @@
 ﻿#region using
 using System;
-using System.Diagnostics.Eventing.Reader;
-//using System.Net.NetworkInformation;
-//lo ha aggiunto il codice
-
 /* using System.Collections.Generic;
 using System.Drawing;
 using System.Dynamic;
@@ -16,11 +12,7 @@ using System.Net.Http;
 using System.Threading; */
 //using System.Threading.Tasks;
 using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using System.Xml.Schema;
-using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Diagnostics;
 
@@ -28,30 +20,34 @@ namespace progetto_CRUD
 {
 	public partial class CRUD : Form
 	{
-        #endregion
-        //fare sia csv che txt
-        //togliere multi liste
-        //moltiplica linea
-        //cancellazione logica
-        //file accesso diretto
-        //search sia indice che string
-        //menu a comparsa
-        //elementi cliccabili in listview
-        //funzioni esterne
-        //edit logico?? //cronologia?? //pensavo a due stack (ctrl z  ctrl y)
+		#endregion
+		//togliere multi liste //fare sia csv che txt
+		//togliere gli autocomplete
+		//moltiplica linea
+		//cancellazione logica
+		//file accesso diretto
+		//search sia indice che string
+		//menu a comparsa
+		//elementi cliccabili in listview
+		//funzioni esterne
+		//edit logico?? //cronologia?? //pensavo a due stack (ctrl z  ctrl y)
 
-        public int fun, totpro, totline, seline; //fun funzione //totlis totale liste //lista selezionata
+		//non c'è mai seline 0; quando è 0 diventa il totline + 1; fa solo add o select altro; funziona tutto a select
+
+		public int fun, totline, seline; //fun funzione //totlis totale liste //lista selezionata
 		public string path;
 		public CRUD()
 		{
 			InitializeComponent();
 			path = GetPath();
-			totpro = GetProCount(path + "\\contatori.txt");
-			fun = 0; // 1 add, 2 select, 3 edit, 4 move, 5 delete, 6 switch, 7 twin, 8 remove 
+			//totpro = GetProCount(path + "\\contatori.txt");
+			totline = GetLineCount(path + "\\contatori.txt");
+			seline = totline + 1;
+			fun = 0; // 1 add, 2 select, 3 edit, 4 delete, 5 move, 6 switch, 7 twin, 8 remove, (a parte) history
 			SetVisible();
+			StampaForm();
 			File.Create(path + "\\logic remove.txt").Close(); //crea
 		}
-		//{
 		private string GetPath()
 		{
 			string path = Path.GetFullPath(".");
@@ -62,35 +58,53 @@ namespace progetto_CRUD
 			//Directory.CreateDirectory(path);
 			return path;
 		}
-		//see
 		private int GetProCount(string filepath)
 		{
+			//StreamReader sr = File.OpenText(filepath);
 			StreamReader sr = new StreamReader(filepath);
 			int read = int.Parse(sr.ReadLine());
 			sr.Close();
 			return read;
 		}
-		//}
+		private int GetLineCount(string filepath)
+		{
+			int lineCount = -1; //non conto la prima linea
+			//StreamReader sr = new (filepath);
+			StreamReader sr = new StreamReader(filepath);
+			while (sr.ReadLine() != null)
+				lineCount++;
+			sr.Close();
+			return lineCount;
+		}
 		private void CRUD_Load(object sender, EventArgs e)
 		{
 			//aggiungere
 			DescrizioneAdd.SetToolTip(AddButton, "Aggiungi nuova linea");
-			DescrizioneHistoryR.SetToolTip(HistoryRButton, "Guarda la lista delle linee rimosse");
+			DescrizioneHistoryR.SetToolTip(HistoryButton, "Guarda la lista delle linee rimosse");
 		}
 		//add
 		private void Shortcut(object sender, KeyEventArgs e)
-		{			
+		{
+			//funziona con history?
 			if (e.Control &&  e.Shift &&e.KeyCode == Keys.A)
-			//shortcut Ctrl+Shift+A
+				//shortcut Ctrl+Shift+A
 				AddButton_Click(sender, e);
-			
+			//confirm shortcut
+			//cancel shortcut
+			//
+		}
+		private void StampaForm()
+		{
+			string[] lines = File.ReadAllLines(path + "\\lista.txt");
+			ListaProdotti.Items.Clear();
+			for (int i = 0; i < lines.Length; i++)
+				ListaProdotti.Items.Add(lines[i]);
 		}
 		private void ChiudiFormButton_Click(object sender, EventArgs e)
 		{
 			File.Delete(path + "\\logic remove.txt");
 			Close();
 		}
-		//{
 		private void SearchVisible(bool vis)
 		{
 			(SearchBox.Visible, SearchLabel.Visible) = (vis, vis);
@@ -99,36 +113,77 @@ namespace progetto_CRUD
 		{
 			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible) = (vis, vis, vis, vis);
 		}
-		private void ClearConfirmVisible(bool vis)
+		private void ClearVisible(bool vis)
 		{
 			(ClearButton.Visible, ClearLabel.Visible) = (vis, vis);
-			(ConfirmButton.Visible, CancelButton1.Visible) = (vis, vis);
 		}
-		//}
-		//modificare
 		private void SetVisible()
 		{
-			//bool 0 update, 1 move, 0 delete, 2 add, 2 edit, 2 dupl, 2 remove, 3 search, 4 textprice, 5 clear, 5 confirm
-			bool[] vis = new bool[5];
-			//*vis[0] = totlis != 0;
-			//*vis[1] = !(totlis < 2 || selis == 0);
-			//*vis[2] = selis != 0;
-			//vis[3] search = update2 o move3 o delete4 o edit6 o twin7 o remove8
-			//vis[4] textprice = create1 o add5 o edit6
-			//*vis[3] = !(fun == 1 || fun == 5 || fun == 0);
-			//*vis[4] = (fun == 1 || fun == 5 || fun == 6);
+			//fun // 0 nulla, 1 add sempre attivo, 2 select esiste 1 linea (totline)
+			//3 edit 4 delete 7 twin 8 remove + è attivo select ( seline non è 0)
+			//5 move 6 switch + è attivo select + esistono 2 linee
+			//9 history = cancel to exit, la sua visibilità è gestita da solo (si attiva al primo remove)
+			//bool //add \, select 0, edit delete twin remove 1, move switch 2
 
-			//bool 0 update, 1 move, 0 delete, 2 add, 2 edit, 2 dupl, 2 remove, 3 search, 4 textprice, 5 clear, 5 confirm
-			//*UpdateButton.Visible = vis[0];
-			//*MoveButton.Visible = vis[1];
-			//*DeleteButton.Visible = vis[0];
-			AddButton.Visible = vis[2];
-			EditButton.Visible = vis[2];
-			TwinButton.Visible = vis[2];
-			RemoveButton.Visible = vis[2];
+			//search, textprice, clear, confirm, cancel.
+			//search = 1 add o 2 select o 5 move o 6 switch
+			//textprice = 1 add o 3 edit
+			//numero di prodotti box
+			//clear(search || textprice)
+			// confirm cancel = tranne 0
+			//bool //search 3, textprice 4, clear 3 || 4, confirm cancel 5 
+
+			bool[] vis = new bool[6];
+
+			vis[0] = totline != 0;
+			vis[1] = seline != totline + 1;
+			vis[2] = totline > 1 && vis[1];
+			vis[3] = fun == 1 || fun == 2 || fun == 5 || fun == 6;
+			vis[4] = fun == 1 || fun == 3;
+			vis[5] = fun != 0;
+
+			SelectButton.Visible = vis[0];
+			EditButton.Visible = vis[1];
+			DeleteButton.Visible = vis[1];
+			MoveButton.Visible = vis[2];
+			SwitchButton.Visible = vis[2];
+			TwinButton.Visible = vis[1];
+			RemoveButton.Visible = vis[1];
 			SearchVisible(vis[3]);
 			TextPriceVisible(vis[4]);
-			ClearConfirmVisible(vis[4] || vis[3]);
+			ClearVisible(vis[4] || vis[3]);
+			ConfirmButton.Visible = vis[5];
+			CancelButton1.Visible = vis[5];
+		}
+		private void AddButton_Click(object sender, EventArgs e)
+		{
+			fun = 1;
+			seline = totline + 1;
+			SetVisible();
+			NameList.Text = $"Stai aggiungendo la linea {seline} :";
+		}
+		//edit fun ??
+		private void EditButton_Click(object sender, EventArgs e)
+		{
+			fun = 6;
+			SetVisible();
+			NameList.Text = $"Stai modificando una linea:";
+		}
+		//select line
+		private void SelectButton_Click(object sender, EventArgs e)
+		{
+			fun = 2;
+			SetVisible();
+			NameList.Text = "Scegli la linea da modificare digitando il numero in search :";
+		}
+		//delete line
+		private void DeleteButton_Click(object sender, EventArgs e)
+		{
+			fun = 4;
+			SetVisible();
+			ListaProdotti.Items.Clear();
+			NameList.Text = "Scegli la linea da cancellare digitando il numero in search :";
+			//stampa
 		}
 		//move line, sposta
 		private void MoveButton_Click(object sender, EventArgs e)
@@ -140,32 +195,9 @@ namespace progetto_CRUD
 			//stampa
 		}
 		//switch line scambiare
+		private void SwitchButton_Click(object sender, EventArgs e)
+		{
 
-		//select line
-		private void UpdateButton_Click(object sender, EventArgs e)
-		{
-			fun = 2;
-			SetVisible();
-			ListaProdotti.Items.Clear();
-			NameList.Text = "Scegli la linea da modificare digitando il numero in search :";
-			//stampa
-		}
-		//delete line
-		private void DeleteButton_Click(object sender, EventArgs e)
-		{
-			fun = 4;
-			SetVisible();
-			ListaProdotti.Items.Clear();
-			NameList.Text = "Scegli la linea da cancellare digitando il numero in search :";
-			//stampa
-		}
-		//edit //fun 1
-		private void AddButton_Click(object sender, EventArgs e)
-		{
-			fun = 1;
-			SetVisible();
-			//!! totpro
-			NameList.Text = $"Stai aggiungendo alla linea {totline}. :";
 		}
 		//edit // fun ??
 		private void TwinButton_Click(object sender, EventArgs e)
@@ -173,13 +205,6 @@ namespace progetto_CRUD
 			fun = 7;
 			SetVisible();
 			NameList.Text = $"Stai duplicando una linea (verrà aggiunta accanto alla linea duplicata):";
-		}
-		//edit fun ??
-		private void EditButton_Click(object sender, EventArgs e)
-		{
-			fun = 6;
-			SetVisible();
-			NameList.Text = $"Stai modificando una linea:";
 		}
 		//remove 1 pro
 		private void RemoveButton_Click(object sender, EventArgs e)
@@ -189,12 +214,13 @@ namespace progetto_CRUD
 			//!! seline
 			NameList.Text = $"Stai rimuovendo un prodotto alla linea {seline} :";
 		}
+
 		private void CancelButton1_Click(object sender, EventArgs e)
 		{
-			ClearButton_Click(sender, e);
 			fun = 0;
+			seline = totline + 1;
 			SetVisible();
-			ListaProdotti.Items.Clear();
+			StampaForm();
 			NameList.Text = "Non è selezionata nessuna linea";
 		}
 		private void ClearButton_Click(object sender, EventArgs e)
@@ -203,11 +229,22 @@ namespace progetto_CRUD
 			PriceBox.Text = "";
 			SearchBox.Text = "";
 		}
-		//edit // cronologia
-		private void HistoryRButton_Click(object sender, EventArgs e)
-		{
-			fun = 0;
-			SetVisible();
+		// cronologia
+		private void HistoryButton_Click(object sender, EventArgs e)
+		{//fun 9
+			AddButton.Visible = false;
+			SelectButton.Visible = false;
+			EditButton.Visible = false;
+			DeleteButton.Visible = false;
+			MoveButton.Visible = false;
+			SwitchButton.Visible = false;
+			TwinButton.Visible = false;
+			RemoveButton.Visible = false;
+			SearchVisible(false);
+			TextPriceVisible(false);
+			ClearVisible(false);
+			ConfirmButton.Visible = false;
+			CancelButton1.Visible = true;
 			ListaProdotti.Items.Clear();
 			NameList.Text = "Queste sono le linee rimosse";
 
@@ -216,51 +253,32 @@ namespace progetto_CRUD
 			while (i < lines.Length)
 				ListaProdotti.Items.Add(lines[i++]);
 		}
-		//}
 		//edit
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
-			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, SearchBox.Text, path);
+			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, SearchBox.Text, totline, seline, path);
 			if (control == true)
 				switch (fun)
 				{
-					case 1: //add line
-						AddButton_Click(sender, e);
-						break;
-					case 2: //select line
-						AddButton_Click(sender, e);
-						break;
-					case 3: //move linne
-						AddButton_Click(sender, e);
-						break;
-					case 4: //delete line
-						NameList.Text = "Non è aperta nessuna linea";
-						fun = 0;
+					case 1: //addline
+						totline += 1;
+						seline += 1;
 						SetVisible();
+						NameList.Text = $"Stai aggiungendo la linea {seline}, o la linea scelta in search :";
 						break;
-					case 6: //edit line
-						AddButton_Click(sender, e);
-						break;
-
-					case 7: //twin pro
-						TwinButton_Click(sender, e);
-						break;
-
-					case 8: //remove pro
-						HistoryRButton.Visible = true;
-						RemoveButton_Click(sender, e);
+					case 2:
 						break;
 				}
-			//if (selis != 0)
-				StampaForm();
+			StampaForm();
 		}
 		//edit
-		private bool SwitchFun(int fun, string nome, string prezzo, string cerca, string path)
+		private bool SwitchFun(int fun, string nome, string prezzo, string cerca, int totline, int seline, string path)
 		{
 			bool control = true; // false se qualcosa è andato storto
 			switch (fun)
 			{
 				case 1:
+					AddLine(nome, prezzo, cerca, totline, path);
 					break;
 				case 2:
 					break;
@@ -279,7 +297,6 @@ namespace progetto_CRUD
 			}
 			return control;
 		}
-
 		private bool CheckNomePrezzo(string nome, string prezzo)
 		{
 			if (nome == "")
@@ -295,70 +312,69 @@ namespace progetto_CRUD
 
 			return true;
 		}
-		private bool CheckCercaLine(string cerca, int totline)
+		private int CheckCercaLine(string cerca, int totline)
 		{
+			if (cerca == "")
+				return totline + 1;
 			if (!int.TryParse(cerca, out int seline) || seline < 1) //seline = seleziona riga, select line
 			{//bad input
 				MessageBox.Show("inserisci un intero positivo", "errore nella ricerca");
-				return false;
+				return 0;
 			}
-			if (seline > totline)
+			if (seline > totline + 1)
 			{//bad input
 				MessageBox.Show("inserisci un indice che appare in lista", "errore nella ricerca");
-				return false;
+				return 0;
 			}
-			return true;
+			return seline;
 		}
-		//delete line
-		
-		//see
-		private void AddLine(string nome, string prezzo, string path, int selis)
-		{//fun 5
-			if (!CheckNomePrezzo(nome, prezzo)) //bad input
+
+		private void AddLine(string nome, string prezzo, string cerca, int totline, string path)
+		{
+			if (!CheckNomePrezzo(nome, prezzo)) //errore in input
+				return;
+			int seline = CheckCercaLine(cerca, totline);
+			if (seline == 0) //0 = false
 				return;
 
-			string[] lines = File.ReadAllLines(path + "\\delimitatori.txt");
-			int npro = int.Parse(lines[selis]) - 4; //numero righe di prodotti // 4 sono =  tot prodotti + somma + 2 separatori.
-			int line = 0; //numero riga dove inizia la lista
-			for (int i = 1; i < selis; i++)
-				line += int.Parse(lines[i]); //fa la somma di tutti i delimitatori (tranne il primo in lines[0])
+			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
+			lines[0] = (int.Parse(lines[0]) + 1).ToString(); //aggiungo un prodotto
+			string totpro = lines[0];
 
-			//aggiungo un prodotto
-			StreamWriter sw = new StreamWriter(path + "\\delimitatori.txt");
-			lines[selis] = (int.Parse(lines[selis])+1).ToString(); ; //aggiungo già una riga al conteggio righe della lista
-
-			sw.Write(lines[0]); //prima riga senza \n iniziale
-			for (int i = 1; i < lines.Length; i++)
-				sw.Write("\n"+lines[i]); //nessuna riga vuota alla fine del file
+			StreamWriter sw = new StreamWriter(path + "\\contatori.txt");
+			for (int i = 0; i < seline; i++) //stampo fino alla linea scelta
+				sw.WriteLine(lines[i]);
+			sw.WriteLine("1"); //aggiungo la linea di prodotti
+			for (int i = seline; i < lines.Length; i++) //stampo il resto
+				sw.WriteLine(lines[i]);
 			sw.Close();
 
-			lines = File.ReadAllLines(path + "\\liste.txt");
+			lines = File.ReadAllLines(path + "\\lista.csv");
 
-			//il fondo della lista ha la somma dei prezzi
-			//conteggio char 15, 15 - 1 per la posizione, +1 = 15 il carattere successivo
-			//line + numpro + 3 è dove si trova la somma
-			string str = "";
-			for (int c = 15; c < lines[line+npro+2].Length; c++)
-				str += lines[line+npro+2][c];
-			float sum = float.Parse(str) + float.Parse(prezzo);
+			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(prezzo);
 
-			sw = new StreamWriter(path + "\\liste.txt");
-			for (int i = 0; i < line+npro; i++)
+			sw = new StreamWriter(path + "\\lista.csv");
+			for (int i = 0; i < seline - 1; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{npro + 1}.    Nome: {nome}     Prezzo: {prezzo}");
+			sw.WriteLine(string.Join(";", seline, nome, prezzo)); //la nuova linea
+			for (int i = seline-1; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
+				sw.WriteLine(i+2 + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
+			sw.WriteLine(totpro);
+			sw.WriteLine(sum);
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\lista.txt");
+			sw = new StreamWriter(path + "\\lista.txt");
+
+			for (int i = 0; i < seline -1; i++)
+				sw.WriteLine(lines[i]);
+			sw.WriteLine($"{seline}.    Nome: {nome}     Prezzo: {prezzo}");
+			for (int i = seline -1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
+				sw.WriteLine(i+2 + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
 			sw.WriteLine("-------------------");
-			sw.WriteLine($"numero di prodotti: {npro + 1}");
+			sw.WriteLine($"numero di prodotti: {totpro}");
 			sw.WriteLine($"prezzo totale: {sum}");
-			sw.WriteLine("###################");
-
-			for (int i = line+npro+4; i < lines.Length; i++)
-				sw.WriteLine(lines[i]);
 			sw.Close();
-		}
-		
-		private void StampaForm()
-		{
-			
 		}
 	}
 }

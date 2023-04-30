@@ -130,8 +130,9 @@ namespace progetto_CRUD
 			//textprice = 1 add o 3 edit
 			//numero di prodotti box
 			//clear(search || textprice)
-			// confirmcancel = tranne 0
-			//bool //search 3, textprice 4, clear 3 || 4, confirmcancel 5 
+			// confirm = tranne 0
+			//cancel = tranne 0 e tranne seline non è 0
+			//bool //search 3, textprice 4, clear 3 || 4, confirm 5, cancel 5 || 1
 
 			bool[] vis = new bool[6];
 
@@ -153,7 +154,7 @@ namespace progetto_CRUD
 			TextPriceVisible(vis[4]);
 			ClearVisible(vis[3] || vis[4]);
 			ConfirmButton.Visible = vis[5];
-			CancelButton1.Visible = vis[5];
+			CancelButton1.Visible = vis[5] || vis[1];
 		}
 		private void AddButton_Click(object sender, EventArgs e)
 		{
@@ -164,9 +165,9 @@ namespace progetto_CRUD
 		}
 		private void EditButton_Click(object sender, EventArgs e)
 		{
-			fun = 6;
+			fun = 3;
 			SetVisible();
-			NameList.Text = $"Stai modificando una linea:";
+			NameList.Text = $"Stai modificando il testo della linea {seline}:";
 		}
 		private void SelectButton_Click(object sender, EventArgs e)
 		{
@@ -262,7 +263,8 @@ namespace progetto_CRUD
 						fun = 0;
 						break;
 					case 3: //edit line
-
+						NameList.Text = $"Stai modificando la linea {seline}";
+						fun = 0;
 						break;
 					case 4: //delete line
 						if (seline == totline) seline--;
@@ -289,6 +291,7 @@ namespace progetto_CRUD
 					control = SelectLine(cerca, totline);
 					break;
 				case 3:
+					control = EditLine(nome, prezzo, seline, path);
 					break;
 				case 4:
 					DeleteLine(seline, path);
@@ -316,6 +319,24 @@ namespace progetto_CRUD
 				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
 				return false;
 			}
+
+			return true;
+		}
+		private bool EditCheckNomePrezzo(string nome, string prezzo)
+		{
+			//se nome o prezzo sono vuoti è ok, non entrambi vuoti
+			//quando uno è vuoto si prende quello vecchio
+			if (nome == "" && prezzo == "")
+			{//bad input
+				MessageBox.Show("Scrivi qualcosa", "errore nel nome del prodotto");
+				return false;
+			}
+			if (prezzo != "")
+				if (!float.TryParse(prezzo, out float price) || price < 0)
+				{//bad input
+					MessageBox.Show("numero decimale positivo", "errore nel prezzo");
+					return false;
+				}
 
 			return true;
 		}
@@ -402,6 +423,57 @@ namespace progetto_CRUD
 		{//fun 2
 			return BoolCheckCercaLine(cerca, totline); //ret false = il cerca non è valido //ret true = string cerca  ha  int seline
 		}
+		private bool EditLine(string nome, string prezzo, int seline, string path)
+		{
+			if (!EditCheckNomePrezzo(nome, prezzo)) //errore in input
+				return false;
+
+			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
+			//modifico il conteggio dei prodotti
+			string totpro = lines[0];
+
+			//modifico il contatori.txt
+
+			lines = File.ReadAllLines(path + "\\lista.csv");
+
+			if (nome == "")
+				nome = lines[seline-1].Split(";".ToCharArray(), 3)[1];
+			float sum;
+			if (prezzo == "")
+			{
+				prezzo = lines[seline-1].Split(";".ToCharArray(), 3)[2];
+				sum = float.Parse(lines[lines.Length - 1]);
+			}
+			else
+				//alla somma attuale toglie il vecchio valore e si aggiunge quello modificato
+				sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline-1].Split(";".ToCharArray(), 3)[2]) + float.Parse(prezzo);
+
+			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
+			for (int i = 0; i < seline - 1; i++)
+				sw.WriteLine(lines[i]);
+			//aggiungo la linea modificata
+			sw.WriteLine(string.Join(";", seline, nome, prezzo));
+			for (int i = seline; i < lines.Length - 2; i++)//seline - 1 + 1 per saltare la vecchia linea // length -1 prezzo totale, -1 n prodotti
+				sw.WriteLine(lines[i]); //trascrive il resto
+			sw.WriteLine(totpro);
+			sw.WriteLine(sum);
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\lista.txt");
+			sw = new StreamWriter(path + "\\lista.txt");
+
+			for (int i = 0; i < seline -1; i++)
+				sw.WriteLine(lines[i]);
+			sw.WriteLine($"{seline}.    Nome: {nome}     Prezzo: {prezzo}");
+			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
+				sw.WriteLine(lines[i]); //trascrive il resto
+			sw.WriteLine("-------------------");
+			sw.WriteLine($"numero di prodotti: {totpro}");
+			sw.WriteLine($"prezzo totale: {sum}");
+			sw.Close();
+
+			return true;
+		}
 		private void DeleteLine(int seline, string path)
 		{
 			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
@@ -416,7 +488,6 @@ namespace progetto_CRUD
 			sw.Close();
 
 			lines = File.ReadAllLines(path + "\\lista.csv");
-			//float prezzo = float.Parse(lines[seline-1].Split(";".ToCharArray(), 3)[2]);
 			float sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline-1].Split(";".ToCharArray(), 3)[2]);
 
 			sw = new StreamWriter(path + "\\lista.csv");

@@ -1,3 +1,6 @@
+1.    Nome: zucchero filato 2     Prezzo: 10
+2.    Nome: ciao     Prezzo: 10
+3.    Nome: 12\     Prezzo: 12
 -------------------
-numero di prodotti: 0
-prezzo totale: 0
+numero di prodotti: 3
+prezzo totale: 32

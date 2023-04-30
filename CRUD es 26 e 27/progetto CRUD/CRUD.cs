@@ -314,6 +314,11 @@ namespace progetto_CRUD
 				MessageBox.Show("Scrivi qualcosa", "errore nel nome del prodotto");
 				return false;
 			}
+			if (nome.Contains(";"))
+			{//bad input
+				MessageBox.Show("Non puoi usare il carattere ' ; '", "errore nel nome del prodotto");
+				return false;
+			}
 			if (!float.TryParse(prezzo, out float price) || price < 0)
 			{//bad input
 				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
@@ -329,6 +334,11 @@ namespace progetto_CRUD
 			if (nome == "" && prezzo == "")
 			{//bad input
 				MessageBox.Show("Scrivi qualcosa", "errore nel nome del prodotto");
+				return false;
+			}
+			if (nome.Contains(";"))
+			{//bad input
+				MessageBox.Show("Non puoi usare il carattere ' ; '", "errore nel nome del prodotto");
 				return false;
 			}
 			if (prezzo != "")

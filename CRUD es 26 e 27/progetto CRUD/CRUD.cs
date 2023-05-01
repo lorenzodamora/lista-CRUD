@@ -21,7 +21,7 @@ namespace progetto_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//più prodotti per linea
+		//funzione remove amount
 		//cancellazione logica
 		//file accesso diretto
 		//select sia indice che string
@@ -92,10 +92,14 @@ namespace progetto_CRUD
 		{
 			(SearchBox.Visible, SearchLabel.Visible) = (vis, vis);
 		}
-		private void TextPriceAmountVisible(bool vis)
+		private void TextPriceVisible(bool vis)
 		{
-			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible,
-				AmountBox.Visible, AmountLabel.Visible) = (vis, vis, vis, vis, vis, vis);
+			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible) = (vis, vis, vis, vis);
+		}
+		private void AmountVisible(bool vis)
+		{
+			AmountBox.Visible = vis;
+			AmountLabel.Visible = vis;
 		}
 		private void ClearVisible(bool vis)
 		{
@@ -109,14 +113,15 @@ namespace progetto_CRUD
 			//9 history = cancel to exit, la sua visibilità è gestita da solo (si attiva al primo remove)
 			//bool //add \, select 0, edit delete twin remove 1, move switch 2
 
-			//search, textprice, clear, confirm, cancel.
+			//search, textprice, amount, clear, confirm, cancel.
 			//search = 1 add o 2 select o 5 move o 6 switch
 			//textprice = 1 add o 3 edit
+			//amount = 1 add o 3 edit o 8 remove
 			//numero di prodotti box
 			//clear(search || textprice)
 			// confirm = tranne 0
 			//cancel = tranne 0 e tranne seline non è 0
-			//bool //search 3, textprice 4, clear 3 || 4, confirm 5, cancel 5 || 1
+			//bool //search 3, textprice 4, amount 4 || fun 8, clear 3 || 4 || fun 8, confirm 5, cancel 5 || 1
 
 			bool[] vis = new bool[6];
 
@@ -135,8 +140,9 @@ namespace progetto_CRUD
 			TwinButton.Visible = vis[1];
 			RemoveButton.Visible = vis[1];
 			SearchVisible(vis[3]);
-			TextPriceAmountVisible(vis[4]);
-			ClearVisible(vis[3] || vis[4]);
+			TextPriceVisible(vis[4]);
+			AmountVisible(fun == 8 || vis[4]);
+			ClearVisible(vis[3] || vis[4] || fun == 8);
 			ConfirmButton.Visible = vis[5];
 			CancelButton1.Visible = vis[5] || vis[1];
 		}
@@ -145,7 +151,7 @@ namespace progetto_CRUD
 			fun = 1;
 			seline = totline + 1;
 			SetVisible();
-			NameList.Text = $"Stai aggiungendo la linea {seline}, o la linea scelta in search :";
+			NameList.Text = $"Stai aggiungendo la linea {seline}, o la linea scelta in search:";
 		}
 		private void EditButton_Click(object sender, EventArgs e)
 		{
@@ -190,7 +196,7 @@ namespace progetto_CRUD
 		{
 			fun = 8;
 			SetVisible();
-			NameList.Text = $"Stai rimuovendo un prodotto alla linea {seline} :";
+			NameList.Text = $"Stai rimuovendo dei prodotti dalla linea {seline}:";
 		}
 
 		private void CancelButton1_Click(object sender, EventArgs e)
@@ -220,7 +226,8 @@ namespace progetto_CRUD
 			TwinButton.Visible = false;
 			RemoveButton.Visible = false;
 			SearchVisible(false);
-			TextPriceAmountVisible(false);
+			TextPriceVisible(false);
+			AmountVisible(false);
 			ClearVisible(false);
 			ConfirmButton.Visible = false;
 			CancelButton1.Visible = true;
@@ -235,7 +242,7 @@ namespace progetto_CRUD
 
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
-			bool control = SwitchFun(fun, TextBox.Text, AmountBox.Text, PriceBox.Text, SearchBox.Text, totline, seline, path);
+			bool control = SwitchFun(ref fun, TextBox.Text, AmountBox.Text, PriceBox.Text, SearchBox.Text, totline, seline, path);
 			if (control) //if SwitchFun è meno ridondante ma brutto
 				switch (fun)
 				{
@@ -261,20 +268,31 @@ namespace progetto_CRUD
 						totline--;
 						NameList.Text = $"Conferma per cancellare la linea {seline}:";
 						break;
-					case 7: //twin
+					case 7: //twin line
 						totline += 1;
 						seline += 1;
 						NameList.Text = $"Stai modificando la linea {seline}";
 						fun = 0;
 						break;
+					case 8: //remove amount
+						NameList.Text = $"Stai modificando la linea {seline}";
+						fun = 0;
+						break;
+					case 84: //quando da 8remove passa a 4delete, ma era remove
+						if (seline == totline) seline--;
+						if (seline == 0) seline++;
+						totline--;
+						NameList.Text = $"Stai rimuovendo dei prodotti dalla linea {seline}:";
+						fun = 8;
+						break;
 				}
-			if (totline == 0 && fun == 4)
-				CancelButton1_Click(sender, e);
+			if (totline == 0 && (fun == 4 || fun == 8)) //&& fun 4 //serve quando sbagli in add con 0 linee
+				CancelButton1_Click(sender, e); //NameList.Text e fun 0
 
 			SetVisible();
 			StampaForm();
 		}
-		private bool SwitchFun(int fun, string nome, string qua, string prezzo, string cerca, int totline, int seline, string path)
+		private bool SwitchFun(ref int fun, string nome, string qua, string prezzo, string cerca, int totline, int seline, string path)
 		{
 			bool control = true; // false se qualcosa è andato storto
 			switch (fun)
@@ -301,7 +319,9 @@ namespace progetto_CRUD
 					TwinLine(seline, path);
 					break;
 				case 8:
-					//remove tot pro
+					int amount = RemoveAmount(qua, seline, path);
+					control = amount != -1;
+					if (amount == 0) fun = 84;
 					break;
 			}
 			return control;
@@ -319,15 +339,14 @@ namespace progetto_CRUD
 				MessageBox.Show("Non puoi usare il carattere ' ; '", "errore nel nome del prodotto");
 				return false;
 			}
-			if (!float.TryParse(prezzo, out float price) || price < 0)
-			{//bad input
-				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
-				return false;
-			}
-			if (qua == "") return true; //qua = 1;
 			if (!int.TryParse(qua, out int amount) || amount < 0)
 			{//bad input
 				MessageBox.Show("numero intero positivo", "errore nella quantità");
+				return false;
+			}
+			if (!float.TryParse(prezzo, out float price) || price < 0)
+			{//bad input
+				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
 				return false;
 			}
 
@@ -347,18 +366,33 @@ namespace progetto_CRUD
 				MessageBox.Show("Non puoi usare il carattere ' ; '", "errore nel nome del prodotto");
 				return false;
 			}
-			if (prezzo != "")
-				if (!float.TryParse(prezzo, out float price) || price < 0)
-				{//bad input
-					MessageBox.Show("numero decimale positivo", "errore nel prezzo");
-					return false;
-				}
 			if (qua != "")
 				if (!int.TryParse(qua, out int amount) || amount < 0)
 				{//bad input
 					MessageBox.Show("numero intero positivo", "errore nella quantità");
 					return false;
 				}
+			if (prezzo != "")
+				if (!float.TryParse(prezzo, out float price) || price < 0)
+				{//bad input
+					MessageBox.Show("numero decimale positivo", "errore nel prezzo");
+					return false;
+				}
+
+			return true;
+		}
+		private bool CheckAmount(string qua, int amount)
+		{
+			if (!int.TryParse(qua, out int quan) || quan < 0)
+			{//bad input
+				MessageBox.Show("numero intero positivo", "errore nella quantità");
+				return false;
+			}
+			if (quan > amount)
+			{//bad input
+				MessageBox.Show("inserisci una quantità minore di quella selezionata", "errore nella quantità");
+				return false;
+			}
 			return true;
 		}
 		private int IntCheckCercaLine(string cerca, int totline)
@@ -393,13 +427,14 @@ namespace progetto_CRUD
 		}
 		private bool AddLine(string nome, string qua, string prezzo, string cerca, int totline, string path)
 		{//fun 1
+			if (qua=="") qua = "1";
 			if (!CheckNomePrezzoQua(nome, qua, prezzo)) //errore in input
 				return false;
 			int seline = IntCheckCercaLine(cerca, totline);
 			if (seline == 0) //0 = false
 				return false;
 			seline--;
-			if (qua == "") qua = "1";
+
 			string[] lines = File.ReadAllLines(path + "\\lista.csv");
 			string totpro = (int.Parse(lines[lines.Length - 2]) + int.Parse(qua)).ToString(); //aggiungo i prodotti
 			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(prezzo);
@@ -434,7 +469,7 @@ namespace progetto_CRUD
 			return BoolCheckCercaLine(cerca, totline); //ret false = il cerca non è valido //ret true = string cerca  ha  int seline
 		}
 		private bool EditLine(string nome, string qua, string prezzo, int seline, string path)
-		{
+		{//fun 3
 			if (!EditCheckNomePrezzoQua(nome, qua, prezzo)) //errore in input
 				return false;
 
@@ -488,7 +523,7 @@ namespace progetto_CRUD
 			return true;
 		}
 		private void DeleteLine(int seline, string path)
-		{
+		{//fun 4
 			seline--;
 			string[] lines = File.ReadAllLines(path + "\\lista.csv");
 			int totpro = int.Parse(lines[lines.Length-2]) - int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]); //tolgo una linea di prodotti
@@ -533,7 +568,7 @@ namespace progetto_CRUD
 			}
 		}
 		private bool MoveLine(string cerca, int totline, int seline, string path)
-		{
+		{//fun 5
 			if (!BoolCheckCercaLine(cerca, totline))
 				return false;
 
@@ -565,7 +600,7 @@ namespace progetto_CRUD
 			return true;
 		}
 		private bool SwitchLine(string cerca, int totline, int seline, string path)
-		{
+		{//fun 6
 			if (!BoolCheckCercaLine(cerca, totline))
 				return false;
 
@@ -594,7 +629,7 @@ namespace progetto_CRUD
 			return true;
 		}
 		private void TwinLine(int seline, string path)
-		{
+		{//fun 7
 			seline--;
 			string[] lines = File.ReadAllLines(path + "\\lista.csv");
 			int totpro = int.Parse(lines[lines.Length-2]) + int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]); //aggiungo i prodotti duplicati
@@ -622,6 +657,46 @@ namespace progetto_CRUD
 			sw.WriteLine($"numero di prodotti: {totpro}");
 			sw.WriteLine($"prezzo totale: {sum}");
 			sw.Close();
+		}
+		private int RemoveAmount(string qua, int seline, string path)
+		{//fun 8
+			seline--;
+			if (qua == "") qua = "1";
+			string[] lines = File.ReadAllLines(path + "\\lista.csv");
+			int amount = int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]);
+			if (!CheckAmount(qua, amount)) //errore in input
+				return -1;
+
+			amount -= int.Parse(qua);
+			int totpro = int.Parse(lines[lines.Length - 2]) - int.Parse(qua); //tolgo i prodotti
+
+			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
+			for (int i = 0; i < seline; i++)
+				sw.WriteLine(lines[i]);
+			string[] split = lines[seline].Split(";".ToCharArray(), 4);
+			split[2] = amount.ToString();
+			sw.WriteLine(string.Join(";", split));
+			for (int i = seline+1; i < lines.Length - 2; i++)//seline + 1 per saltare la vecchia linea // length -1 prezzo totale, -1 n prodotti
+				sw.WriteLine(lines[i]); //trascrive il resto
+			sw.WriteLine(totpro);
+			sw.WriteLine(lines[lines.Length-1]); // sum
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\lista.txt");
+			sw = new StreamWriter(path + "\\lista.txt");
+
+			for (int i = 0; i < seline; i++)
+				sw.WriteLine(lines[i]);
+			sw.WriteLine($"{split[0]}.    Nome: {split[1]}     Quantità: {split[2]}     Prezzo: {split[3]}");
+			for (int i = seline + 1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
+				sw.WriteLine(lines[i]); //trascrive il resto
+			sw.WriteLine("-------------------");
+			sw.WriteLine($"numero di prodotti: {totpro}");
+			sw.WriteLine(lines[lines.Length-1]); // sum
+			sw.Close();
+
+			if (amount == 0) DeleteLine(seline+1, path);
+			return amount;
 		}
 	}
 }

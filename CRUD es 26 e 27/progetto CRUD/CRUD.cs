@@ -37,8 +37,7 @@ namespace progetto_CRUD
 		{
 			InitializeComponent();
 			path = GetPath();
-			//totpro = GetProCount(path + "\\contatori.txt");
-			totline = GetLineCount(path + "\\contatori.txt");
+			totline = GetLineCount(path + "\\lista.csv") - 2;
 			seline = totline + 1;
 			fun = 0; // 1 add, 2 select, 3 edit, 4 delete, 5 move, 6 switch, 7 twin, 8 remove, (a parte) history
 			SetVisible();
@@ -47,26 +46,13 @@ namespace progetto_CRUD
 		}
 		private string GetPath()
 		{
-			string path = Path.GetFullPath(".");
-			path = Path.GetDirectoryName(path);
-			path = Path.GetDirectoryName(path);
-			path = Path.GetDirectoryName(path);
-			path += @"\files";
+			string path = Path.GetFullPath("..\\..\\..\\files");
 			//Directory.CreateDirectory(path);
 			return path;
 		}
-		private int GetProCount(string filepath)
-		{
-			//StreamReader sr = File.OpenText(filepath);
-			StreamReader sr = new StreamReader(filepath);
-			int read = int.Parse(sr.ReadLine());
-			sr.Close();
-			return read;
-		}
 		private int GetLineCount(string filepath)
 		{
-			int lineCount = -1; //non conto la prima linea
-								//StreamReader sr = new (filepath);
+			int lineCount = 0;
 			StreamReader sr = new StreamReader(filepath);
 			while (sr.ReadLine() != null)
 				lineCount++;
@@ -106,9 +92,10 @@ namespace progetto_CRUD
 		{
 			(SearchBox.Visible, SearchLabel.Visible) = (vis, vis);
 		}
-		private void TextPriceVisible(bool vis)
+		private void TextPriceAmountVisible(bool vis)
 		{
-			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible) = (vis, vis, vis, vis);
+			(TextBox.Visible, TextLabel.Visible, PriceBox.Visible, PriceLabel.Visible,
+				AmountBox.Visible, AmountLabel.Visible) = (vis, vis, vis, vis, vis, vis);
 		}
 		private void ClearVisible(bool vis)
 		{
@@ -148,7 +135,7 @@ namespace progetto_CRUD
 			TwinButton.Visible = vis[1];
 			RemoveButton.Visible = vis[1];
 			SearchVisible(vis[3]);
-			TextPriceVisible(vis[4]);
+			TextPriceAmountVisible(vis[4]);
 			ClearVisible(vis[3] || vis[4]);
 			ConfirmButton.Visible = vis[5];
 			CancelButton1.Visible = vis[5] || vis[1];
@@ -217,6 +204,7 @@ namespace progetto_CRUD
 		private void ClearButton_Click(object sender, EventArgs e)
 		{
 			TextBox.Text = "";
+			AmountBox.Text = "";
 			PriceBox.Text = "";
 			SearchBox.Text = "";
 		}
@@ -232,7 +220,7 @@ namespace progetto_CRUD
 			TwinButton.Visible = false;
 			RemoveButton.Visible = false;
 			SearchVisible(false);
-			TextPriceVisible(false);
+			TextPriceAmountVisible(false);
 			ClearVisible(false);
 			ConfirmButton.Visible = false;
 			CancelButton1.Visible = true;
@@ -247,7 +235,7 @@ namespace progetto_CRUD
 
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
-			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, SearchBox.Text, totline, seline, path);
+			bool control = SwitchFun(fun, TextBox.Text, AmountBox.Text, PriceBox.Text, SearchBox.Text, totline, seline, path);
 			if (control) //if SwitchFun è meno ridondante ma brutto
 				switch (fun)
 				{
@@ -286,19 +274,19 @@ namespace progetto_CRUD
 			SetVisible();
 			StampaForm();
 		}
-		private bool SwitchFun(int fun, string nome, string prezzo, string cerca, int totline, int seline, string path)
+		private bool SwitchFun(int fun, string nome, string qua, string prezzo, string cerca, int totline, int seline, string path)
 		{
 			bool control = true; // false se qualcosa è andato storto
 			switch (fun)
 			{
 				case 1:
-					control = AddLine(nome, prezzo, cerca, totline, path); //mettere return AddLine ?
+					control = AddLine(nome, qua, prezzo, cerca, totline, path); //mettere return AddLine ?
 					break;
 				case 2:
 					control = SelectLine(cerca, totline);
 					break;
 				case 3:
-					control = EditLine(nome, prezzo, seline, path);
+					control = EditLine(nome, qua, prezzo, seline, path);
 					break;
 				case 4:
 					DeleteLine(seline, path);
@@ -319,7 +307,7 @@ namespace progetto_CRUD
 			return control;
 		}
 
-		private bool CheckNomePrezzo(string nome, string prezzo)
+		private bool CheckNomePrezzoQua(string nome, string qua, string prezzo)
 		{
 			if (nome == "")
 			{//bad input
@@ -336,14 +324,20 @@ namespace progetto_CRUD
 				MessageBox.Show("numero decimale positivo", "errore nel prezzo");
 				return false;
 			}
+			if (qua == "") return true; //qua = 1;
+			if (!int.TryParse(qua, out int amount) || amount < 0)
+			{//bad input
+				MessageBox.Show("numero intero positivo", "errore nella quantità");
+				return false;
+			}
 
 			return true;
 		}
-		private bool EditCheckNomePrezzo(string nome, string prezzo)
+		private bool EditCheckNomePrezzoQua(string nome, string qua, string prezzo)
 		{
-			//se nome o prezzo sono vuoti è ok, non entrambi vuoti
-			//quando uno è vuoto si prende quello vecchio
-			if (nome == "" && prezzo == "")
+			//se nome o prezzo o qua sono vuoti è ok, non tutti vuoti
+			//quando 1 o 2 sono vuoti si prende quello vecchio
+			if (nome == "" && prezzo == "" && qua == "")
 			{//bad input
 				MessageBox.Show("Scrivi qualcosa", "errore nel nome del prodotto");
 				return false;
@@ -359,7 +353,12 @@ namespace progetto_CRUD
 					MessageBox.Show("numero decimale positivo", "errore nel prezzo");
 					return false;
 				}
-
+			if (qua != "")
+				if (!int.TryParse(qua, out int amount) || amount < 0)
+				{//bad input
+					MessageBox.Show("numero intero positivo", "errore nella quantità");
+					return false;
+				}
 			return true;
 		}
 		private int IntCheckCercaLine(string cerca, int totline)
@@ -392,22 +391,23 @@ namespace progetto_CRUD
 			}
 			return true; //ret false = il cerca non è valido
 		}
-		private bool AddLine(string nome, string prezzo, string cerca, int totline, string path)
+		private bool AddLine(string nome, string qua, string prezzo, string cerca, int totline, string path)
 		{//fun 1
-			if (!CheckNomePrezzo(nome, prezzo)) //errore in input
+			if (!CheckNomePrezzoQua(nome, qua, prezzo)) //errore in input
 				return false;
-			int seline = IntCheckCercaLine(cerca, totline) - 1;
+			int seline = IntCheckCercaLine(cerca, totline);
 			if (seline == 0) //0 = false
 				return false;
-
+			seline--;
+			if (qua == "") qua = "1";
 			string[] lines = File.ReadAllLines(path + "\\lista.csv");
-			string totpro = (int.Parse(lines[lines.Length - 2]) + 1).ToString(); //aggiungo un prodotto
+			string totpro = (int.Parse(lines[lines.Length - 2]) + int.Parse(qua)).ToString(); //aggiungo i prodotti
 			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(prezzo);
 
 			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
 			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine(string.Join(";", seline+1, nome, prezzo)); //la nuova linea
+			sw.WriteLine(string.Join(";", seline+1, nome, qua, prezzo)); //la nuova linea
 			for (int i = seline; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
 				sw.WriteLine(i+2 + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
 			sw.WriteLine(totpro);
@@ -419,7 +419,7 @@ namespace progetto_CRUD
 
 			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{seline+1}.    Nome: {nome}     Prezzo: {prezzo}");
+			sw.WriteLine($"{seline+1}.    Nome: {nome}     Quantità: {qua}     Prezzo: {prezzo}");
 			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
 				sw.WriteLine(i+2 + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
 			sw.WriteLine("-------------------");
@@ -433,31 +433,39 @@ namespace progetto_CRUD
 		{//fun 2
 			return BoolCheckCercaLine(cerca, totline); //ret false = il cerca non è valido //ret true = string cerca  ha  int seline
 		}
-		private bool EditLine(string nome, string prezzo, int seline, string path)
+		private bool EditLine(string nome, string qua, string prezzo, int seline, string path)
 		{
-			if (!EditCheckNomePrezzo(nome, prezzo)) //errore in input
+			if (!EditCheckNomePrezzoQua(nome, qua, prezzo)) //errore in input
 				return false;
 
 			seline--;
 			string[] lines = File.ReadAllLines(path + "\\lista.csv");
-			string totpro = lines[lines.Length - 2];
 			if (nome == "")
 				nome = lines[seline].Split(";".ToCharArray(), 3)[1];
+			int totpro;
+			if (qua == "")
+			{
+				qua = lines[seline].Split(";".ToCharArray(), 4)[2];
+				totpro = int.Parse(lines[lines.Length - 2]);
+			}
+			else
+				//al totpro attuale toglie il vecchio valore e ci aggiunge quello modificato
+				totpro = int.Parse(lines[lines.Length-2]) - int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]) + int.Parse(qua);
 			float sum;
 			if (prezzo == "")
 			{
-				prezzo = lines[seline].Split(";".ToCharArray(), 3)[2];
+				prezzo = lines[seline].Split(";".ToCharArray(), 4)[3];
 				sum = float.Parse(lines[lines.Length - 1]);
 			}
 			else
 				//alla somma attuale toglie il vecchio valore e si aggiunge quello modificato
-				sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline].Split(";".ToCharArray(), 3)[2]) + float.Parse(prezzo);
+				sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline].Split(";".ToCharArray(), 4)[3]) + float.Parse(prezzo);
 
 			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
 			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
 			//aggiungo la linea modificata
-			sw.WriteLine(string.Join(";", seline+1, nome, prezzo));
+			sw.WriteLine(string.Join(";", seline+1, nome, qua, prezzo));
 			for (int i = seline+1; i < lines.Length - 2; i++)//seline + 1 per saltare la vecchia linea // length -1 prezzo totale, -1 n prodotti
 				sw.WriteLine(lines[i]); //trascrive il resto
 			sw.WriteLine(totpro);
@@ -469,7 +477,7 @@ namespace progetto_CRUD
 
 			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{seline+1}.    Nome: {nome}     Prezzo: {prezzo}");
+			sw.WriteLine($"{seline+1}.    Nome: {nome}     Quantità: {qua}     Prezzo: {prezzo}");
 			for (int i = seline + 1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
 				sw.WriteLine(lines[i]); //trascrive il resto
 			sw.WriteLine("-------------------");
@@ -483,8 +491,8 @@ namespace progetto_CRUD
 		{
 			seline--;
 			string[] lines = File.ReadAllLines(path + "\\lista.csv");
-			string totpro = (int.Parse(lines[lines.Length - 2]) - 1).ToString(); //tolgo una linea di prodotti
-			float sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline].Split(";".ToCharArray(), 3)[2]);
+			int totpro = int.Parse(lines[lines.Length-2]) - int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]); //tolgo una linea di prodotti
+			float sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline].Split(";".ToCharArray(), 4)[3]);
 
 			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
 			for (int i = 0; i < seline; i++)
@@ -589,8 +597,8 @@ namespace progetto_CRUD
 		{
 			seline--;
 			string[] lines = File.ReadAllLines(path + "\\lista.csv");
-			string totpro = (int.Parse(lines[lines.Length - 2]) + 1).ToString(); //aggiungo i prodotti duplicati
-			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(lines[seline].Split(";".ToCharArray(), 3)[2]);
+			int totpro = int.Parse(lines[lines.Length-2]) + int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]); //aggiungo i prodotti duplicati
+			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(lines[seline].Split(";".ToCharArray(), 4)[3]);
 
 			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
 			for (int i = 0; i < seline; i++)

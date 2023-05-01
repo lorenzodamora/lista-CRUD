@@ -57,6 +57,8 @@ namespace progetto_CRUD
             this.DescrizioneHistoryR = new System.Windows.Forms.ToolTip(this.components);
             this.ChiudiFormButton = new System.Windows.Forms.Button();
             this.SwitchButton = new System.Windows.Forms.Button();
+            this.AmountBox = new System.Windows.Forms.TextBox();
+            this.AmountLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // GraphicTitle
@@ -224,7 +226,7 @@ namespace progetto_CRUD
             // PriceLabel
             // 
             this.PriceLabel.AutoSize = true;
-            this.PriceLabel.Location = new System.Drawing.Point(394, 534);
+            this.PriceLabel.Location = new System.Drawing.Point(394, 577);
             this.PriceLabel.Name = "PriceLabel";
             this.PriceLabel.Size = new System.Drawing.Size(31, 13);
             this.PriceLabel.TabIndex = 11;
@@ -404,12 +406,52 @@ namespace progetto_CRUD
             this.SwitchButton.Visible = false;
             this.SwitchButton.Click += new System.EventHandler(this.SwitchButton_Click);
             // 
+            // AmountBox
+            // 
+            this.AmountBox.AutoCompleteCustomSource.AddRange(new string[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13"});
+            this.AmountBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.AmountBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.AmountBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.AmountBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.AmountBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.18868F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AmountBox.Location = new System.Drawing.Point(300, 500);
+            this.AmountBox.MaxLength = 20;
+            this.AmountBox.Name = "AmountBox";
+            this.AmountBox.Size = new System.Drawing.Size(125, 24);
+            this.AmountBox.TabIndex = 29;
+            this.AmountBox.Visible = false;
+            // 
+            // AmountLabel
+            // 
+            this.AmountLabel.AutoSize = true;
+            this.AmountLabel.Location = new System.Drawing.Point(384, 481);
+            this.AmountLabel.Name = "AmountLabel";
+            this.AmountLabel.Size = new System.Drawing.Size(43, 13);
+            this.AmountLabel.TabIndex = 30;
+            this.AmountLabel.Text = "Amount";
+            this.AmountLabel.Visible = false;
+            // 
             // CRUD
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(984, 759);
+            this.Controls.Add(this.AmountLabel);
+            this.Controls.Add(this.AmountBox);
             this.Controls.Add(this.SwitchButton);
             this.Controls.Add(this.ChiudiFormButton);
             this.Controls.Add(this.HistoryButton);
@@ -471,6 +513,8 @@ namespace progetto_CRUD
         private System.Windows.Forms.ToolTip DescrizioneHistoryR;
         private System.Windows.Forms.Button ChiudiFormButton;
         private Button SwitchButton;
+        private TextBox AmountBox;
+        private Label AmountLabel;
     }
 }
 

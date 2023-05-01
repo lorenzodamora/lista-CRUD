@@ -21,9 +21,6 @@ namespace progetto_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//togliere multi liste //fare sia csv che txt
-		//	//switch, twin
-
 		//togliere gli autocomplete
 		//più prodotti per linea
 		//cancellazione logica
@@ -199,9 +196,10 @@ namespace progetto_CRUD
 		{
 			fun = 7;
 			SetVisible();
-			NameList.Text = $"Stai duplicando una linea (verrà aggiunta accanto alla linea duplicata):";
+			NameList.Text = $"Conferma per duplicare la linea {seline}:";
+			//verrà aggiunta accanto alla linea duplicata
 		}
-		//remove 1 pro
+		//remove tot pro
 		private void RemoveButton_Click(object sender, EventArgs e)
 		{
 			fun = 8;
@@ -277,6 +275,10 @@ namespace progetto_CRUD
 						NameList.Text = $"Conferma per cancellare la linea {seline}:";
 						break;
 					case 7: //twin
+						totline += 1;
+						seline += 1;
+						NameList.Text = $"Stai modificando la linea {seline}";
+						fun = 0;
 						break;
 				}
 			if (totline == 0 && fun == 4)
@@ -309,8 +311,10 @@ namespace progetto_CRUD
 					control = SwitchLine(cerca, totline, seline, path);
 					break;
 				case 7:
+					TwinLine(seline, path);
 					break;
 				case 8:
+					//remove tot pro
 					break;
 			}
 			return control;
@@ -612,7 +616,7 @@ namespace progetto_CRUD
 			sw.Close();
 
 			lines = File.ReadAllLines(path + "\\lista.txt");
-			(lines[seline-1], lines[moveline-1]) = 
+			(lines[seline-1], lines[moveline-1]) =
 				(seline + "." + lines[moveline-1].Split(".".ToCharArray(), 2)[1], moveline + "." + lines[seline-1].Split(".".ToCharArray(), 2)[1]);
 
 			sw = new StreamWriter(path + "\\lista.txt");
@@ -622,6 +626,46 @@ namespace progetto_CRUD
 
 			return true;
 		}
+		private void TwinLine(int seline, string path)
+		{
+			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
+			lines[0] = (int.Parse(lines[0]) + 1).ToString(); //aggiungo i prodotti duplicati
+			string totpro = lines[0];
 
+			StreamWriter sw = new StreamWriter(path + "\\contatori.txt");
+			for (int i = 0; i < seline; i++) //stampo fino alla linea scelta
+				sw.WriteLine(lines[i]);
+			sw.WriteLine("1"); //aggiungo la linea di prodotti duplicati
+			for (int i = seline; i < lines.Length; i++) //stampo il resto
+				sw.WriteLine(lines[i]);
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\lista.csv");
+
+			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(lines[seline-1].Split(";".ToCharArray(), 3)[2]);
+
+			sw = new StreamWriter(path + "\\lista.csv");
+			for (int i = 0; i < seline - 1; i++)
+				sw.WriteLine(lines[i]);
+			sw.WriteLine(lines[seline-1]); //la nuova linea
+			for (int i = seline-1; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
+				sw.WriteLine(i+2 + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
+			sw.WriteLine(totpro);
+			sw.WriteLine(sum);
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\lista.txt");
+			sw = new StreamWriter(path + "\\lista.txt");
+
+			for (int i = 0; i < seline -1; i++)
+				sw.WriteLine(lines[i]);
+			sw.WriteLine(lines[seline-1]); //la nuova linea
+			for (int i = seline -1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
+				sw.WriteLine(i+2 + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
+			sw.WriteLine("-------------------");
+			sw.WriteLine($"numero di prodotti: {totpro}");
+			sw.WriteLine($"prezzo totale: {sum}");
+			sw.Close();
+		}
 	}
 }

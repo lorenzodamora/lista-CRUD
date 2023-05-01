@@ -4,6 +4,8 @@
 4.    Nome: test4     Prezzo: 4
 5.    Nome: test5     Prezzo: 5
 6.    Nome: test6     Prezzo: 6
+7.    Nome: test7     Prezzo: 7
+8.    Nome: test7     Prezzo: 7
 -------------------
-numero di prodotti: 6
-prezzo totale: 47
+numero di prodotti: 8
+prezzo totale: 61

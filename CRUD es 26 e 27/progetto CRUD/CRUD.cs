@@ -191,7 +191,9 @@ namespace progetto_CRUD
 		}
 		private void SwitchButton_Click(object sender, EventArgs e)
 		{
-
+			fun = 6;
+			SetVisible();
+			NameList.Text = $"Stai scambiando la linea {seline}:";
 		}
 		private void TwinButton_Click(object sender, EventArgs e)
 		{
@@ -245,6 +247,7 @@ namespace progetto_CRUD
 			while (i < lines.Length)
 				ListaProdotti.Items.Add(lines[i++]);
 		}
+
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
 			bool control = SwitchFun(fun, TextBox.Text, PriceBox.Text, SearchBox.Text, totline, seline, path);
@@ -256,6 +259,7 @@ namespace progetto_CRUD
 						seline += 1;
 						NameList.Text = $"Stai aggiungendo la linea {seline}, o la linea scelta in search :";
 						break;
+					case 6: //switch line
 					case 5: //move line
 					case 2: //select line true
 						seline = int.Parse(SearchBox.Text);
@@ -272,11 +276,8 @@ namespace progetto_CRUD
 						totline--;
 						NameList.Text = $"Conferma per cancellare la linea {seline}:";
 						break;
-						/*case 5: //move line
-							seline = int.Parse(SearchBox.Text); //insegue la linea spostata
-							NameList.Text = $"Stai modificando la linea {seline}";
-							fun = 0;
-							break;*/
+					case 7: //twin
+						break;
 				}
 			if (totline == 0 && fun == 4)
 				CancelButton1_Click(sender, e);
@@ -305,6 +306,7 @@ namespace progetto_CRUD
 					control = MoveLine(cerca, totline, seline, path);
 					break;
 				case 6:
+					control = SwitchLine(cerca, totline, seline, path);
 					break;
 				case 7:
 					break;
@@ -313,6 +315,7 @@ namespace progetto_CRUD
 			}
 			return control;
 		}
+
 		private bool CheckNomePrezzo(string nome, string prezzo)
 		{
 			if (nome == "")
@@ -583,5 +586,42 @@ namespace progetto_CRUD
 
 			return true;
 		}
+		private bool SwitchLine(string cerca, int totline, int seline, string path)
+		{
+			if (!BoolCheckCercaLine(cerca, totline))
+				return false;
+
+			int moveline = int.Parse(cerca);
+			if (seline == moveline) return false;
+
+			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
+			(lines[seline], lines[moveline]) = (lines[moveline], lines[seline]);
+
+			StreamWriter sw = new StreamWriter(path + "\\contatori.txt");
+			for (int i = 0; i < lines.Length; i++)
+				sw.WriteLine(lines[i]);
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\lista.csv");
+			(lines[seline-1], lines[moveline-1]) =
+				(seline + ";" + lines[moveline-1].Split(";".ToCharArray(), 2)[1], moveline + ";" + lines[seline-1].Split(";".ToCharArray(), 2)[1]);
+
+			sw = new StreamWriter(path + "\\lista.csv");
+			for (int i = 0; i < lines.Length; i++)
+				sw.WriteLine(lines[i]);
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\lista.txt");
+			(lines[seline-1], lines[moveline-1]) = 
+				(seline + "." + lines[moveline-1].Split(".".ToCharArray(), 2)[1], moveline + "." + lines[seline-1].Split(".".ToCharArray(), 2)[1]);
+
+			sw = new StreamWriter(path + "\\lista.txt");
+			for (int i = 0; i < lines.Length; i++)
+				sw.WriteLine(lines[i]);
+			sw.Close();
+
+			return true;
+		}
+
 	}
 }

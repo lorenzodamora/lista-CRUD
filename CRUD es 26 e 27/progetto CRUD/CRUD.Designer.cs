@@ -124,7 +124,7 @@ namespace progetto_CRUD
             "Pasta",
             "Tonno",
             "Pomodori"});
-            this.TextBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.TextBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.TextBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.TextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -152,7 +152,7 @@ namespace progetto_CRUD
             "11",
             "12",
             "13"});
-            this.SearchBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.SearchBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.SearchBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.SearchBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SearchBox.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -167,10 +167,11 @@ namespace progetto_CRUD
             // PriceBox
             // 
             this.PriceBox.AutoCompleteCustomSource.AddRange(new string[] {
+            "1",
             "1,00",
-            "50,34",
-            "23,56"});
-            this.PriceBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            "10,34",
+            "13,56"});
+            this.PriceBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.PriceBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.PriceBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PriceBox.Cursor = System.Windows.Forms.Cursors.IBeam;

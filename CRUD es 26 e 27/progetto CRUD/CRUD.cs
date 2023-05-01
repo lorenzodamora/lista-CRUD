@@ -21,7 +21,7 @@ namespace progetto_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//togliere gli autocomplete
+		//togliere contatori.txt // seline-1
 		//più prodotti per linea
 		//cancellazione logica
 		//file accesso diretto

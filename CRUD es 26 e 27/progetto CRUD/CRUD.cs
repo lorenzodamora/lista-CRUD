@@ -21,7 +21,6 @@ namespace progetto_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//togliere contatori.txt // seline-1
 		//più prodotti per linea
 		//cancellazione logica
 		//file accesso diretto
@@ -397,31 +396,19 @@ namespace progetto_CRUD
 		{//fun 1
 			if (!CheckNomePrezzo(nome, prezzo)) //errore in input
 				return false;
-			int seline = IntCheckCercaLine(cerca, totline);
+			int seline = IntCheckCercaLine(cerca, totline) - 1;
 			if (seline == 0) //0 = false
 				return false;
 
-			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
-			lines[0] = (int.Parse(lines[0]) + 1).ToString(); //aggiungo un prodotto
-			string totpro = lines[0];
-
-			StreamWriter sw = new StreamWriter(path + "\\contatori.txt");
-			for (int i = 0; i < seline; i++) //stampo fino alla linea scelta
-				sw.WriteLine(lines[i]);
-			sw.WriteLine("1"); //aggiungo la linea di prodotti
-			for (int i = seline; i < lines.Length; i++) //stampo il resto
-				sw.WriteLine(lines[i]);
-			sw.Close();
-
-			lines = File.ReadAllLines(path + "\\lista.csv");
-
+			string[] lines = File.ReadAllLines(path + "\\lista.csv");
+			string totpro = (int.Parse(lines[lines.Length - 2]) + 1).ToString(); //aggiungo un prodotto
 			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(prezzo);
 
-			sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < seline - 1; i++)
+			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
+			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine(string.Join(";", seline, nome, prezzo)); //la nuova linea
-			for (int i = seline-1; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
+			sw.WriteLine(string.Join(";", seline+1, nome, prezzo)); //la nuova linea
+			for (int i = seline; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
 				sw.WriteLine(i+2 + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
 			sw.WriteLine(totpro);
 			sw.WriteLine(sum);
@@ -430,10 +417,10 @@ namespace progetto_CRUD
 			lines = File.ReadAllLines(path + "\\lista.txt");
 			sw = new StreamWriter(path + "\\lista.txt");
 
-			for (int i = 0; i < seline -1; i++)
+			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{seline}.    Nome: {nome}     Prezzo: {prezzo}");
-			for (int i = seline -1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
+			sw.WriteLine($"{seline+1}.    Nome: {nome}     Prezzo: {prezzo}");
+			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
 				sw.WriteLine(i+2 + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
 			sw.WriteLine("-------------------");
 			sw.WriteLine($"numero di prodotti: {totpro}");
@@ -451,32 +438,27 @@ namespace progetto_CRUD
 			if (!EditCheckNomePrezzo(nome, prezzo)) //errore in input
 				return false;
 
-			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
-			//modifico il conteggio dei prodotti
-			string totpro = lines[0];
-
-			//modifico il contatori.txt
-
-			lines = File.ReadAllLines(path + "\\lista.csv");
-
+			seline--;
+			string[] lines = File.ReadAllLines(path + "\\lista.csv");
+			string totpro = lines[lines.Length - 2];
 			if (nome == "")
-				nome = lines[seline-1].Split(";".ToCharArray(), 3)[1];
+				nome = lines[seline].Split(";".ToCharArray(), 3)[1];
 			float sum;
 			if (prezzo == "")
 			{
-				prezzo = lines[seline-1].Split(";".ToCharArray(), 3)[2];
+				prezzo = lines[seline].Split(";".ToCharArray(), 3)[2];
 				sum = float.Parse(lines[lines.Length - 1]);
 			}
 			else
 				//alla somma attuale toglie il vecchio valore e si aggiunge quello modificato
-				sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline-1].Split(";".ToCharArray(), 3)[2]) + float.Parse(prezzo);
+				sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline].Split(";".ToCharArray(), 3)[2]) + float.Parse(prezzo);
 
 			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < seline - 1; i++)
+			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
 			//aggiungo la linea modificata
-			sw.WriteLine(string.Join(";", seline, nome, prezzo));
-			for (int i = seline; i < lines.Length - 2; i++)//seline - 1 + 1 per saltare la vecchia linea // length -1 prezzo totale, -1 n prodotti
+			sw.WriteLine(string.Join(";", seline+1, nome, prezzo));
+			for (int i = seline+1; i < lines.Length - 2; i++)//seline + 1 per saltare la vecchia linea // length -1 prezzo totale, -1 n prodotti
 				sw.WriteLine(lines[i]); //trascrive il resto
 			sw.WriteLine(totpro);
 			sw.WriteLine(sum);
@@ -485,10 +467,10 @@ namespace progetto_CRUD
 			lines = File.ReadAllLines(path + "\\lista.txt");
 			sw = new StreamWriter(path + "\\lista.txt");
 
-			for (int i = 0; i < seline -1; i++)
+			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{seline}.    Nome: {nome}     Prezzo: {prezzo}");
-			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
+			sw.WriteLine($"{seline+1}.    Nome: {nome}     Prezzo: {prezzo}");
+			for (int i = seline + 1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
 				sw.WriteLine(lines[i]); //trascrive il resto
 			sw.WriteLine("-------------------");
 			sw.WriteLine($"numero di prodotti: {totpro}");
@@ -499,24 +481,15 @@ namespace progetto_CRUD
 		}
 		private void DeleteLine(int seline, string path)
 		{
-			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
-			lines[0] = (int.Parse(lines[0]) - int.Parse(lines[seline])).ToString(); //tolgo una linea di prodotti
-			string totpro = lines[0];
+			seline--;
+			string[] lines = File.ReadAllLines(path + "\\lista.csv");
+			string totpro = (int.Parse(lines[lines.Length - 2]) - 1).ToString(); //tolgo una linea di prodotti
+			float sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline].Split(";".ToCharArray(), 3)[2]);
 
-			StreamWriter sw = new StreamWriter(path + "\\contatori.txt");
-			for (int i = 0; i < seline; i++) //stampo fino alla linea scelta
+			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
+			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			for (int i = seline + 1; i < lines.Length; i++) //la salto e stampo il resto
-				sw.WriteLine(lines[i]);
-			sw.Close();
-
-			lines = File.ReadAllLines(path + "\\lista.csv");
-			float sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline-1].Split(";".ToCharArray(), 3)[2]);
-
-			sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < seline - 1; i++)
-				sw.WriteLine(lines[i]);
-			for (int i = seline; i < lines.Length - 2; i++)//seline - 1 + 1 per saltare // length -1 prezzo totale, -1 n prodotti
+			for (int i = seline + 1; i < lines.Length - 2; i++)//seline + 1 per saltare // length -1 prezzo totale, -1 n prodotti
 				sw.WriteLine(i + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //i+1 indice attuale // i = il nuovo indice, e poi trascrive il resto
 			sw.WriteLine(totpro);
 			sw.WriteLine(sum);
@@ -525,9 +498,9 @@ namespace progetto_CRUD
 			lines = File.ReadAllLines(path + "\\lista.txt");
 			sw = new StreamWriter(path + "\\lista.txt");
 
-			for (int i = 0; i < seline -1; i++)
+			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
+			for (int i = seline+1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
 				sw.WriteLine(i + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
 			sw.WriteLine("-------------------");
 			sw.WriteLine($"numero di prodotti: {totpro}");
@@ -559,18 +532,11 @@ namespace progetto_CRUD
 			int moveline = int.Parse(cerca);
 			if (seline == moveline) return false;
 
-			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
+			seline--; moveline--;
+			string[] lines = File.ReadAllLines(path + "\\lista.csv");
 			StringMoveLine(lines, seline, moveline);
 
-			StreamWriter sw = new StreamWriter(path + "\\contatori.txt");
-			for (int i = 0; i < lines.Length; i++)
-				sw.WriteLine(lines[i]);
-			sw.Close();
-
-			lines = File.ReadAllLines(path + "\\lista.csv");
-			StringMoveLine(lines, seline-1, moveline-1);
-
-			sw = new StreamWriter(path + "\\lista.csv");
+			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
 			for (int i = 0; i < lines.Length - 2; i++) // length -1 prezzo totale, -1 n prodotti
 				sw.WriteLine(i+1 + ";" + lines[i].Split(";".ToCharArray(), 2)[1]);
 			sw.WriteLine(lines[lines.Length-2]); //totpro
@@ -578,7 +544,7 @@ namespace progetto_CRUD
 			sw.Close();
 
 			lines = File.ReadAllLines(path + "\\lista.txt");
-			StringMoveLine(lines, seline-1, moveline-1);
+			StringMoveLine(lines, seline, moveline);
 
 			sw = new StreamWriter(path + "\\lista.txt");
 			for (int i = 0; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
@@ -598,26 +564,19 @@ namespace progetto_CRUD
 			int moveline = int.Parse(cerca);
 			if (seline == moveline) return false;
 
-			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
-			(lines[seline], lines[moveline]) = (lines[moveline], lines[seline]);
+			seline--; moveline--;
+			string[] lines = File.ReadAllLines(path + "\\lista.csv");
+			(lines[seline], lines[moveline]) =
+				(seline+1 + ";" + lines[moveline].Split(";".ToCharArray(), 2)[1], moveline+1 + ";" + lines[seline].Split(";".ToCharArray(), 2)[1]);
 
-			StreamWriter sw = new StreamWriter(path + "\\contatori.txt");
-			for (int i = 0; i < lines.Length; i++)
-				sw.WriteLine(lines[i]);
-			sw.Close();
-
-			lines = File.ReadAllLines(path + "\\lista.csv");
-			(lines[seline-1], lines[moveline-1]) =
-				(seline + ";" + lines[moveline-1].Split(";".ToCharArray(), 2)[1], moveline + ";" + lines[seline-1].Split(";".ToCharArray(), 2)[1]);
-
-			sw = new StreamWriter(path + "\\lista.csv");
+			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
 			for (int i = 0; i < lines.Length; i++)
 				sw.WriteLine(lines[i]);
 			sw.Close();
 
 			lines = File.ReadAllLines(path + "\\lista.txt");
-			(lines[seline-1], lines[moveline-1]) =
-				(seline + "." + lines[moveline-1].Split(".".ToCharArray(), 2)[1], moveline + "." + lines[seline-1].Split(".".ToCharArray(), 2)[1]);
+			(lines[seline], lines[moveline]) =
+				(seline+1 + "." + lines[moveline].Split(".".ToCharArray(), 2)[1], moveline+1 + "." + lines[seline].Split(".".ToCharArray(), 2)[1]);
 
 			sw = new StreamWriter(path + "\\lista.txt");
 			for (int i = 0; i < lines.Length; i++)
@@ -628,27 +587,16 @@ namespace progetto_CRUD
 		}
 		private void TwinLine(int seline, string path)
 		{
-			string[] lines = File.ReadAllLines(path + "\\contatori.txt");
-			lines[0] = (int.Parse(lines[0]) + 1).ToString(); //aggiungo i prodotti duplicati
-			string totpro = lines[0];
+			seline--;
+			string[] lines = File.ReadAllLines(path + "\\lista.csv");
+			string totpro = (int.Parse(lines[lines.Length - 2]) + 1).ToString(); //aggiungo i prodotti duplicati
+			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(lines[seline].Split(";".ToCharArray(), 3)[2]);
 
-			StreamWriter sw = new StreamWriter(path + "\\contatori.txt");
-			for (int i = 0; i < seline; i++) //stampo fino alla linea scelta
+			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
+			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine("1"); //aggiungo la linea di prodotti duplicati
-			for (int i = seline; i < lines.Length; i++) //stampo il resto
-				sw.WriteLine(lines[i]);
-			sw.Close();
-
-			lines = File.ReadAllLines(path + "\\lista.csv");
-
-			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(lines[seline-1].Split(";".ToCharArray(), 3)[2]);
-
-			sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < seline - 1; i++)
-				sw.WriteLine(lines[i]);
-			sw.WriteLine(lines[seline-1]); //la nuova linea
-			for (int i = seline-1; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
+			sw.WriteLine(lines[seline]); //la nuova linea
+			for (int i = seline; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
 				sw.WriteLine(i+2 + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
 			sw.WriteLine(totpro);
 			sw.WriteLine(sum);
@@ -657,10 +605,10 @@ namespace progetto_CRUD
 			lines = File.ReadAllLines(path + "\\lista.txt");
 			sw = new StreamWriter(path + "\\lista.txt");
 
-			for (int i = 0; i < seline -1; i++)
+			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
-			sw.WriteLine(lines[seline-1]); //la nuova linea
-			for (int i = seline -1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
+			sw.WriteLine(lines[seline]); //la nuova linea
+			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
 				sw.WriteLine(i+2 + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
 			sw.WriteLine("-------------------");
 			sw.WriteLine($"numero di prodotti: {totpro}");

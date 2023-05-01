@@ -1,6 +1,9 @@
 1.    Nome: zucchero filato 2     Prezzo: 10
-2.    Nome: ciao     Prezzo: 10
-3.    Nome: 12\     Prezzo: 12
+2.    Nome: 12\     Prezzo: 12
+3.    Nome: test4     Prezzo: 4
+4.    Nome: test5     Prezzo: 5
+5.    Nome: test6     Prezzo: 6
+6.    Nome: ciao     Prezzo: 10
 -------------------
-numero di prodotti: 3
-prezzo totale: 32
+numero di prodotti: 6
+prezzo totale: 47

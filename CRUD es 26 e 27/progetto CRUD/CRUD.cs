@@ -21,8 +21,6 @@ namespace progetto_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//funzione remove amount
-		//cancellazione logica
 		//file accesso diretto
 		//select sia indice che string
 		//menu a comparsa
@@ -42,7 +40,7 @@ namespace progetto_CRUD
 			fun = 0; // 1 add, 2 select, 3 edit, 4 delete, 5 move, 6 switch, 7 twin, 8 remove, (a parte) history
 			SetVisible();
 			StampaForm();
-			File.Create(path + "\\logic remove.txt").Close(); //crea
+			File.Create(path + "\\logicRemove.csv").Close(); //crea
 		}
 		private string GetPath()
 		{
@@ -85,7 +83,7 @@ namespace progetto_CRUD
 		}
 		private void ChiudiFormButton_Click(object sender, EventArgs e)
 		{
-			File.Delete(path + "\\logic remove.txt");
+			File.Delete(path + "\\logicRemove.csv");
 			Close();
 		}
 		private void SearchVisible(bool vis)
@@ -230,14 +228,49 @@ namespace progetto_CRUD
 			AmountVisible(false);
 			ClearVisible(false);
 			ConfirmButton.Visible = false;
+
 			CancelButton1.Visible = true;
 			ListaProdotti.Items.Clear();
 			NameList.Text = "Queste sono le linee rimosse";
+			ListaProdotti.Items.Add("riclicca il pulsante H per ripristinare la cancellazione più recente");
 
-			string[] lines = File.ReadAllLines(path + "\\logic remove.txt");
-			int i = 0;
-			while (i < lines.Length)
-				ListaProdotti.Items.Add(lines[i++]);
+			string[] lines = File.ReadAllLines(path + "\\logicRemove.csv");
+			string[] splits = new string[4];
+
+			for (int i = 0; i < lines.Length; i++)
+			{
+				splits = lines[i].Split(";".ToCharArray(), 4);
+				ListaProdotti.Items.Add($"{splits[0]}.    Nome: {splits[1]}     Quantità: {splits[2]}     Prezzo: {splits[3]}");
+			}
+
+			if (fun == 9)
+			{
+				splits = lines[0].Split(";".ToCharArray(), 4);
+				AddButton.Visible = true;
+				AddButton_Click(sender, e);
+				AddLine(splits[1], splits[2], splits[3], splits[0], totline, path);
+				totline += 1;
+				seline = int.Parse(splits[0]);
+				fun = 0;
+				NameList.Text = $"Stai modificando la linea {seline}";
+				SetVisible();
+				StampaForm();
+
+				if (lines.Length != 1)
+				{
+					StreamWriter sw = new StreamWriter(path + "\\logicRemove.csv");
+					for (int i = 1; i < lines.Length; i++)
+						sw.WriteLine(lines[i]);
+					sw.Close();
+				}
+				else
+				{
+					File.Create(path + "\\logicRemove.csv").Close(); //svuota
+					HistoryButton.Visible = false;
+				}
+			}
+			else
+				fun = 9;
 		}
 
 		private void ConfirmButton_Click(object sender, EventArgs e)
@@ -267,6 +300,7 @@ namespace progetto_CRUD
 						if (seline == 0) seline++;
 						totline--;
 						NameList.Text = $"Conferma per cancellare la linea {seline}:";
+						HistoryButton.Visible = true;
 						break;
 					case 7: //twin line
 						totline += 1;
@@ -284,6 +318,7 @@ namespace progetto_CRUD
 						totline--;
 						NameList.Text = $"Stai rimuovendo dei prodotti dalla linea {seline}:";
 						fun = 8;
+						HistoryButton.Visible = true;
 						break;
 				}
 			if (totline == 0 && (fun == 4 || fun == 8)) //&& fun 4 //serve quando sbagli in add con 0 linee
@@ -532,10 +567,18 @@ namespace progetto_CRUD
 			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
 			for (int i = 0; i < seline; i++)
 				sw.WriteLine(lines[i]);
+			string logic = lines[seline];//linea da aggiungere alla cancellazione logica
 			for (int i = seline + 1; i < lines.Length - 2; i++)//seline + 1 per saltare // length -1 prezzo totale, -1 n prodotti
 				sw.WriteLine(i + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //i+1 indice attuale // i = il nuovo indice, e poi trascrive il resto
 			sw.WriteLine(totpro);
 			sw.WriteLine(sum);
+			sw.Close();
+
+			lines = File.ReadAllLines(path + "\\logicRemove.csv");
+			sw = new StreamWriter(path + "\\logicRemove.csv");
+			sw.WriteLine(logic); //aggiungo l'elemento appena rimosso alla cancellazione logica
+			for (int i = 0; i  < lines.Length; i++)
+				sw.WriteLine(lines[i]);
 			sw.Close();
 
 			lines = File.ReadAllLines(path + "\\lista.txt");
@@ -696,6 +739,17 @@ namespace progetto_CRUD
 			sw.Close();
 
 			if (amount == 0) DeleteLine(seline+1, path);
+
+			//a logicRemove aggiungo la quantità rimossa per arrivare a 0
+			lines = File.ReadAllLines(path + "\\logicRemove.csv");
+			split = lines[0].Split(";".ToCharArray(), 4);
+			split[2] = qua;
+			sw = new StreamWriter(path + "\\logicRemove.csv");
+			sw.WriteLine(string.Join(";", split));
+			for (int i = 1; i  < lines.Length; i++)
+				sw.WriteLine(lines[i]);
+			sw.Close();
+
 			return amount;
 		}
 	}

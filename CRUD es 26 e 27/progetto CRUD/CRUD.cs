@@ -21,12 +21,12 @@ namespace progetto_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//file accesso diretto
+		//files accesso diretto
 		//select sia indice che string
 		//menu a comparsa
 		//elementi cliccabili in listview
 		//funzioni esterne
-		//edit logico?? //cronologia?? //pensavo a due stack (ctrl z  ctrl y)
+		//cronologia //pensavo a due stack (ctrl z  ctrl y)
 
 		//non c'è mai seline 0; quando è 0 diventa totline + 1; tranne add e select, funziona tutto a select line
 		public int fun, totline, seline; //fun funzione //totline totale linee //seline linea selezionata
@@ -202,6 +202,7 @@ namespace progetto_CRUD
 			fun = 0;
 			seline = totline + 1;
 			SetVisible();
+			AddButton.Visible = true;
 			StampaForm();
 			NameList.Text = "Non è stata selezionata nessuna linea";
 		}
@@ -355,7 +356,7 @@ namespace progetto_CRUD
 					break;
 				case 8:
 					int amount = RemoveAmount(qua, seline, path);
-					control = amount != -1;
+					control = amount != -1; //-1 = errore in input
 					if (amount == 0) fun = 84;
 					break;
 			}
@@ -738,18 +739,20 @@ namespace progetto_CRUD
 			sw.WriteLine(lines[lines.Length-1]); // sum
 			sw.Close();
 
-			if (amount == 0) DeleteLine(seline+1, path);
+			if (amount == 0)
+			{
+				DeleteLine(seline+1, path);
 
-			//a logicRemove aggiungo la quantità rimossa per arrivare a 0
-			lines = File.ReadAllLines(path + "\\logicRemove.csv");
-			split = lines[0].Split(";".ToCharArray(), 4);
-			split[2] = qua;
-			sw = new StreamWriter(path + "\\logicRemove.csv");
-			sw.WriteLine(string.Join(";", split));
-			for (int i = 1; i  < lines.Length; i++)
-				sw.WriteLine(lines[i]);
-			sw.Close();
-
+				//a logicRemove aggiungo la quantità rimossa per arrivare a 0
+				lines = File.ReadAllLines(path + "\\logicRemove.csv");
+				split = lines[0].Split(";".ToCharArray(), 4);
+				split[2] = qua;
+				sw = new StreamWriter(path + "\\logicRemove.csv");
+				sw.WriteLine(string.Join(";", split));
+				for (int i = 1; i  < lines.Length; i++)
+					sw.WriteLine(lines[i]);
+				sw.Close();
+			}
 			return amount;
 		}
 	}

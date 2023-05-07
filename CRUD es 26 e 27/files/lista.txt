@@ -1,3 +1,7 @@
+1.    Nome: t1     Quantità: 1     Prezzo: 1,01
+2.    Nome: t2     Quantità: 1     Prezzo: 2
+3.    Nome: t3     Quantità: 2     Prezzo: 3
+4.    Nome: t4     Quantità: 4     Prezzo: 4
 -------------------
-numero di prodotti: 0
-prezzo totale: 0
+numero di prodotti: 8
+prezzo totale: 10,01

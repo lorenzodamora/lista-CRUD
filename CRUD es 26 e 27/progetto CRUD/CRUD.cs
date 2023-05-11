@@ -30,9 +30,19 @@ namespace progetto_CRUD
 		//funzioni esterne
 		//cronologia //pensavo a due stack (ctrl z  ctrl y)
 
-		//non c'è mai seline 0; quando è 0 diventa totline + 1; tranne add e select, funziona tutto a select line
+		//non c'è mai seline 0; quando è 0 diventa totline + 1; tranne add e select funziona tutto a select line
+		public struct StructLines
+		{
+			public int dim;
+			public string text;
+			public int amount;
+			public float price;
+		}
+
 		public int fun, totline, seline; //fun funzione //totline totale linee //seline linea selezionata
 		public string path;
+		public StructLines[] Lines; //evita di rileggere ogni volta il file
+		public int totpro; public float sum; //totale prodotti e somma finali
 		public CRUD()
 		{
 			InitializeComponent();
@@ -40,8 +50,9 @@ namespace progetto_CRUD
 			totline = GetLineCount(path + "\\lista.csv") - 2;
 			seline = totline + 1;
 			fun = 0; // 1 add, 2 select, 3 edit, 4 delete, 5 move, 6 switch, 7 twin, 8 remove, (a parte) history
-			SetVisible();
-			StampaForm();
+
+			//SetVisible(); crud load
+			//StampaForm();
 			File.Create(path + "\\logicRemove.csv").Close(); //crea o svuota
 		}
 		private string GetPath()
@@ -89,8 +100,32 @@ namespace progetto_CRUD
 			fs.Write(info, 0, info.Length);
 			fs.Close();
 		}
-		private void CRUD_Load(object sender, EventArgs e)
+		private int CheckLines(int length)
 		{
+			if (length < 100)
+				return 100;
+			else length = length/100 * 100 + 100;
+			return length; //ritorna 100 se minore di 100, altrimenti arrotonda a 2 zeri e aggiunge 100
+		}
+		private void CRUD_Shown(object sender, EventArgs e)
+		{
+			Lines = new StructLines[0];//100 linee alla volta
+			Array.Resize(ref Lines, CheckLines(totline+2));
+
+			string[] lines = FileReadAllLines(path + "\\lista.csv");
+			for (int i = 0; i < lines.Length-2; i++)//totpro e sum
+			{
+				string[] splits = lines[i].Split(';');
+				Lines[i].dim= int.Parse(splits[0]);
+				Lines[i].text= splits[1];
+				Lines[i].amount= int.Parse(splits[2]);
+				Lines[i].price= float.Parse(splits[3]);
+			}
+			totpro = int.Parse(lines[lines.Length-2]);
+			sum = float.Parse(lines[lines.Length-1]);
+			SetVisible();
+			StampaForm();
+
 			//aggiungere
 			DescrizioneAdd.SetToolTip(AddButton, "Aggiungi nuova linea");
 			DescrizioneHistoryR.SetToolTip(HistoryButton, "Guarda la lista delle linee rimosse");
@@ -117,6 +152,10 @@ namespace progetto_CRUD
 		{
 			File.Create(path + "\\logicRemove.csv").Close(); //svuota
 			Close();
+		}
+		private void ClosingForm(object sender, FormClosingEventArgs e)
+		{//???
+			File.Create(path + "\\logicRemove.csv").Close(); //svuota
 		}
 		private void SearchVisible(bool vis)
 		{

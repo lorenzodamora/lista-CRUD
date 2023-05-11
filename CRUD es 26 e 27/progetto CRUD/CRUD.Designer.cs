@@ -440,6 +440,7 @@ namespace progetto_CRUD
             // 
             // CRUD
             // 
+            this.AcceptButton = this.ClearButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -474,7 +475,8 @@ namespace progetto_CRUD
             this.MaximizeBox = false;
             this.Name = "CRUD";
             this.Text = "Lista CRUD";
-            this.Load += new System.EventHandler(this.CRUD_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClosingForm);
+            this.Shown += new System.EventHandler(this.CRUD_Shown);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Shortcut);
             this.ResumeLayout(false);
             this.PerformLayout();

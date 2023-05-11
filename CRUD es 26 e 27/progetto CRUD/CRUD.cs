@@ -4,7 +4,6 @@ using System;
 using System.Drawing;
 using System.Dynamic;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.ComponentModel;
 using System.Data;
 using System.Linq; //ha .ToArray();
@@ -14,14 +13,15 @@ using System.Threading; */
 using System.IO;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Diagnostics;
 using System.Text;
+using System.Diagnostics;
 
 namespace progetto_CRUD
 {
 	public partial class CRUD : Form
 	{
 		#endregion
+		//struct pubblica ed evitare di rileggere i files ogni volta
 		//select sia indice che string
 		//tooltip
 		//shortcut
@@ -65,13 +65,12 @@ namespace progetto_CRUD
 			UTF8Encoding temp = new UTF8Encoding(true);
 			string line = "";
 			FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
-			while (fs.Read(b, 0, b.Length)>0)
-				line += temp.GetString(b);
+			for (int l; (l = fs.Read(b, 0, b.Length)) > 0;)
+				line += temp.GetString(b, 0, l);
 			fs.Close();
 
 			if (line == "") return new string[0];
 
-			line = line.TrimEnd('\0');
 			// .SubString() perché altrimenti per ultimo rimarrebbe una stringa vuota
 			string[] lines = line.Substring(0, line.Length-1).Split('\n');
 			for (int i = 0; i < lines.Length; i++)

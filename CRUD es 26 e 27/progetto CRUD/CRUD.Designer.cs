@@ -343,12 +343,6 @@ namespace progetto_CRUD
             // 
             // NameList
             // 
-            this.NameList.AutoCompleteCustomSource.AddRange(new string[] {
-            "1,00",
-            "50,34",
-            "23,56"});
-            this.NameList.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.NameList.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.NameList.BackColor = System.Drawing.Color.White;
             this.NameList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.NameList.Cursor = System.Windows.Forms.Cursors.Arrow;

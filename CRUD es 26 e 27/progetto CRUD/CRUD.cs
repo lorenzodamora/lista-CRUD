@@ -21,8 +21,6 @@ namespace progetto_CRUD
 	public partial class CRUD : Form
 	{
 		#endregion
-		//struct pubblica ed evitare di rileggere i files ogni volta
-		//select sia indice che string
 		//tooltip
 		//shortcut
 		//menu a comparsa
@@ -31,25 +29,15 @@ namespace progetto_CRUD
 		//cronologia //pensavo a due stack (ctrl z  ctrl y)
 
 		//non c'è mai seline 0; quando è 0 diventa totline + 1; tranne add e select funziona tutto a select line
-		public struct StructLines
-		{
-			public int dim;
-			public string text;
-			public int amount;
-			public float price;
-		}
-
 		public int fun, totline, seline; //fun funzione //totline totale linee //seline linea selezionata
 		public string path;
-		public StructLines[] Lines; //evita di rileggere ogni volta il file
-		public int totpro; public float sum; //totale prodotti e somma finali
 		public CRUD()
 		{
 			InitializeComponent();
 			path = GetPath();
 			totline = GetLineCount(path + "\\lista.csv") - 2;
 			seline = totline + 1;
-			fun = 0; // 1 add, 2 select, 3 edit, 4 delete, 5 move, 6 switch, 7 twin, 8 remove, (a parte) history
+			fun = 0; // 1 add, 2 select, 3 edit, 4 delete, 5 move, 6 switch, 7 twin, 8 remove, (a parte) 9 history
 
 			//SetVisible(); crud load
 			//StampaForm();
@@ -81,7 +69,6 @@ namespace progetto_CRUD
 			fs.Close();
 
 			if (line == "") return new string[0];
-
 			// .SubString() perché altrimenti per ultimo rimarrebbe una stringa vuota
 			string[] lines = line.Substring(0, line.Length-1).Split('\n');
 			for (int i = 0; i < lines.Length; i++)
@@ -100,29 +87,8 @@ namespace progetto_CRUD
 			fs.Write(info, 0, info.Length);
 			fs.Close();
 		}
-		private int CheckLines(int length)
-		{
-			if (length < 100)
-				return 100;
-			else length = length/100 * 100 + 100;
-			return length; //ritorna 100 se minore di 100, altrimenti arrotonda a 2 zeri e aggiunge 100
-		}
 		private void CRUD_Shown(object sender, EventArgs e)
 		{
-			Lines = new StructLines[0];//100 linee alla volta
-			Array.Resize(ref Lines, CheckLines(totline+2));
-
-			string[] lines = FileReadAllLines(path + "\\lista.csv");
-			for (int i = 0; i < lines.Length-2; i++)//totpro e sum
-			{
-				string[] splits = lines[i].Split(';');
-				Lines[i].dim= int.Parse(splits[0]);
-				Lines[i].text= splits[1];
-				Lines[i].amount= int.Parse(splits[2]);
-				Lines[i].price= float.Parse(splits[3]);
-			}
-			totpro = int.Parse(lines[lines.Length-2]);
-			sum = float.Parse(lines[lines.Length-1]);
 			SetVisible();
 			StampaForm();
 
@@ -130,7 +96,6 @@ namespace progetto_CRUD
 			DescrizioneAdd.SetToolTip(AddButton, "Aggiungi nuova linea");
 			DescrizioneHistoryR.SetToolTip(HistoryButton, "Guarda la lista delle linee rimosse");
 		}
-		//add
 		private void Shortcut(object sender, KeyEventArgs e)
 		{
 			//funziona con history?
@@ -143,7 +108,10 @@ namespace progetto_CRUD
 		}
 		private void StampaForm()
 		{
-			string[] lines = FileReadAllLines(path + "\\lista.txt");
+			StampaForm(FileReadAllLines(path + "\\lista.txt"));
+		}
+		private void StampaForm(string[] lines)
+		{
 			ListaProdotti.Items.Clear();
 			for (int i = 0; i < lines.Length; i++)
 				ListaProdotti.Items.Add(lines[i]);
@@ -197,7 +165,7 @@ namespace progetto_CRUD
 			vis[0] = totline != 0;
 			vis[1] = seline != totline + 1;
 			vis[2] = totline > 1 && vis[1];
-			vis[3] = fun == 1 || fun == 2 || fun == 5 || fun == 6;
+			vis[3] = fun == 1 || fun == 2 || fun == 21 || fun == 5 || fun == 6;
 			vis[4] = fun == 1 || fun == 3;
 			vis[5] = fun != 0;
 
@@ -214,6 +182,9 @@ namespace progetto_CRUD
 			ClearVisible(vis[3] || vis[4] || fun == 8);
 			ConfirmButton.Visible = vis[5];
 			CancelButton1.Visible = vis[5] || vis[1];
+
+			//box ricerca index o testo
+			IndexCheckBox.Visible = fun == 2 || fun == 21;
 		}
 		private void AddButton_Click(object sender, EventArgs e)
 		{
@@ -230,10 +201,16 @@ namespace progetto_CRUD
 		}
 		private void SelectButton_Click(object sender, EventArgs e)
 		{
-			fun = 2;
+			IndexCheckBox.Checked = true;
+			fun = 21;
 			seline = totline + 1;
 			SetVisible();
 			NameList.Text = "Scegli la linea da modificare digitando il numero in search :";
+		}
+		private void IndexCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			if (IndexCheckBox.Checked) { fun = 21; StampaForm(); NameList.Text = "Scegli la linea da modificare digitando il numero in search :"; }
+			if (!IndexCheckBox.Checked) fun = 2;
 		}
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
@@ -351,8 +328,10 @@ namespace progetto_CRUD
 
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
-			bool control = SwitchFun(ref fun, TextBox.Text, AmountBox.Text, PriceBox.Text, SearchBox.Text, totline, seline, path);
+			bool control = true;
+			if (fun != 2) control = SwitchFun(ref fun, TextBox.Text, AmountBox.Text, PriceBox.Text, SearchBox.Text, totline, seline, path);
 			if (control) //if SwitchFun è meno ridondante ma brutto
+			{
 				switch (fun)
 				{
 					case 1: //addline
@@ -360,16 +339,10 @@ namespace progetto_CRUD
 						seline += 1;
 						NameList.Text = $"Stai aggiungendo la linea {seline}, o la linea scelta in search :";
 						break;
-					case 6: //switch line
+					case 21: //select index
 					case 5: //move line
-					case 2: //select line true
+					case 6: //switch line
 						seline = int.Parse(SearchBox.Text);
-						NameList.Text = $"Stai modificando la linea {seline}";
-						fun = 0;
-						break;
-					case 3: //edit line
-						NameList.Text = $"Stai modificando la linea {seline}";
-						fun = 0;
 						break;
 					case 4: //delete line
 						if (seline == totline) seline--;
@@ -381,12 +354,9 @@ namespace progetto_CRUD
 					case 7: //twin line
 						totline += 1;
 						seline += 1;
-						NameList.Text = $"Stai modificando la linea {seline}";
-						fun = 0;
 						break;
 					case 8: //remove amount
 						NameList.Text = $"Stai modificando la linea {seline}";
-						fun = 0;
 						break;
 					case 84: //quando da 8remove passa a 4delete, ma era remove
 						if (seline == totline) seline--;
@@ -397,11 +367,31 @@ namespace progetto_CRUD
 						HistoryButton.Visible = true;
 						break;
 				}
+				switch (fun)
+				{
+					case 21: //select index
+					case 3: //edit line
+					case 5: //move line
+					case 6: //switch line
+					case 7: //twin line
+						NameList.Text = $"Stai modificando la linea {seline}";
+						fun = 0;
+						break;
+				}
+			}
 			if (totline == 0 && (fun == 4 || fun == 8)) //&& fun 4 //serve quando sbagli in add con 0 linee
 				CancelButton1_Click(sender, e); //NameList.Text e fun 0
 
-			SetVisible();
-			StampaForm();
+			if (fun == 2)
+			{
+				NameList.Text = $"Tutte le linee trovate in ricerca(spunta index e scegli la linea da modificare):";
+				StampaForm(SelectLineResearch(SearchBox.Text, path));
+			}
+			else
+			{
+				SetVisible();
+				StampaForm();
+			}
 		}
 		private bool SwitchFun(ref int fun, string nome, string qua, string prezzo, string cerca, int totline, int seline, string path)
 		{
@@ -411,8 +401,8 @@ namespace progetto_CRUD
 				case 1:
 					control = AddLine(nome, qua, prezzo, cerca, totline, path); //mettere return AddLine ?
 					break;
-				case 2:
-					control = SelectLine(cerca, totline);
+				case 21:
+					control = SelectLineIndex(cerca, totline);
 					break;
 				case 3:
 					control = EditLine(nome, qua, prezzo, seline, path);
@@ -602,9 +592,35 @@ namespace progetto_CRUD
 			*/
 			return true;
 		}
-		private bool SelectLine(string cerca, int totline)
-		{//fun 2
+		private bool SelectLineIndex(string cerca, int totline)
+		{//fun 21
 			return BoolCheckCercaLine(cerca, totline); //ret false = il cerca non è valido //ret true = string cerca  ha  int seline
+		}
+		private string[] SelectLineResearch(string cerca, string path)
+		{//fun 2
+			string[] lines = FileReadAllLines(path + "\\lista.csv");
+			string[] splits = new string[0];
+			int k = 0;
+			for (int i = 0; i< lines.Length-2; i++)
+				if (lines[i].Split(";".ToCharArray(), 3)[1].ToLower().Contains(cerca.ToLower())) //cerca solo in text
+				{
+					splits = lines[i].Split(';');
+					lines[k++]=$"{splits[0]}.    Nome: {splits[1]}     Quantità: {splits[2]}     Prezzo: {splits[3]}";
+				}
+			if (splits.Length == 0)
+			{
+				ErrorInSelect();
+				return new string[0];
+			}
+			else
+			{
+				Array.Resize(ref lines, k);
+				return lines;
+			}
+		}
+		private void ErrorInSelect()
+		{
+			MessageBox.Show("la parola cercata non esiste", "errore nella ricerca");
 		}
 		private bool EditLine(string nome, string qua, string prezzo, int seline, string path)
 		{//fun 3

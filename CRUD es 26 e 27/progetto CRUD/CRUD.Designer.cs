@@ -59,6 +59,7 @@ namespace progetto_CRUD
             this.SwitchButton = new System.Windows.Forms.Button();
             this.AmountBox = new System.Windows.Forms.TextBox();
             this.AmountLabel = new System.Windows.Forms.Label();
+            this.IndexCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // GraphicTitle
@@ -438,6 +439,19 @@ namespace progetto_CRUD
             this.AmountLabel.Text = "Amount";
             this.AmountLabel.Visible = false;
             // 
+            // IndexCheckBox
+            // 
+            this.IndexCheckBox.AutoSize = true;
+            this.IndexCheckBox.Checked = true;
+            this.IndexCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.IndexCheckBox.Location = new System.Drawing.Point(169, 481);
+            this.IndexCheckBox.Name = "IndexCheckBox";
+            this.IndexCheckBox.Size = new System.Drawing.Size(51, 17);
+            this.IndexCheckBox.TabIndex = 31;
+            this.IndexCheckBox.Text = "index";
+            this.IndexCheckBox.UseVisualStyleBackColor = true;
+            this.IndexCheckBox.CheckedChanged += new System.EventHandler(this.IndexCheckBox_CheckedChanged);
+            // 
             // CRUD
             // 
             this.AcceptButton = this.ClearButton;
@@ -445,6 +459,7 @@ namespace progetto_CRUD
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(984, 759);
+            this.Controls.Add(this.IndexCheckBox);
             this.Controls.Add(this.AmountLabel);
             this.Controls.Add(this.AmountBox);
             this.Controls.Add(this.SwitchButton);
@@ -511,6 +526,7 @@ namespace progetto_CRUD
         private Button SwitchButton;
         private TextBox AmountBox;
         private Label AmountLabel;
+        private CheckBox IndexCheckBox;
     }
 }
 

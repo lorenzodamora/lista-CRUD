@@ -22,7 +22,6 @@ namespace progetto_CRUD
 	{
 		#endregion
 		//tooltip
-		//shortcut
 		//menu a comparsa
 		//elementi cliccabili in listview
 		//funzioni esterne
@@ -95,16 +94,49 @@ namespace progetto_CRUD
 			//aggiungere
 			DescrizioneAdd.SetToolTip(AddButton, "Aggiungi nuova linea");
 			DescrizioneHistoryR.SetToolTip(HistoryButton, "Guarda la lista delle linee rimosse");
+
 		}
 		private void Shortcut(object sender, KeyEventArgs e)
 		{
-			//funziona con history?
-			if (e.Control &&  e.Shift &&e.KeyCode == Keys.A)
+			if (e.Control && e.Shift && e.KeyCode == Keys.A && AddButton.Visible)
 				//shortcut Ctrl+Shift+A
 				AddButton_Click(sender, e);
-			//confirm shortcut
-			//cancel shortcut
-			//
+			if (e.Control && e.Shift && e.KeyCode == Keys.S && SelectButton.Visible)
+				//shortcut Ctrl+Shift+S
+				SelectButton_Click(sender, e);
+			if (e.Control && e.Shift && e.KeyCode == Keys.E && EditButton.Visible)
+				//shortcut Ctrl+Shift+E
+				EditButton_Click(sender, e);
+			if (e.Control && e.Shift && e.KeyCode == Keys.D && DeleteButton.Visible)
+				//shortcut Ctrl+Shift+D
+				DeleteButton_Click(sender, e);
+			if (e.Control && e.Shift && e.KeyCode == Keys.M && MoveButton.Visible)
+				//shortcut Ctrl+Shift+M
+				MoveButton_Click(sender, e);
+			if (e.Control && e.Shift && e.KeyCode == Keys.T && TwinButton.Visible)
+				//shortcut Ctrl+Shift+T
+				TwinButton_Click(sender, e);
+			if (e.Control && e.Shift && e.KeyCode == Keys.W && SwitchButton.Visible)
+				//shortcut Ctrl+Shift+W
+				SwitchButton_Click(sender, e);
+			if (e.Control && e.Shift && e.KeyCode == Keys.R && RemoveButton.Visible)
+				//shortcut Ctrl+Shift+R
+				RemoveButton_Click(sender, e);
+			if (e.Control && e.Shift && e.KeyCode == Keys.H && HistoryButton.Visible)
+				//shortcut Ctrl+Shift+H
+				HistoryButton_Click(sender, e);
+			if (e.Control && e.Shift && e.KeyCode == Keys.I && IndexCheckBox.Visible)
+				//shortcut Ctrl+Shift+I
+				IndexCheckBox.Checked = !IndexCheckBox.Checked;
+			if (e.Control && e.Shift && e.KeyCode == Keys.C && ClearButton.Visible)
+				//shortcut Ctrl+Shift+C
+				ClearButton_Click(sender, e);
+			if (e.Control && e.Shift && e.KeyCode == Keys.Enter && ConfirmButton.Visible)
+				//shortcut Ctrl+Shift+Enter
+				ConfirmButton_Click(sender, e);
+			if (e.Control && e.Shift && (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back) && CancelButton1.Visible)
+				//shortcut Ctrl+Shift+ Canc o Back
+				CancelButton1_Click(sender, e);
 		}
 		private void StampaForm()
 		{

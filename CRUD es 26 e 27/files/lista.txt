@@ -2,6 +2,7 @@
 2.    Nome: a2      Quantità: 1     Prezzo: 2
 3.    Nome: a3      Quantità: 2     Prezzo: 3
 4.    Nome: t4      Quantità: 4     Prezzo: 4
+5.    Nome: b5     Quantità: 5     Prezzo: 5,05
 -------------------
-numero di prodotti: 8
-prezzo totale: 10,01
+numero di prodotti: 13
+prezzo totale: 15,06

@@ -44,7 +44,11 @@ namespace progetto_CRUD
             this.SearchLabel = new System.Windows.Forms.Label();
             this.PriceLabel = new System.Windows.Forms.Label();
             this.TextLabel = new System.Windows.Forms.Label();
-            this.ListaProdotti = new System.Windows.Forms.ListView();
+            this.Lista = new System.Windows.Forms.ListView();
+            this.index = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DescrizioneAdd = new System.Windows.Forms.ToolTip(this.components);
             this.ClearButton = new System.Windows.Forms.Button();
             this.ClearLabel = new System.Windows.Forms.Label();
@@ -239,21 +243,51 @@ namespace progetto_CRUD
             this.TextLabel.AutoSize = true;
             this.TextLabel.Location = new System.Drawing.Point(100, 577);
             this.TextLabel.Name = "TextLabel";
-            this.TextLabel.Size = new System.Drawing.Size(47, 13);
+            this.TextLabel.Size = new System.Drawing.Size(77, 13);
             this.TextLabel.TabIndex = 12;
-            this.TextLabel.Text = "Prodotto";
+            this.TextLabel.Text = "Testo Prodotto";
             this.TextLabel.Visible = false;
             // 
-            // ListaProdotti
+            // Lista
             // 
-            this.ListaProdotti.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.830189F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ListaProdotti.HideSelection = false;
-            this.ListaProdotti.Location = new System.Drawing.Point(525, 150);
-            this.ListaProdotti.Name = "ListaProdotti";
-            this.ListaProdotti.Size = new System.Drawing.Size(400, 575);
-            this.ListaProdotti.TabIndex = 16;
-            this.ListaProdotti.UseCompatibleStateImageBehavior = false;
-            this.ListaProdotti.View = System.Windows.Forms.View.List;
+            this.Lista.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.index,
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.Lista.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.830189F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Lista.FullRowSelect = true;
+            this.Lista.GridLines = true;
+            this.Lista.HideSelection = false;
+            this.Lista.Location = new System.Drawing.Point(525, 150);
+            this.Lista.Name = "Lista";
+            this.Lista.Size = new System.Drawing.Size(400, 575);
+            this.Lista.TabIndex = 16;
+            this.Lista.UseCompatibleStateImageBehavior = false;
+            this.Lista.View = System.Windows.Forms.View.Details;
+            // 
+            // index
+            // 
+            this.index.Text = "index";
+            this.index.Width = 44;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "name";
+            this.columnHeader1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader1.Width = 46;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "amount";
+            this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader2.Width = 56;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "price";
+            this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader3.Width = 42;
             // 
             // ClearButton
             // 
@@ -472,7 +506,7 @@ namespace progetto_CRUD
             this.Controls.Add(this.AddButton);
             this.Controls.Add(this.ClearLabel);
             this.Controls.Add(this.ClearButton);
-            this.Controls.Add(this.ListaProdotti);
+            this.Controls.Add(this.Lista);
             this.Controls.Add(this.TextLabel);
             this.Controls.Add(this.PriceLabel);
             this.Controls.Add(this.SearchLabel);
@@ -511,7 +545,7 @@ namespace progetto_CRUD
         private System.Windows.Forms.Label SearchLabel;
         private System.Windows.Forms.Label PriceLabel;
         private System.Windows.Forms.Label TextLabel;
-        private System.Windows.Forms.ListView ListaProdotti;
+        private System.Windows.Forms.ListView Lista;
         private System.Windows.Forms.ToolTip DescrizioneAdd;
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Label ClearLabel;
@@ -527,6 +561,10 @@ namespace progetto_CRUD
         private TextBox AmountBox;
         private Label AmountLabel;
         private CheckBox IndexCheckBox;
+        private ColumnHeader index;
+        private ColumnHeader columnHeader1;
+        private ColumnHeader columnHeader2;
+        private ColumnHeader columnHeader3;
     }
 }
 

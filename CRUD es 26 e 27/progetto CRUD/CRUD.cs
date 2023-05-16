@@ -18,16 +18,29 @@ using System.Diagnostics;
 
 namespace progetto_CRUD
 {
+	#endregion
+	public struct StructLines
+	{
+		public int ind;
+		public string text;
+		public int amount;
+		public float price;
+	}
 	public partial class CRUD : Form
 	{
-		#endregion
+		//listview tabelle e struct (togliere lista.txt)
+		//rifare accesso diretto
 		//tooltip
 		//menu a comparsa
 		//elementi cliccabili in listview
 		//funzioni esterne
-		//cronologia //pensavo a due stack (ctrl z  ctrl y)
+		//cronologia //pensavo a due stack (ctrl z  ctrl y) //togliere logicremove.csv e mettere history.csv
 
 		//non c'è mai seline 0; quando è 0 diventa totline + 1; tranne add e select funziona tutto a select line
+
+		public int len, totpro; //len lunghezza usata struct[], totpro totale prodotti
+		public float sumprice; //somma prezzi
+		public StructLines[] csvLines;
 		public int fun, totline, seline; //fun funzione //totline totale linee //seline linea selezionata
 		public string path;
 		public CRUD()
@@ -137,16 +150,95 @@ namespace progetto_CRUD
 			if (e.Control && e.Shift && (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back) && CancelButton1.Visible)
 				//shortcut Ctrl+Shift+ Canc o Back
 				CancelButton1_Click(sender, e);
+
+			if (e.Control && e.Alt && e.KeyCode == Keys.S && SearchBox.Visible)
+				//shortcut Ctrl+Alt+ S
+				SearchBox.Focus();
+			if (e.Control && e.Alt && e.KeyCode == Keys.T && TextBox.Visible)
+				//shortcut Ctrl+Alt+ T
+				TextBox.Focus();
+			if (e.Control && e.Alt && e.KeyCode == Keys.P && PriceBox.Visible)
+				//shortcut Ctrl+Alt+ P
+				PriceBox.Focus();
+			if (e.Control && e.Alt && e.KeyCode == Keys.A && AmountBox.Visible)
+				//shortcut Ctrl+Alt+ A
+				AmountBox.Focus();
 		}
 		private void StampaForm()
 		{
-			StampaForm(FileReadAllLines(path + "\\lista.txt"));
+			StampaForm(FileReadAllLines(path + "\\lista.csv"));
 		}
 		private void StampaForm(string[] lines)
 		{
-			ListaProdotti.Items.Clear();
+			Lista.Clear();
+
+			ColumnHeader index, name, amount, price;
+			index = new ColumnHeader()
+			{
+				Text = "index",
+				TextAlign = HorizontalAlignment.Center,
+				Width = 44
+			};
+			name = new ColumnHeader()
+			{
+				Text = "name",
+				TextAlign = HorizontalAlignment.Center,
+				Width = 46
+			};
+			amount = new ColumnHeader()
+			{
+				Text = "amount",
+				TextAlign = HorizontalAlignment.Center,
+				Width = 56
+			};
+			price = new ColumnHeader()
+
+			{
+				Text = "price",
+				TextAlign = HorizontalAlignment.Center,
+				Width = 42
+			};
+
+			Lista.Columns.Add(index);
+			Lista.Columns.Add(name);
+			Lista.Columns.Add(amount);
+			Lista.Columns.Add(price);
+
+			ListViewItem line;
 			for (int i = 0; i < lines.Length; i++)
-				ListaProdotti.Items.Add(lines[i]);
+			{
+				string[] split = lines[i].Split(';');
+				if (split.Length == 1)
+				{
+					line = new ListViewItem(); //main item
+					Lista.Items.Add("");
+					line.SubItems.Add("totale prodotti:"); //sub item
+					line.SubItems.Add(lines[lines.Length-2]); //sub item
+					Lista.Items.Add(line);
+					line = new ListViewItem(); //main item
+					line.SubItems.Add("somma totale:"); //sub item
+					line.SubItems.Add(""); //sub item
+					line.SubItems.Add(lines[lines.Length-1]); //sub item
+					Lista.Items.Add(line);
+					break;
+				}
+				else
+				{
+					line = new ListViewItem(split[0]); //main item
+					for (int j = 1; j < split.Length; j++)
+						line.SubItems.Add(split[j]); //sub item
+					Lista.Items.Add(line);
+				}
+			}
+
+			index.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+			if (index.Width<44) index.Width=44;
+			name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+			if (name.Width<46) name.Width=46;
+			amount.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+			if (amount.Width<56) amount.Width=56;
+			price.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+			if (price.Width<42) price.Width=42;
 		}
 		private void ChiudiFormButton_Click(object sender, EventArgs e)
 		{
@@ -296,37 +388,35 @@ namespace progetto_CRUD
 		// cronologia
 		private void HistoryButton_Click(object sender, EventArgs e)
 		{//fun 9
-			AddButton.Visible = false;
-			SelectButton.Visible = false;
-			EditButton.Visible = false;
-			DeleteButton.Visible = false;
-			MoveButton.Visible = false;
-			SwitchButton.Visible = false;
-			TwinButton.Visible = false;
-			RemoveButton.Visible = false;
-			SearchVisible(false);
-			TextPriceVisible(false);
-			AmountVisible(false);
-			ClearVisible(false);
-			ConfirmButton.Visible = false;
-
-			CancelButton1.Visible = true;
-			ListaProdotti.Items.Clear();
-			NameList.Text = "Queste sono le linee rimosse";
-			ListaProdotti.Items.Add("riclicca il pulsante H per ripristinare la cancellazione più recente");
-
-			string[] lines = FileReadAllLines(path + "\\logicRemove.csv");
-			string[] splits; // = new string[4];
-
-			for (int i = 0; i < lines.Length; i++)
+			if (fun != 9)
 			{
-				splits = lines[i].Split(";".ToCharArray());
-				ListaProdotti.Items.Add($"{splits[0]}.    Nome: {splits[1]}     Quantità: {splits[2]}     Prezzo: {splits[3]}");
+				fun = 9;
+				AddButton.Visible = false;
+				SelectButton.Visible = false;
+				EditButton.Visible = false;
+				DeleteButton.Visible = false;
+				MoveButton.Visible = false;
+				SwitchButton.Visible = false;
+				TwinButton.Visible = false;
+				RemoveButton.Visible = false;
+				SearchVisible(false);
+				TextPriceVisible(false);
+				AmountVisible(false);
+				ClearVisible(false);
+				ConfirmButton.Visible = false;
+
+				CancelButton1.Visible = true;
+				Lista.Items.Clear();
+				NameList.Text = "Queste sono le linee rimosse";
+				ListViewItem line = new ListViewItem(); //main item
+				line.SubItems.Add("riclicca il pulsante H per ripristinare la cancellazione più recente");
+				Lista.Items.Add(line);
+				StampaForm(FileReadAllLines(path + "\\logicRemove.csv"));
 			}
-
-			if (fun == 9)
+			else
 			{
-				splits = lines[0].Split(";".ToCharArray(), 4);
+				string[] lines = FileReadAllLines(path + "\\logicRemove.csv");
+				string[] splits = lines[0].Split(';');
 				AddButton.Visible = true;
 				AddButton_Click(sender, e);
 				AddLine(splits[1], splits[2], splits[3], splits[0], totline, path);
@@ -341,7 +431,7 @@ namespace progetto_CRUD
 				{
 					//StreamWriter sw = new StreamWriter(path + "\\logicRemove.csv");
 					lines[0] = "";
-					for (int i = 1; i < lines.Length; i++)
+					for (int i = 1; i<lines.Length; i++)
 						lines[0] += lines[i] + "\n";
 					Byte[] info = new UTF8Encoding(true).GetBytes(lines[0]);
 					FileStream fs = new FileStream(path + "\\logicRemove.csv", FileMode.Truncate, FileAccess.Write, FileShare.None);
@@ -354,8 +444,6 @@ namespace progetto_CRUD
 					HistoryButton.Visible = false;
 				}
 			}
-			else
-				fun = 9;
 		}
 
 		private void ConfirmButton_Click(object sender, EventArgs e)
@@ -596,7 +684,7 @@ namespace progetto_CRUD
 			sw.Close();
 			*/
 
-			lines = FileReadAllLines(path + "\\lista.txt");
+			/*lines = FileReadAllLines(path + "\\lista.txt");
 
 			allLines = "";
 			for (int i = 0; i < seline; i++)
@@ -608,7 +696,7 @@ namespace progetto_CRUD
 			info = new UTF8Encoding(true).GetBytes(allLines);
 			fs = new FileStream(path + "\\lista.txt", FileMode.Open, FileAccess.Write, FileShare.None);
 			fs.Write(info, 0, info.Length);
-			fs.Close();
+			fs.Close();*/
 
 			/*
 			var sw = new StreamWriter(path + "\\lista.txt");
@@ -708,7 +796,7 @@ namespace progetto_CRUD
 			sw.Close();
 			*/
 
-			lines = FileReadAllLines(path + "\\lista.txt");
+			/*lines = FileReadAllLines(path + "\\lista.txt");
 
 			allLines = "";
 			for (int i = 0; i < seline; i++)
@@ -720,7 +808,7 @@ namespace progetto_CRUD
 			info = new UTF8Encoding(true).GetBytes(allLines);
 			fs = new FileStream(path + "\\lista.txt", FileMode.Truncate, FileAccess.Write, FileShare.None);
 			fs.Write(info, 0, info.Length);
-			fs.Close();
+			fs.Close();*/
 
 			/*
 			sw = new StreamWriter(path + "\\lista.txt");
@@ -784,7 +872,7 @@ namespace progetto_CRUD
 			sw.Close();
 			*/
 
-			lines = FileReadAllLines(path + "\\lista.txt");
+			/*lines = FileReadAllLines(path + "\\lista.txt");
 
 			allLines = "";
 			for (int i = 0; i < seline; i++)
@@ -795,7 +883,7 @@ namespace progetto_CRUD
 			info = new UTF8Encoding(true).GetBytes(allLines);
 			fs = new FileStream(path + "\\lista.txt", FileMode.Truncate, FileAccess.Write, FileShare.None); //truncate perché il numero di byte è meno rispetto a prima
 			fs.Write(info, 0, info.Length);
-			fs.Close();
+			fs.Close();*/
 
 			/*
 			sw = new StreamWriter(path + "\\lista.txt");
@@ -857,7 +945,7 @@ namespace progetto_CRUD
 			sw.Close();
 			*/
 
-			lines = FileReadAllLines(path + "\\lista.txt");
+			/*lines = FileReadAllLines(path + "\\lista.txt");
 			StringMoveLine(lines, seline, moveline);
 
 			allLines = "";
@@ -867,7 +955,7 @@ namespace progetto_CRUD
 			info = new UTF8Encoding(true).GetBytes(allLines);
 			fs = new FileStream(path + "\\lista.txt", FileMode.Open, FileAccess.Write, FileShare.None);
 			fs.Write(info, 0, info.Length);
-			fs.Close();
+			fs.Close();*/
 
 			/*
 			sw = new StreamWriter(path + "\\lista.txt");
@@ -902,11 +990,11 @@ namespace progetto_CRUD
 			sw.Close();
 			*/
 
-			lines = FileReadAllLines(path + "\\lista.txt");
+			/*lines = FileReadAllLines(path + "\\lista.txt");
 			(lines[seline], lines[moveline]) =
 				(seline+1 + "." + lines[moveline].Split(".".ToCharArray(), 2)[1], moveline+1 + "." + lines[seline].Split(".".ToCharArray(), 2)[1]);
 
-			FileWriteAllLines(path + "\\lista.txt", lines);
+			FileWriteAllLines(path + "\\lista.txt", lines);*/
 
 			/*
 			sw = new StreamWriter(path + "\\lista.txt");
@@ -947,7 +1035,7 @@ namespace progetto_CRUD
 			sw.Close();
 			*/
 
-			lines = File.ReadAllLines(path + "\\lista.txt");
+			/*lines = File.ReadAllLines(path + "\\lista.txt");
 
 			allLines = "";
 			for (int i = 0; i < seline; i++)
@@ -959,7 +1047,7 @@ namespace progetto_CRUD
 			info = new UTF8Encoding(true).GetBytes(allLines);
 			fs = new FileStream(path + "\\lista.txt", FileMode.Open, FileAccess.Write, FileShare.None);
 			fs.Write(info, 0, info.Length);
-			fs.Close();
+			fs.Close();*/
 
 			/*
 			sw = new StreamWriter(path + "\\lista.txt");
@@ -1015,7 +1103,7 @@ namespace progetto_CRUD
 			sw.Close();
 			*/
 
-			lines = FileReadAllLines(path + "\\lista.txt");
+			/*lines = FileReadAllLines(path + "\\lista.txt");
 
 			allLines = "";
 			for (int i = 0; i < seline; i++)
@@ -1027,7 +1115,7 @@ namespace progetto_CRUD
 			info = new UTF8Encoding(true).GetBytes(allLines);
 			fs = new FileStream(path + "\\lista.txt", FileMode.Truncate, FileAccess.Write, FileShare.None); //truncate per il numero di byte sconosciuto
 			fs.Write(info, 0, info.Length);
-			fs.Close();
+			fs.Close();*/
 
 			/*
 			sw = new StreamWriter(path + "\\lista.txt");

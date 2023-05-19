@@ -1,5 +1,4 @@
-﻿#region using
-using System;
+﻿using System;
 /* using System.Collections.Generic;
 using System.Drawing;
 using System.Dynamic;
@@ -15,40 +14,47 @@ using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Text;
 using System.Diagnostics;
+using static System.Windows.Forms.LinkLabel;
+using System.Drawing.Drawing2D;
 
 namespace progetto_CRUD
 {
-	#endregion
-	public struct StructLines
+	public struct StructLine
 	{
 		public int ind;
 		public string text;
 		public int amount;
 		public float price;
 	}
+	public struct StructFile
+	{
+		public StructLine[] csvLines;
+		public int totline; //totline totale linee
+		public int totpro; //totpro totale prodotti
+		public float sumprice; //somma prezzi
+	}
 	public partial class CRUD : Form
 	{
-		//listview tabelle e struct (togliere lista.txt)
+		//listview tabella e struct //!! ci sono errori in stampa (research)
 		//rifare accesso diretto
 		//tooltip
 		//menu a comparsa
 		//elementi cliccabili in listview
+		//aggiustare tab index
 		//funzioni esterne
-		//cronologia //pensavo a due stack (ctrl z  ctrl y) //togliere logicremove.csv e mettere history.csv
+		//cronologia //pensavo a due stack (ctrl z  ctrl y) //???togliere logicremove.csv e mettere history.csv???
 
 		//non c'è mai seline 0; quando è 0 diventa totline + 1; tranne add e select funziona tutto a select line
 
-		public int len, totpro; //len lunghezza usata struct[], totpro totale prodotti
-		public float sumprice; //somma prezzi
-		public StructLines[] csvLines;
-		public int fun, totline, seline; //fun funzione //totline totale linee //seline linea selezionata
+		public StructFile csvFile = new StructFile();
+		public int fun, seline; //fun funzione //seline linea selezionata
 		public string path;
 		public CRUD()
 		{
 			InitializeComponent();
 			path = GetPath();
-			totline = GetLineCount(path + "\\lista.csv") - 2;
-			seline = totline + 1;
+			csvFile.totline = GetLineCount(path + "\\lista.csv") - 2;
+			seline = csvFile.totline + 1;
 			fun = 0; // 1 add, 2 select, 3 edit, 4 delete, 5 move, 6 switch, 7 twin, 8 remove, (a parte) 9 history
 
 			//SetVisible(); crud load
@@ -70,6 +76,47 @@ namespace progetto_CRUD
 			fs.Close();
 			return lineCount;
 		}
+
+		private int CheckStruct(int tot)
+		{
+			if (tot < 100) return 100;
+			return tot/100 * 100 + 100;
+		} //!! quando controllare e resize ( aggiungere o togliere)
+		private StructLine UpdateStruct(int ind, string text, int amount, float price)
+		{
+			StructLine line = new StructLine()
+			{
+				ind = ind,
+				text = text,
+				amount = amount,
+				price = price
+			};
+			return line;
+		}
+		private string StructLineToString(StructLine line)
+		{
+			return string.Join(";", line.ind, line.text, line.amount, line.price);
+		}
+		private string[] StructFileToStrings(StructFile csvFile)
+		{
+			string[] lines = new string[csvFile.totline+2];
+			for (int i = 0; i < csvFile.totline; i++)
+				lines[i] = StructLineToString(csvFile.csvLines[i]);
+			lines[csvFile.totline] = csvFile.totpro.ToString();
+			lines[csvFile.totline+1] = csvFile.sumprice.ToString();
+
+			return lines;
+		}
+		private string StructFileToString(StructFile csvFile)
+		{
+			string allLines = "";
+			for (int i = 0; i < csvFile.totline; i++)
+				allLines += StructLineToString(csvFile.csvLines[i]) + "\n";
+			allLines += csvFile.totpro + "\n";
+
+			return allLines + csvFile.sumprice + "\n"; ;
+		}
+
 		private string[] FileReadAllLines(string path)
 		{
 			byte[] b = new byte[1024];
@@ -86,6 +133,18 @@ namespace progetto_CRUD
 			for (int i = 0; i < lines.Length; i++)
 				lines[i] = lines[i].TrimEnd('\r');
 			return lines;
+		} //!! controlla riferimenti
+		private void FileWriteAllText(string path, string allLines, FileMode mode)
+		{
+			Byte[] info = new UTF8Encoding(true).GetBytes(allLines);
+			FileStream fs = new FileStream(path, mode, FileAccess.Write, FileShare.None);
+			fs.Write(info, 0, info.Length);
+			fs.Close();
+		}
+		/* funzioni non utilizzate
+		private void FileWriteAllText(string path, string allLines)
+		{
+			FileWriteAllText(path, allLines, FileMode.Create);
 		}
 		private void FileWriteAllLines(string path, string[] lines)
 		{
@@ -93,21 +152,27 @@ namespace progetto_CRUD
 		}
 		private void FileWriteAllLines(string path, string[] lines, FileMode mode)
 		{
-			string allLines = string.Join("\n", lines);
-			Byte[] info = new UTF8Encoding(true).GetBytes(allLines);
-			FileStream fs = new FileStream(path, mode, FileAccess.Write, FileShare.None);
-			fs.Write(info, 0, info.Length);
-			fs.Close();
-		}
+			FileWriteAllText(path, string.Join("\n", lines), mode);
+		}*/
 		private void CRUD_Shown(object sender, EventArgs e)
 		{
+			csvFile.csvLines = new StructLine[CheckStruct(csvFile.totline)];
+			string[] lines = FileReadAllLines(path + "\\lista.csv");
+			string[] splits;
+			for (int i = 0; i < csvFile.totline; i++)
+			{
+				splits = lines[i].Split(';');
+				csvFile.csvLines[i] = UpdateStruct(int.Parse(splits[0]), splits[1], int.Parse(splits[2]), float.Parse(splits[3]));
+			}
+			csvFile.totpro = int.Parse(lines[lines.Length-2]);
+			csvFile.sumprice = float.Parse(lines[lines.Length-1]);
+
 			SetVisible();
-			StampaForm();
+			StampaForm(lines);
 
 			//aggiungere
 			DescrizioneAdd.SetToolTip(AddButton, "Aggiungi nuova linea");
 			DescrizioneHistoryR.SetToolTip(HistoryButton, "Guarda la lista delle linee rimosse");
-
 		}
 		private void Shortcut(object sender, KeyEventArgs e)
 		{
@@ -163,10 +228,6 @@ namespace progetto_CRUD
 			if (e.Control && e.Alt && e.KeyCode == Keys.A && AmountBox.Visible)
 				//shortcut Ctrl+Alt+ A
 				AmountBox.Focus();
-		}
-		private void StampaForm()
-		{
-			StampaForm(FileReadAllLines(path + "\\lista.csv"));
 		}
 		private void StampaForm(string[] lines)
 		{
@@ -286,9 +347,9 @@ namespace progetto_CRUD
 
 			bool[] vis = new bool[6];
 
-			vis[0] = totline != 0;
-			vis[1] = seline != totline + 1;
-			vis[2] = totline > 1 && vis[1];
+			vis[0] = csvFile.totline != 0;
+			vis[1] = seline != csvFile.totline + 1;
+			vis[2] = csvFile.totline > 1 && vis[1];
 			vis[3] = fun == 1 || fun == 2 || fun == 21 || fun == 5 || fun == 6;
 			vis[4] = fun == 1 || fun == 3;
 			vis[5] = fun != 0;
@@ -313,7 +374,7 @@ namespace progetto_CRUD
 		private void AddButton_Click(object sender, EventArgs e)
 		{
 			fun = 1;
-			seline = totline + 1;
+			seline = csvFile.totline + 1;
 			SetVisible();
 			NameList.Text = $"Stai aggiungendo la linea {seline}, o la linea scelta in search:";
 		}
@@ -327,14 +388,14 @@ namespace progetto_CRUD
 		{
 			IndexCheckBox.Checked = true;
 			fun = 21;
-			seline = totline + 1;
+			seline = csvFile.totline + 1;
 			SetVisible();
 			NameList.Text = "Scegli la linea da modificare digitando il numero in search :";
 		}
 		private void IndexCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			if (IndexCheckBox.Checked) { fun = 21; StampaForm(); NameList.Text = "Scegli la linea da modificare digitando il numero in search :"; }
-			if (!IndexCheckBox.Checked) fun = 2;
+			if (IndexCheckBox.Checked) { fun = 21; StampaForm(StructFileToStrings(csvFile)); NameList.Text = "Scegli la linea da modificare digitando il numero in search :"; }
+			else if (!IndexCheckBox.Checked) fun = 2;
 		}
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
@@ -361,7 +422,6 @@ namespace progetto_CRUD
 			NameList.Text = $"Conferma per duplicare la linea {seline}:";
 			//verrà aggiunta accanto alla linea duplicata
 		}
-		//remove tot amount
 		private void RemoveButton_Click(object sender, EventArgs e)
 		{
 			fun = 8;
@@ -372,10 +432,10 @@ namespace progetto_CRUD
 		private void CancelButton1_Click(object sender, EventArgs e)
 		{
 			fun = 0;
-			seline = totline + 1;
+			seline = csvFile.totline + 1;
 			SetVisible();
 			AddButton.Visible = true;
-			StampaForm();
+			StampaForm(StructFileToStrings(csvFile));
 			NameList.Text = "Non è stata selezionata nessuna linea";
 		}
 		private void ClearButton_Click(object sender, EventArgs e)
@@ -385,7 +445,6 @@ namespace progetto_CRUD
 			PriceBox.Text = "";
 			SearchBox.Text = "";
 		}
-		// cronologia
 		private void HistoryButton_Click(object sender, EventArgs e)
 		{//fun 9
 			if (fun != 9)
@@ -419,13 +478,13 @@ namespace progetto_CRUD
 				string[] splits = lines[0].Split(';');
 				AddButton.Visible = true;
 				AddButton_Click(sender, e);
-				AddLine(splits[1], splits[2], splits[3], splits[0], totline, path);
-				totline += 1;
+				AddLine(ref csvFile, splits[1], splits[2], splits[3], splits[0], path);
+				csvFile.totline += 1;
 				seline = int.Parse(splits[0]);
 				fun = 0;
 				NameList.Text = $"Stai modificando la linea {seline}";
 				SetVisible();
-				StampaForm();
+				StampaForm(StructFileToStrings(csvFile));
 
 				if (lines.Length != 1)
 				{
@@ -433,10 +492,7 @@ namespace progetto_CRUD
 					lines[0] = "";
 					for (int i = 1; i<lines.Length; i++)
 						lines[0] += lines[i] + "\n";
-					Byte[] info = new UTF8Encoding(true).GetBytes(lines[0]);
-					FileStream fs = new FileStream(path + "\\logicRemove.csv", FileMode.Truncate, FileAccess.Write, FileShare.None);
-					fs.Write(info, 0, info.Length);
-					fs.Close();
+					FileWriteAllText(path + "\\logicRemove.csv", lines[0], FileMode.Truncate);
 				}
 				else
 				{
@@ -449,13 +505,12 @@ namespace progetto_CRUD
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
 			bool control = true;
-			if (fun != 2) control = SwitchFun(ref fun, TextBox.Text, AmountBox.Text, PriceBox.Text, SearchBox.Text, totline, seline, path);
+			if (fun != 2) control = SwitchFun(ref fun, ref csvFile, TextBox.Text, AmountBox.Text, PriceBox.Text, SearchBox.Text, seline, path);
 			if (control) //if SwitchFun è meno ridondante ma brutto
 			{
 				switch (fun)
 				{
 					case 1: //addline
-						totline += 1;
 						seline += 1;
 						NameList.Text = $"Stai aggiungendo la linea {seline}, o la linea scelta in search :";
 						break;
@@ -465,23 +520,20 @@ namespace progetto_CRUD
 						seline = int.Parse(SearchBox.Text);
 						break;
 					case 4: //delete line
-						if (seline == totline) seline--;
+						if (seline == csvFile.totline) seline--;
 						if (seline == 0) seline++;
-						totline--;
 						NameList.Text = $"Conferma per cancellare la linea {seline}:";
 						HistoryButton.Visible = true;
 						break;
 					case 7: //twin line
-						totline += 1;
 						seline += 1;
 						break;
 					case 8: //remove amount
 						NameList.Text = $"Stai modificando la linea {seline}";
 						break;
 					case 84: //quando da 8remove passa a 4delete, ma era remove
-						if (seline == totline) seline--;
+						if (seline == csvFile.totline) seline--;
 						if (seline == 0) seline++;
-						totline--;
 						NameList.Text = $"Stai rimuovendo dei prodotti dalla linea {seline}:";
 						fun = 8;
 						HistoryButton.Visible = true;
@@ -499,48 +551,48 @@ namespace progetto_CRUD
 						break;
 				}
 			}
-			if (totline == 0 && (fun == 4 || fun == 8)) //&& fun 4 //serve quando sbagli in add con 0 linee
+			if (csvFile.totline == 0 && (fun == 4 || fun == 8)) //&& fun 4 //serve quando sbagli in add con 0 linee
 				CancelButton1_Click(sender, e); //NameList.Text e fun 0
 
 			if (fun == 2)
 			{
 				NameList.Text = $"Tutte le linee trovate in ricerca(spunta index e scegli la linea da modificare):";
-				StampaForm(SelectLineResearch(SearchBox.Text, path));
+				StampaForm(SelectLineResearch(csvFile, SearchBox.Text));
 			}
 			else
 			{
 				SetVisible();
-				StampaForm();
+				StampaForm(StructFileToStrings(csvFile));
 			}
 		}
-		private bool SwitchFun(ref int fun, string nome, string qua, string prezzo, string cerca, int totline, int seline, string path)
+		private bool SwitchFun(ref int fun, ref StructFile csvFile, string nome, string qua, string prezzo, string cerca, int seline, string path)
 		{
 			bool control = true; // false se qualcosa è andato storto
 			switch (fun)
 			{
 				case 1:
-					control = AddLine(nome, qua, prezzo, cerca, totline, path); //mettere return AddLine ?
+					control = AddLine(ref csvFile, nome, qua, prezzo, cerca, path); //mettere return AddLine ?
 					break;
 				case 21:
-					control = SelectLineIndex(cerca, totline);
+					control = SelectLineIndex(cerca, csvFile.totline);
 					break;
 				case 3:
-					control = EditLine(nome, qua, prezzo, seline, path);
+					control = EditLine(ref csvFile, nome, qua, prezzo, seline, path);
 					break;
 				case 4:
-					DeleteLine(seline, path);
+					DeleteLine(ref csvFile, seline, path);
 					break;
 				case 5:
-					control = MoveLine(cerca, totline, seline, path);
+					control = MoveLine(ref csvFile, cerca, seline, path);
 					break;
 				case 6:
-					control = SwitchLine(cerca, totline, seline, path);
+					control = SwitchLine(ref csvFile, cerca, seline, path);
 					break;
 				case 7:
-					TwinLine(seline, path);
+					TwinLine(ref csvFile, seline, path);
 					break;
 				case 8:
-					int amount = RemoveAmount(qua, seline, path);
+					int amount = RemoveAmount(ref csvFile, qua, seline, path);
 					control = amount != -1; //-1 = errore in input
 					if (amount == 0) fun = 84;
 					break;
@@ -646,88 +698,46 @@ namespace progetto_CRUD
 			}
 			return true; //ret false = il cerca non è valido
 		}
-		private bool AddLine(string nome, string qua, string prezzo, string cerca, int totline, string path)
+		private bool AddLine(ref StructFile csvFile, string nome, string qua, string prezzo, string cerca, string path)
 		{//fun 1
 			if (qua=="") qua = "1";
 			if (!CheckNomePrezzoQua(nome, qua, prezzo)) //errore in input
 				return false;
-			int seline = IntCheckCercaLine(cerca, totline);
+			int seline = IntCheckCercaLine(cerca, csvFile.totline);
 			if (seline == 0) //0 = false
 				return false;
-			seline--;
+			seline--; //da indice linea a indice generico (linea 1 è indice 0)
 
-			string[] lines = FileReadAllLines(path + "\\lista.csv");
-			string totpro = (int.Parse(lines[lines.Length - 2]) + int.Parse(qua)).ToString(); //aggiungo i prodotti
-			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(prezzo);
+			//aggiorna la struct File
+			csvFile.totpro += int.Parse(qua); //aggiungo i prodotti
+			csvFile.sumprice += float.Parse(prezzo);
+			for (int i = csvFile.totline; i > seline; i--)
+			{
+				csvFile.csvLines[i] = csvFile.csvLines[i+1];
+				csvFile.csvLines[i].ind = i+2;
+			}
+			csvFile.csvLines[seline] = UpdateStruct(seline+1, nome, int.Parse(qua), float.Parse(prezzo));
+			csvFile.totline++;
 
-			string allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			allLines += string.Join(";", seline+1, nome, qua, prezzo) + "\n";
-			for (int i = seline; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
-				allLines += i+2 + ";" + lines[i].Split(";".ToCharArray(), 2)[1] + "\n"; //scrive il nuovo indice, e poi trascrive il resto
-			allLines += totpro + "\n" + sum + "\n";
-			Byte[] info = new UTF8Encoding(true).GetBytes(allLines);
-			FileStream fs = new FileStream(path + "\\lista.csv", FileMode.Open, FileAccess.Write, FileShare.None);
-			fs.Write(info, 0, info.Length);
-			fs.Close();
+			//stampa struct su file
+			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Open);
 
-			/*
-			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			sw.WriteLine(string.Join(";", seline+1, nome, qua, prezzo)); //la nuova linea
-			for (int i = seline; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
-				sw.WriteLine(i+2 + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
-			sw.WriteLine(totpro);
-			sw.WriteLine(sum);
-			sw.Close();
-			*/
-
-			/*lines = FileReadAllLines(path + "\\lista.txt");
-
-			allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			allLines += $"{seline+1}.    Nome: {nome}     Quantità: {qua}     Prezzo: {prezzo}\n";
-			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				allLines += i+2 + "." + lines[i].Split(".".ToCharArray(), 2)[1] + "\n"; //scrive il nuovo indice, e poi trascrive il resto
-			allLines += $"-------------------\nnumero di prodotti: {totpro}\nprezzo totale: {sum}\n";
-			info = new UTF8Encoding(true).GetBytes(allLines);
-			fs = new FileStream(path + "\\lista.txt", FileMode.Open, FileAccess.Write, FileShare.None);
-			fs.Write(info, 0, info.Length);
-			fs.Close();*/
-
-			/*
-			var sw = new StreamWriter(path + "\\lista.txt");
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{seline+1}.    Nome: {nome}     Quantità: {qua}     Prezzo: {prezzo}");
-			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				sw.WriteLine(i+2 + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
-			sw.WriteLine("-------------------");
-			sw.WriteLine($"numero di prodotti: {totpro}");
-			sw.WriteLine($"prezzo totale: {sum}");
-			sw.Close();
-			*/
 			return true;
 		}
 		private bool SelectLineIndex(string cerca, int totline)
 		{//fun 21
 			return BoolCheckCercaLine(cerca, totline); //ret false = il cerca non è valido //ret true = string cerca  ha  int seline
 		}
-		private string[] SelectLineResearch(string cerca, string path)
+		private string[] SelectLineResearch(StructFile csvFile, string cerca)
 		{//fun 2
-			string[] lines = FileReadAllLines(path + "\\lista.csv");
-			string[] splits = new string[0];
+
+			string[] lines = new string[csvFile.totline];
 			int k = 0;
-			for (int i = 0; i< lines.Length-2; i++)
-				if (lines[i].Split(";".ToCharArray(), 3)[1].ToLower().Contains(cerca.ToLower())) //cerca solo in text
-				{
-					splits = lines[i].Split(';');
-					lines[k++]=$"{splits[0]}.    Nome: {splits[1]}     Quantità: {splits[2]}     Prezzo: {splits[3]}";
-				}
-			if (splits.Length == 0)
+			for (int i = 0; i< csvFile.totline; i++)
+				if (csvFile.csvLines[i].text.ToLower().Contains(cerca.ToLower())) //cerca solo in text
+					lines[k++]=$"{csvFile.csvLines[i].ind}.    Nome: {csvFile.csvLines[i].text}     Quantità: {csvFile.csvLines[i].amount}     Prezzo: {csvFile.csvLines[i].price}";
+
+			if (k == 0)
 			{
 				ErrorInSelect();
 				return new string[0];
@@ -742,421 +752,145 @@ namespace progetto_CRUD
 		{
 			MessageBox.Show("la parola cercata non esiste", "errore nella ricerca");
 		}
-		private bool EditLine(string nome, string qua, string prezzo, int seline, string path)
+		private bool EditLine(ref StructFile csvFile, string nome, string qua, string prezzo, int seline, string path)
 		{//fun 3
 			if (!EditCheckNomePrezzoQua(nome, qua, prezzo)) //errore in input
 				return false;
-
 			seline--;
-			string[] lines = FileReadAllLines(path + "\\lista.csv");
-			if (nome == "")
-				nome = lines[seline].Split(";".ToCharArray(), 3)[1];
-			int totpro;
-			if (qua == "")
+
+			if (nome != "")
+				csvFile.csvLines[seline].text = nome;
+
+			if (qua != "")
 			{
-				qua = lines[seline].Split(";".ToCharArray(), 4)[2];
-				totpro = int.Parse(lines[lines.Length - 2]);
-			}
-			else
 				//al totpro attuale toglie il vecchio valore e ci aggiunge quello modificato
-				totpro = int.Parse(lines[lines.Length-2]) - int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]) + int.Parse(qua);
-			float sum;
-			if (prezzo == "")
-			{
-				prezzo = lines[seline].Split(";".ToCharArray(), 4)[3];
-				sum = float.Parse(lines[lines.Length - 1]);
+				csvFile.totpro -= csvFile.csvLines[seline].amount + int.Parse(qua);
+				csvFile.csvLines[seline].amount = int.Parse(qua);
 			}
-			else
+			if (prezzo != "")
+			{
 				//alla somma attuale toglie il vecchio valore e si aggiunge quello modificato
-				sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline].Split(";".ToCharArray(), 4)[3]) + float.Parse(prezzo);
+				csvFile.sumprice -= csvFile.csvLines[seline].price + float.Parse(prezzo);
+				csvFile.csvLines[seline].price = float.Parse(prezzo);
+			}
 
-			string allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			allLines += string.Join(";", seline+1, nome, qua, prezzo) + "\n";
-			for (int i = seline+1; i < lines.Length - 2; i++)//seline + 1 per saltare la vecchia linea // length -1 prezzo totale, -1 n prodotti
-				allLines += lines[i] + "\n"; //trascrive il resto
-			allLines += totpro + "\n" + sum + "\n";
-			//allLines += totpro + '\n' + sum + '\n'; //essendo totpro e sum degli interi, i char '\n' rappresentano il 10
-			Byte[] info = new UTF8Encoding(true).GetBytes(allLines);
-			FileStream fs = new FileStream(path + "\\lista.csv", FileMode.Truncate, FileAccess.Write, FileShare.None); //file mode truncate per evitare errori
-			fs.Write(info, 0, info.Length);
-			fs.Close();
+			//stampa struct su file
+			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Truncate);  //file mode truncate per evitare errori
 
-			/*
-			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			//aggiungo la linea modificata
-			sw.WriteLine(string.Join(";", seline+1, nome, qua, prezzo));
-			for (int i = seline+1; i < lines.Length - 2; i++)//seline + 1 per saltare la vecchia linea // length -1 prezzo totale, -1 n prodotti
-				sw.WriteLine(lines[i]); //trascrive il resto
-			sw.WriteLine(totpro);
-			sw.WriteLine(sum);
-			sw.Close();
-			*/
-
-			/*lines = FileReadAllLines(path + "\\lista.txt");
-
-			allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			allLines += $"{seline+1}.    Nome: {nome}     Quantità: {qua}     Prezzo: {prezzo}\n";
-			for (int i = seline+1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				allLines += lines[i] + "\n"; //trascrive il resto
-			allLines += $"-------------------\nnumero di prodotti: {totpro}\nprezzo totale: {sum}\n";
-			info = new UTF8Encoding(true).GetBytes(allLines);
-			fs = new FileStream(path + "\\lista.txt", FileMode.Truncate, FileAccess.Write, FileShare.None);
-			fs.Write(info, 0, info.Length);
-			fs.Close();*/
-
-			/*
-			sw = new StreamWriter(path + "\\lista.txt");
-
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{seline+1}.    Nome: {nome}     Quantità: {qua}     Prezzo: {prezzo}");
-			for (int i = seline + 1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				sw.WriteLine(lines[i]); //trascrive il resto
-			sw.WriteLine("-------------------");
-			sw.WriteLine($"numero di prodotti: {totpro}");
-			sw.WriteLine($"prezzo totale: {sum}");
-			sw.Close();
-			*/
 			return true;
 		}
-		private void DeleteLine(int seline, string path)
+		private void DeleteLine(ref StructFile csvFile, int seline, string path)
 		{//fun 4
 			seline--;
-			string[] lines = FileReadAllLines(path + "\\lista.csv");
-			int totpro = int.Parse(lines[lines.Length-2]) - int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]); //tolgo una linea di prodotti
-			float sum = float.Parse(lines[lines.Length - 1]) - float.Parse(lines[seline].Split(";".ToCharArray(), 4)[3]);
-			string logic = lines[seline] + "\n";//linea da aggiungere alla cancellazione logica
 
-			string allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			for (int i = seline + 1; i < lines.Length - 2; i++)//seline + 1 per saltare // length -1 prezzo totale, -1 n prodotti
-				allLines += i + ";" + lines[i].Split(";".ToCharArray(), 2)[1] + "\n"; //i+1 indice attuale // i = il nuovo indice, e poi trascrive il resto
-			allLines += totpro + "\n" + sum + "\n";
-			Byte[] info = new UTF8Encoding(true).GetBytes(allLines);
-			FileStream fs = new FileStream(path + "\\lista.csv", FileMode.Truncate, FileAccess.Write, FileShare.None); //truncate perché il numero di byte è meno rispetto a prima
-			fs.Write(info, 0, info.Length);
-			fs.Close();
+			//aggiorna la struct File
+			csvFile.totpro -= csvFile.csvLines[seline].amount; //tolgo una linea di prodotti
+			csvFile.sumprice -= csvFile.csvLines[seline].price;
+			string logic = StructLineToString(csvFile.csvLines[seline]) + "\n";//linea da aggiungere alla cancellazione logica
+			for (int i = seline; i > csvFile.totline; i++)
+			{
+				csvFile.csvLines[i].ind = i;
+				csvFile.csvLines[i] = csvFile.csvLines[i+1];
+			}
+			csvFile.csvLines[csvFile.totline] = UpdateStruct(0, "", 0, 0); //per scrupolo
+			csvFile.totline--;
 
-			/*
-			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			string logic = lines[seline];//linea da aggiungere alla cancellazione logica
-			for (int i = seline + 1; i < lines.Length - 2; i++)//seline + 1 per saltare // length -1 prezzo totale, -1 n prodotti
-				sw.WriteLine(i + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //i+1 indice attuale // i = il nuovo indice, e poi trascrive il resto
-			sw.WriteLine(totpro);
-			sw.WriteLine(sum);
-			sw.Close();
-			*/
+			//stampa struct su file
+			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Truncate); //truncate perché il numero di byte è meno rispetto a prima
 
-			lines = FileReadAllLines(path + "\\logicRemove.csv");
+			string[] lines = FileReadAllLines(path + "\\logicRemove.csv");
 			for (int i = 0; i  < lines.Length; i++)
 				logic += lines[i] + "\n";
-			info = new UTF8Encoding(true).GetBytes(logic);//aggiungo l'elemento appena rimosso alla cancellazione logica, poi trascrivo il resto
-			fs = new FileStream(path + "\\logicRemove.csv", FileMode.Truncate, FileAccess.Write, FileShare.None); //
-			fs.Write(info, 0, info.Length);
-			fs.Close();
 
-			/*
-			sw = new StreamWriter(path + "\\logicRemove.csv");
-			sw.WriteLine(logic); //aggiungo l'elemento appena rimosso alla cancellazione logica
-			for (int i = 0; i  < lines.Length; i++)
-				sw.WriteLine(lines[i]);
-			sw.Close();
-			*/
-
-			/*lines = FileReadAllLines(path + "\\lista.txt");
-
-			allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			for (int i = seline+1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				allLines += i + "." + lines[i].Split(".".ToCharArray(), 2)[1] + "\n"; //i+1 indice attuale // i = il nuovo indice, e poi trascrive il resto
-			allLines += $"-------------------\nnumero di prodotti: {totpro}\nprezzo totale: {sum}\n";
-			info = new UTF8Encoding(true).GetBytes(allLines);
-			fs = new FileStream(path + "\\lista.txt", FileMode.Truncate, FileAccess.Write, FileShare.None); //truncate perché il numero di byte è meno rispetto a prima
-			fs.Write(info, 0, info.Length);
-			fs.Close();*/
-
-			/*
-			sw = new StreamWriter(path + "\\lista.txt");
-
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			for (int i = seline+1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				sw.WriteLine(i + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
-			sw.WriteLine("-------------------");
-			sw.WriteLine($"numero di prodotti: {totpro}");
-			sw.WriteLine($"prezzo totale: {sum}");
-			sw.Close();
-			*/
+			FileWriteAllText(path + "\\logicRemove.csv", logic, FileMode.Open); //open perché il numero di byte è più rispetto a prima
 		}
-		private void StringMoveLine(string[] lines, int seline, int moveline)
+		private void StructMoveLine(StructLine[] csvLines, int seline, int moveline)
 		{
-			string line = lines[moveline];
-			lines[moveline] = lines[seline];
-			if (seline < moveline)
+			StructLine line = csvLines[moveline]; //salva la linea scelta
+			csvLines[moveline] = csvLines[seline]; //sulla la linea scelta mette la linea selezionata
+			if (seline < moveline) //se la linea selezionata si trova prima della linea scelta
 			{
-				for (int i = seline; i < moveline-1; i++)
-					lines[i] = lines[i+1];
-				lines[moveline-1] = line;
+				for (int i = seline; i < moveline-1; i++) //dalla linea selezionata alla linea scelta - 1 
+					csvLines[i] = csvLines[i+1]; //la linea selezionata diventa la linea successiva
+				csvLines[moveline-1] = line; //la linea scelta - 1 diventa la linea scelta
 			}
-			else
+			else //se la linea selezionata si trova dopo la linea scelta
 			{
-				for (int i = seline; i > moveline+1; i--)
-					lines[i]=lines[i-1];
-				lines[moveline+1] = line;
+				for (int i = seline; i > moveline+1; i--) //dalla linea selezionata alla linea scelta + 1 (quindi a ritroso)
+					csvLines[i] = csvLines[i-1]; //la linea selezionata diventa la linea precedente
+				csvLines[moveline+1] = line; //la linea scelta + 1 diventa la linea scelta
 			}
 		}
-		private bool MoveLine(string cerca, int totline, int seline, string path)
+		private bool MoveLine(ref StructFile csvFile, string cerca, int seline, string path)
 		{//fun 5
-			if (!BoolCheckCercaLine(cerca, totline))
+			if (!BoolCheckCercaLine(cerca, csvFile.totline))
 				return false;
 
 			int moveline = int.Parse(cerca);
 			if (seline == moveline) return false;
 
-			seline--; moveline--;
-			string[] lines = FileReadAllLines(path + "\\lista.csv");
-			StringMoveLine(lines, seline, moveline);
+			seline--; moveline--; //da ind linea a ind informatico
+			StructMoveLine(csvFile.csvLines, seline, moveline);
 
-			string allLines = "";
-			for (int i = 0; i < lines.Length - 2; i++) // length -1 prezzo totale, -1 n prodotti
-				allLines += i+1 + ";" + lines[i].Split(";".ToCharArray(), 2)[1] + "\n"; //scrive il nuovo indice, e poi trascrive il resto
-			allLines += lines[lines.Length-2] + "\n" + lines[lines.Length-1] + "\n"; //totpro e sum
-			Byte[] info = new UTF8Encoding(true).GetBytes(allLines);
-			FileStream fs = new FileStream(path + "\\lista.csv", FileMode.Open, FileAccess.Write, FileShare.None); //il numero di byte è lo stesso identico, truncate non serve
-			fs.Write(info, 0, info.Length);
-			fs.Close();
+			for (int i = 0; i < csvFile.totline; i++)
+				csvFile.csvLines[i].ind = i+1;
 
-			/*
-			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < lines.Length - 2; i++) // length -1 prezzo totale, -1 n prodotti
-				sw.WriteLine(i+1 + ";" + lines[i].Split(";".ToCharArray(), 2)[1]);
-			sw.WriteLine(lines[lines.Length-2]); //totpro
-			sw.WriteLine(lines[lines.Length-1]); //sum
-			sw.Close();
-			*/
+			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Open); //il numero di byte è lo stesso identico, truncate non serve
 
-			/*lines = FileReadAllLines(path + "\\lista.txt");
-			StringMoveLine(lines, seline, moveline);
-
-			allLines = "";
-			for (int i = 0; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				allLines += i+1 + "." + lines[i].Split(".".ToCharArray(), 2)[1] + "\n"; //scrive il nuovo indice, e poi trascrive il resto
-			allLines += lines[lines.Length-3] + "\n" +lines[lines.Length-2] + "\n" + lines[lines.Length-1] + "\n"; //separatore totpro e sum
-			info = new UTF8Encoding(true).GetBytes(allLines);
-			fs = new FileStream(path + "\\lista.txt", FileMode.Open, FileAccess.Write, FileShare.None);
-			fs.Write(info, 0, info.Length);
-			fs.Close();*/
-
-			/*
-			sw = new StreamWriter(path + "\\lista.txt");
-			for (int i = 0; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				sw.WriteLine(i+1 + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
-			sw.WriteLine(lines[lines.Length-3]); //------
-			sw.WriteLine(lines[lines.Length-2]); //totpro
-			sw.WriteLine(lines[lines.Length-1]); //sum
-			sw.Close();
-			*/
 			return true;
 		}
-		private bool SwitchLine(string cerca, int totline, int seline, string path)
+		private bool SwitchLine(ref StructFile csvFile, string cerca, int seline, string path)
 		{//fun 6
-			if (!BoolCheckCercaLine(cerca, totline))
+			if (!BoolCheckCercaLine(cerca, csvFile.totline))
 				return false;
 
 			int moveline = int.Parse(cerca);
 			if (seline == moveline) return false;
 
 			seline--; moveline--;
-			string[] lines = FileReadAllLines(path + "\\lista.csv");
-			(lines[seline], lines[moveline]) =
-				(seline+1 + ";" + lines[moveline].Split(";".ToCharArray(), 2)[1], moveline+1 + ";" + lines[seline].Split(";".ToCharArray(), 2)[1]);
+			(csvFile.csvLines[seline].ind, csvFile.csvLines[moveline].ind) = (csvFile.csvLines[moveline].ind, csvFile.csvLines[seline].ind); //metto a posto gli index
+			(csvFile.csvLines[seline], csvFile.csvLines[moveline]) = (csvFile.csvLines[moveline], csvFile.csvLines[seline]); //switch-o le linee
 
-			FileWriteAllLines(path + "\\lista.csv", lines);
+			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Open); //il numero di byte è lo stesso identico, truncate non serve
 
-			/*
-			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < lines.Length; i++)
-				sw.WriteLine(lines[i]);
-			sw.Close();
-			*/
-
-			/*lines = FileReadAllLines(path + "\\lista.txt");
-			(lines[seline], lines[moveline]) =
-				(seline+1 + "." + lines[moveline].Split(".".ToCharArray(), 2)[1], moveline+1 + "." + lines[seline].Split(".".ToCharArray(), 2)[1]);
-
-			FileWriteAllLines(path + "\\lista.txt", lines);*/
-
-			/*
-			sw = new StreamWriter(path + "\\lista.txt");
-			for (int i = 0; i < lines.Length; i++)
-				sw.WriteLine(lines[i]);
-			sw.Close();
-			*/
 			return true;
 		}
-		private void TwinLine(int seline, string path)
+		private void TwinLine(ref StructFile csvFile, int seline, string path)
 		{//fun 7
 			seline--;
-			string[] lines = FileReadAllLines(path + "\\lista.csv");
-			int totpro = int.Parse(lines[lines.Length-2]) + int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]); //aggiungo i prodotti duplicati
-			float sum = float.Parse(lines[lines.Length - 1]) + float.Parse(lines[seline].Split(";".ToCharArray(), 4)[3]);
 
-			string allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			allLines += lines[seline] + "\n"; //la nuova linea
-			for (int i = seline; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
-				allLines += i+2 + ";" + lines[i].Split(";".ToCharArray(), 2)[1] + "\n"; //scrive il nuovo indice, e poi trascrive il resto
-			allLines += totpro + "\n" + sum + "\n";
-			Byte[] info = new UTF8Encoding(true).GetBytes(allLines);
-			FileStream fs = new FileStream(path + "\\lista.csv", FileMode.Open, FileAccess.Write, FileShare.None);
-			fs.Write(info, 0, info.Length);
-			fs.Close();
+			csvFile.totpro += csvFile.csvLines[seline].amount; //aggiungo i prodotti duplicati
+			csvFile.sumprice += csvFile.csvLines[seline].price;
+			for (int i = csvFile.totline; i > seline; i--)
+			{
+				csvFile.csvLines[i] = csvFile.csvLines[i+1];
+				csvFile.csvLines[i].ind = i+2;
+			}
+			csvFile.totline++;
 
-			/*
-			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			sw.WriteLine(lines[seline]); //la nuova linea
-			for (int i = seline; i < lines.Length - 2; i++)// -1 prezzo totale, -1 n prodotti
-				sw.WriteLine(i+2 + ";" + lines[i].Split(";".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
-			sw.WriteLine(totpro);
-			sw.WriteLine(sum);
-			sw.Close();
-			*/
-
-			/*lines = File.ReadAllLines(path + "\\lista.txt");
-
-			allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			allLines += lines[seline] + "\n"; //la nuova linea
-			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				allLines += i+2 + "." + lines[i].Split(".".ToCharArray(), 2)[1] + "\n"; //scrive il nuovo indice, e poi trascrive il resto
-			allLines += $"-------------------\nnumero di prodotti: {totpro}\nprezzo totale: {sum}\n";
-			info = new UTF8Encoding(true).GetBytes(allLines);
-			fs = new FileStream(path + "\\lista.txt", FileMode.Open, FileAccess.Write, FileShare.None);
-			fs.Write(info, 0, info.Length);
-			fs.Close();*/
-
-			/*
-			sw = new StreamWriter(path + "\\lista.txt");
-
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			sw.WriteLine(lines[seline]); //la nuova linea
-			for (int i = seline; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				sw.WriteLine(i+2 + "." + lines[i].Split(".".ToCharArray(), 2)[1]); //scrive il nuovo indice, e poi trascrive il resto
-			sw.WriteLine("-------------------");
-			sw.WriteLine($"numero di prodotti: {totpro}");
-			sw.WriteLine($"prezzo totale: {sum}");
-			sw.Close();
-			*/
+			//stampa struct su file
+			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Open);
 		}
-		private int RemoveAmount(string qua, int seline, string path)
+		private int RemoveAmount(ref StructFile csvFile, string qua, int seline, string path)
 		{//fun 8
 			seline--;
 			if (qua == "") qua = "1";
-			string[] lines = FileReadAllLines(path + "\\lista.csv");
-			int amount = int.Parse(lines[seline].Split(";".ToCharArray(), 4)[2]);
-			if (!CheckAmount(qua, amount)) //errore in input
+
+			if (!CheckAmount(qua, csvFile.csvLines[seline].amount)) //errore in input
 				return -1;
 
-			amount -= int.Parse(qua);
-			int totpro = int.Parse(lines[lines.Length - 2]) - int.Parse(qua); //tolgo i prodotti
+			csvFile.csvLines[seline].amount -= int.Parse(qua);
+			csvFile.totpro -= int.Parse(qua); //tolgo i prodotti
 
-			string allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			string[] split = lines[seline].Split(";".ToCharArray(), 4);
-			split[2] = amount.ToString();
-			allLines += string.Join(";", split) + "\n"; //riscrive la linea col nuovo amount
-			for (int i = seline+1; i < lines.Length - 2; i++)//seline + 1 per saltare la vecchia linea // length -1 prezzo totale, -1 n prodotti
-				allLines += lines[i] + "\n"; //trascrive il resto
-			allLines += totpro + "\n" + lines[lines.Length-1] + "\n"; // totpro e sum
-			Byte[] info = new UTF8Encoding(true).GetBytes(allLines);
-			FileStream fs = new FileStream(path + "\\lista.csv", FileMode.Truncate, FileAccess.Write, FileShare.None); //truncate per il numero di byte
-			fs.Write(info, 0, info.Length);
-			fs.Close();
+			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Truncate); //truncate per il numero di byte
 
-			/*
-			StreamWriter sw = new StreamWriter(path + "\\lista.csv");
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			string[] split = lines[seline].Split(";".ToCharArray(), 4);
-			split[2] = amount.ToString();
-			sw.WriteLine(string.Join(";", split));
-			for (int i = seline+1; i < lines.Length - 2; i++)//seline + 1 per saltare la vecchia linea // length -1 prezzo totale, -1 n prodotti
-				sw.WriteLine(lines[i]); //trascrive il resto
-			sw.WriteLine(totpro);
-			sw.WriteLine(lines[lines.Length-1]); // sum
-			sw.Close();
-			*/
-
-			/*lines = FileReadAllLines(path + "\\lista.txt");
-
-			allLines = "";
-			for (int i = 0; i < seline; i++)
-				allLines += lines[i] + "\n";
-			allLines += $"{split[0]}.    Nome: {split[1]}     Quantità: {split[2]}     Prezzo: {split[3]}\n"; //riscrive la linea col nuovo amount
-			for (int i = seline + 1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				allLines += lines[i] + "\n"; //trascrive il resto
-			allLines += $"-------------------\nnumero di prodotti: {totpro}\n{lines[lines.Length-1]}\n"; //sum
-			info = new UTF8Encoding(true).GetBytes(allLines);
-			fs = new FileStream(path + "\\lista.txt", FileMode.Truncate, FileAccess.Write, FileShare.None); //truncate per il numero di byte sconosciuto
-			fs.Write(info, 0, info.Length);
-			fs.Close();*/
-
-			/*
-			sw = new StreamWriter(path + "\\lista.txt");
-
-			for (int i = 0; i < seline; i++)
-				sw.WriteLine(lines[i]);
-			sw.WriteLine($"{split[0]}.    Nome: {split[1]}     Quantità: {split[2]}     Prezzo: {split[3]}");
-			for (int i = seline + 1; i < lines.Length - 3; i++) // -1 prezzo totale, -1 n prodotti e -1 separatore
-				sw.WriteLine(lines[i]); //trascrive il resto
-			sw.WriteLine("-------------------");
-			sw.WriteLine($"numero di prodotti: {totpro}");
-			sw.WriteLine(lines[lines.Length-1]); // sum
-			sw.Close();
-			*/
-
-			if (amount == 0)
+			if (csvFile.csvLines[seline].amount == 0)
 			{
-				DeleteLine(seline+1, path);
-
 				//a logicRemove aggiungo la quantità rimossa per arrivare a 0
-				lines = FileReadAllLines(path + "\\logicRemove.csv");
-				split = lines[0].Split(";".ToCharArray());
-				split[2] = qua;
-
-				allLines = string.Join(";", split) + "\n";
-				for (int i = 1; i < lines.Length; i++)
-					allLines += lines[i] + "\n";
-				info = new UTF8Encoding(true).GetBytes(allLines);
-				fs = new FileStream(path + "\\logicRemove.csv", FileMode.Truncate, FileAccess.Write, FileShare.None); //truncate per il numero di byte sconosciuto
-				fs.Write(info, 0, info.Length);
-				fs.Close();
-
-				/*
-				sw = new StreamWriter(path + "\\logicRemove.csv");
-				sw.WriteLine(string.Join(";", split));
-				for (int i = 1; i  < lines.Length; i++)
-					sw.WriteLine(lines[i]);
-				sw.Close();
-				*/
+				csvFile.csvLines[seline].amount = int.Parse(qua);
+				DeleteLine(ref csvFile, seline+1, path);
 			}
-			return amount;
-		}
+			return csvFile.csvLines[seline].amount;
+		} //!! fun 84 rifare??
 	}
 }

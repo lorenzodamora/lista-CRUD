@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 /* using System.Collections.Generic;
 using System.Drawing;
 using System.Dynamic;
@@ -35,7 +36,7 @@ namespace progetto_CRUD
 	}
 	public partial class CRUD : Form
 	{
-		//listview tabella e struct //!! ci sono errori in stampa (research)
+		//struct pt4
 		//rifare accesso diretto
 		//tooltip
 		//menu a comparsa
@@ -77,11 +78,31 @@ namespace progetto_CRUD
 			return lineCount;
 		}
 
-		private int CheckStruct(int tot)
+		private int GetStructLength(int tot)
 		{
 			if (tot < 100) return 100;
 			return tot/100 * 100 + 100;
 		} //!! quando controllare e resize ( aggiungere o togliere)
+		private void CheckStruct(ref StructFile csvFile)
+		{
+			int newSize = GetStructLength(csvFile.totline);
+			if (newSize != csvFile.csvLines.Length)
+				StructLineResize(ref csvFile.csvLines, newSize);
+		}
+		private void StructLineResize(ref StructLine[] array, int newSize)
+		{
+			if (array.Length != newSize)
+			{
+				StructLine[] array2 = new StructLine[newSize];
+				if (array.Length > newSize) //se newsize è più grande, copia fino ad array.length e il resto rimane default
+					for (int i = 0; i < array.Length; i++)
+						array2[i] = array[i];
+				else //se newsize è più piccolo copia fino a newsize
+					for (int i = 0; i < newSize; i++)
+						array2[i] = array[i];
+				array = array2;
+			}
+		}
 		private StructLine UpdateStruct(int ind, string text, int amount, float price)
 		{
 			StructLine line = new StructLine()
@@ -128,8 +149,12 @@ namespace progetto_CRUD
 			fs.Close();
 
 			if (line == "") return new string[0];
-			// .SubString() perché altrimenti per ultimo rimarrebbe una stringa vuota
-			string[] lines = line.Substring(0, line.Length-1).Split('\n');
+			string[] lines;
+			if (line[line.Length-1] == '\n')
+				// .SubString() perché altrimenti per ultimo rimarrebbe una stringa vuota
+				lines = line.Substring(0, line.Length-1).Split('\n');
+			else
+				lines = line.Split('\n');
 			for (int i = 0; i < lines.Length; i++)
 				lines[i] = lines[i].TrimEnd('\r');
 			return lines;
@@ -156,7 +181,7 @@ namespace progetto_CRUD
 		}*/
 		private void CRUD_Shown(object sender, EventArgs e)
 		{
-			csvFile.csvLines = new StructLine[CheckStruct(csvFile.totline)];
+			csvFile.csvLines = new StructLine[GetStructLength(csvFile.totline)];
 			string[] lines = FileReadAllLines(path + "\\lista.csv");
 			string[] splits;
 			for (int i = 0; i < csvFile.totline; i++)
@@ -479,7 +504,6 @@ namespace progetto_CRUD
 				AddButton.Visible = true;
 				AddButton_Click(sender, e);
 				AddLine(ref csvFile, splits[1], splits[2], splits[3], splits[0], path);
-				csvFile.totline += 1;
 				seline = int.Parse(splits[0]);
 				fun = 0;
 				NameList.Text = $"Stai modificando la linea {seline}";
@@ -488,7 +512,6 @@ namespace progetto_CRUD
 
 				if (lines.Length != 1)
 				{
-					//StreamWriter sw = new StreamWriter(path + "\\logicRemove.csv");
 					lines[0] = "";
 					for (int i = 1; i<lines.Length; i++)
 						lines[0] += lines[i] + "\n";
@@ -520,7 +543,7 @@ namespace progetto_CRUD
 						seline = int.Parse(SearchBox.Text);
 						break;
 					case 4: //delete line
-						if (seline == csvFile.totline) seline--;
+						if (seline == csvFile.totline+1) seline--;
 						if (seline == 0) seline++;
 						NameList.Text = $"Conferma per cancellare la linea {seline}:";
 						HistoryButton.Visible = true;
@@ -529,13 +552,14 @@ namespace progetto_CRUD
 						seline += 1;
 						break;
 					case 8: //remove amount
-						NameList.Text = $"Stai modificando la linea {seline}";
+						NameList.Text = $"Stai modificando la linea {seline}"; //?? fun 0
 						break;
 					case 84: //quando da 8remove passa a 4delete, ma era remove
-						if (seline == csvFile.totline) seline--;
+						if (seline == csvFile.totline+1) seline--;
 						if (seline == 0) seline++;
 						NameList.Text = $"Stai rimuovendo dei prodotti dalla linea {seline}:";
-						fun = 8;
+                        CheckStruct(ref csvFile);
+                        fun = 8;
 						HistoryButton.Visible = true;
 						break;
 				}
@@ -548,6 +572,14 @@ namespace progetto_CRUD
 					case 7: //twin line
 						NameList.Text = $"Stai modificando la linea {seline}";
 						fun = 0;
+						break;
+				}
+				switch (fun)
+				{
+					case 1: //addline
+					case 4: //delete line
+					case 7: //twin line
+						CheckStruct(ref csvFile);
 						break;
 				}
 			}
@@ -713,8 +745,8 @@ namespace progetto_CRUD
 			csvFile.sumprice += float.Parse(prezzo);
 			for (int i = csvFile.totline; i > seline; i--)
 			{
-				csvFile.csvLines[i] = csvFile.csvLines[i+1];
-				csvFile.csvLines[i].ind = i+2;
+				csvFile.csvLines[i] = csvFile.csvLines[i-1];
+				csvFile.csvLines[i].ind = i+1;
 			}
 			csvFile.csvLines[seline] = UpdateStruct(seline+1, nome, int.Parse(qua), float.Parse(prezzo));
 			csvFile.totline++;
@@ -730,12 +762,11 @@ namespace progetto_CRUD
 		}
 		private string[] SelectLineResearch(StructFile csvFile, string cerca)
 		{//fun 2
-
 			string[] lines = new string[csvFile.totline];
 			int k = 0;
 			for (int i = 0; i< csvFile.totline; i++)
 				if (csvFile.csvLines[i].text.ToLower().Contains(cerca.ToLower())) //cerca solo in text
-					lines[k++]=$"{csvFile.csvLines[i].ind}.    Nome: {csvFile.csvLines[i].text}     Quantità: {csvFile.csvLines[i].amount}     Prezzo: {csvFile.csvLines[i].price}";
+					lines[k++]= StructLineToString(csvFile.csvLines[i]);
 
 			if (k == 0)
 			{
@@ -764,13 +795,14 @@ namespace progetto_CRUD
 			if (qua != "")
 			{
 				//al totpro attuale toglie il vecchio valore e ci aggiunge quello modificato
-				csvFile.totpro -= csvFile.csvLines[seline].amount + int.Parse(qua);
+				//csvFile.totpro -= csvFile.csvLines[seline].amount + int.Parse(qua); //a quanto pare -= toglie il risultato a destra
+				csvFile.totpro = csvFile.totpro - csvFile.csvLines[seline].amount + int.Parse(qua);
 				csvFile.csvLines[seline].amount = int.Parse(qua);
 			}
 			if (prezzo != "")
 			{
 				//alla somma attuale toglie il vecchio valore e si aggiunge quello modificato
-				csvFile.sumprice -= csvFile.csvLines[seline].price + float.Parse(prezzo);
+				csvFile.sumprice = csvFile.sumprice - csvFile.csvLines[seline].price + float.Parse(prezzo);
 				csvFile.csvLines[seline].price = float.Parse(prezzo);
 			}
 
@@ -785,15 +817,15 @@ namespace progetto_CRUD
 
 			//aggiorna la struct File
 			csvFile.totpro -= csvFile.csvLines[seline].amount; //tolgo una linea di prodotti
-			csvFile.sumprice -= csvFile.csvLines[seline].price;
+			csvFile.sumprice = csvFile.sumprice - csvFile.csvLines[seline].price;
 			string logic = StructLineToString(csvFile.csvLines[seline]) + "\n";//linea da aggiungere alla cancellazione logica
-			for (int i = seline; i > csvFile.totline; i++)
+			for (int i = seline; i < csvFile.totline - 1; i++)
 			{
-				csvFile.csvLines[i].ind = i;
-				csvFile.csvLines[i] = csvFile.csvLines[i+1];
-			}
-			csvFile.csvLines[csvFile.totline] = UpdateStruct(0, "", 0, 0); //per scrupolo
-			csvFile.totline--;
+                csvFile.csvLines[i] = csvFile.csvLines[i+1];
+				csvFile.csvLines[i].ind = i+1;
+            }
+            csvFile.totline--;
+            csvFile.csvLines[csvFile.totline] = UpdateStruct(0, null, 0, 0); //per scrupolo
 
 			//stampa struct su file
 			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Truncate); //truncate perché il numero di byte è meno rispetto a prima
@@ -863,8 +895,8 @@ namespace progetto_CRUD
 			csvFile.sumprice += csvFile.csvLines[seline].price;
 			for (int i = csvFile.totline; i > seline; i--)
 			{
-				csvFile.csvLines[i] = csvFile.csvLines[i+1];
-				csvFile.csvLines[i].ind = i+2;
+				csvFile.csvLines[i] = csvFile.csvLines[i-1];
+				csvFile.csvLines[i].ind = i+1;
 			}
 			csvFile.totline++;
 
@@ -873,24 +905,26 @@ namespace progetto_CRUD
 		}
 		private int RemoveAmount(ref StructFile csvFile, string qua, int seline, string path)
 		{//fun 8
-			seline--;
-			if (qua == "") qua = "1";
+            if (qua == "") qua = "1";
+            seline--;
 
-			if (!CheckAmount(qua, csvFile.csvLines[seline].amount)) //errore in input
+            if (!CheckAmount(qua, csvFile.csvLines[seline].amount)) //errore in input
 				return -1;
 
-			csvFile.csvLines[seline].amount -= int.Parse(qua);
-			csvFile.totpro -= int.Parse(qua); //tolgo i prodotti
-
-			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Truncate); //truncate per il numero di byte
-
-			if (csvFile.csvLines[seline].amount == 0)
+            if (csvFile.csvLines[seline].amount != int.Parse(qua))
 			{
-				//a logicRemove aggiungo la quantità rimossa per arrivare a 0
-				csvFile.csvLines[seline].amount = int.Parse(qua);
-				DeleteLine(ref csvFile, seline+1, path);
-			}
-			return csvFile.csvLines[seline].amount;
+                csvFile.csvLines[seline].amount -= int.Parse(qua);
+                csvFile.totpro -= int.Parse(qua); //tolgo i prodotti
+
+                FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Truncate); //truncate per il numero di byte
+
+                return csvFile.csvLines[seline].amount;
+            }
+            else
+			{
+                DeleteLine(ref csvFile, seline+1, path);
+                return 0;
+            }
 		} //!! fun 84 rifare??
 	}
 }

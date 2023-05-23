@@ -35,9 +35,8 @@ namespace progetto_CRUD
 	}
 	public partial class CRUD : Form
 	{
-		//struct pt4
-		//rifare accesso diretto
 		//tooltip
+		//structline logicremove
 		//menu a comparsa
 		//elementi cliccabili in listview
 		//aggiustare tab index
@@ -410,6 +409,13 @@ namespace progetto_CRUD
 			fun = 3;
 			SetVisible();
 			NameList.Text = $"Stai modificando il testo della linea {seline}:";
+
+			//get set text boxes
+			string[] splits = StructLineToString(csvFile.csvLines[seline-1]).Split(';');
+			SearchBox.Text = splits[0];
+			TextBox.Text = splits[1];
+			AmountBox.Text = splits[2];
+			PriceBox.Text = splits[3];
 		}
 		private void SelectButton_Click(object sender, EventArgs e)
 		{

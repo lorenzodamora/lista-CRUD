@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 /* using System.Collections.Generic;
 using System.Drawing;
 using System.Dynamic;
@@ -82,7 +81,7 @@ namespace progetto_CRUD
 		{
 			if (tot < 100) return 100;
 			return tot/100 * 100 + 100;
-		} //!! quando controllare e resize ( aggiungere o togliere)
+		}
 		private void CheckStruct(ref StructFile csvFile)
 		{
 			int newSize = GetStructLength(csvFile.totline);
@@ -94,7 +93,7 @@ namespace progetto_CRUD
 			if (array.Length != newSize)
 			{
 				StructLine[] array2 = new StructLine[newSize];
-				if (array.Length > newSize) //se newsize è più grande, copia fino ad array.length e il resto rimane default
+				if (array.Length < newSize) //se newsize è più grande, copia fino ad array.length e il resto rimane default
 					for (int i = 0; i < array.Length; i++)
 						array2[i] = array[i];
 				else //se newsize è più piccolo copia fino a newsize
@@ -158,7 +157,7 @@ namespace progetto_CRUD
 			for (int i = 0; i < lines.Length; i++)
 				lines[i] = lines[i].TrimEnd('\r');
 			return lines;
-		} //!! controlla riferimenti
+		}
 		private void FileWriteAllText(string path, string allLines, FileMode mode)
 		{
 			Byte[] info = new UTF8Encoding(true).GetBytes(allLines);
@@ -179,6 +178,7 @@ namespace progetto_CRUD
 		{
 			FileWriteAllText(path, string.Join("\n", lines), mode);
 		}*/
+
 		private void CRUD_Shown(object sender, EventArgs e)
 		{
 			csvFile.csvLines = new StructLine[GetStructLength(csvFile.totline)];
@@ -199,6 +199,78 @@ namespace progetto_CRUD
 			DescrizioneAdd.SetToolTip(AddButton, "Aggiungi nuova linea");
 			DescrizioneHistoryR.SetToolTip(HistoryButton, "Guarda la lista delle linee rimosse");
 		}
+		private void StampaForm(string[] lines)
+		{
+			Lista.Clear();
+
+			ColumnHeader index, name, amount, price;
+			index = new ColumnHeader()
+			{
+				Text = "index",
+				TextAlign = HorizontalAlignment.Center,
+				Width = 44
+			};
+			name = new ColumnHeader()
+			{
+				Text = "name",
+				TextAlign = HorizontalAlignment.Center,
+				Width = 46
+			};
+			amount = new ColumnHeader()
+			{
+				Text = "amount",
+				TextAlign = HorizontalAlignment.Center,
+				Width = 56
+			};
+			price = new ColumnHeader()
+			{
+				Text = "price",
+				TextAlign = HorizontalAlignment.Center,
+				Width = 42
+			};
+
+			Lista.Columns.Add(index);
+			Lista.Columns.Add(name);
+			Lista.Columns.Add(amount);
+			Lista.Columns.Add(price);
+
+			ListViewItem line;
+			for (int i = 0; i < lines.Length; i++)
+			{
+				string[] split = lines[i].Split(';');
+				if (split.Length == 1)
+				{
+					line = new ListViewItem(); //main item
+					Lista.Items.Add("");
+					line.SubItems.Add("totale prodotti:"); //sub item
+					line.SubItems.Add(lines[lines.Length-2]); //sub item
+					Lista.Items.Add(line);
+					line = new ListViewItem(); //main item
+					line.SubItems.Add("somma totale:"); //sub item
+					line.SubItems.Add(""); //sub item
+					line.SubItems.Add(lines[lines.Length-1]); //sub item
+					Lista.Items.Add(line);
+					break;
+				}
+				else
+				{
+					line = new ListViewItem(split[0]); //main item
+					for (int j = 1; j < split.Length; j++)
+						line.SubItems.Add(split[j]); //sub item
+					Lista.Items.Add(line);
+				}
+			}
+
+			index.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+			if (index.Width<44) index.Width=44;
+			name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+			if (name.Width<46) name.Width=46;
+			amount.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+			if (amount.Width<56) amount.Width=56;
+			price.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+			if (price.Width<42) price.Width=42;
+		}
+
 		private void Shortcut(object sender, KeyEventArgs e)
 		{
 			if (e.Control && e.Shift && e.KeyCode == Keys.A && AddButton.Visible)
@@ -254,78 +326,6 @@ namespace progetto_CRUD
 				//shortcut Ctrl+Alt+ A
 				AmountBox.Focus();
 		}
-		private void StampaForm(string[] lines)
-		{
-			Lista.Clear();
-
-			ColumnHeader index, name, amount, price;
-			index = new ColumnHeader()
-			{
-				Text = "index",
-				TextAlign = HorizontalAlignment.Center,
-				Width = 44
-			};
-			name = new ColumnHeader()
-			{
-				Text = "name",
-				TextAlign = HorizontalAlignment.Center,
-				Width = 46
-			};
-			amount = new ColumnHeader()
-			{
-				Text = "amount",
-				TextAlign = HorizontalAlignment.Center,
-				Width = 56
-			};
-			price = new ColumnHeader()
-
-			{
-				Text = "price",
-				TextAlign = HorizontalAlignment.Center,
-				Width = 42
-			};
-
-			Lista.Columns.Add(index);
-			Lista.Columns.Add(name);
-			Lista.Columns.Add(amount);
-			Lista.Columns.Add(price);
-
-			ListViewItem line;
-			for (int i = 0; i < lines.Length; i++)
-			{
-				string[] split = lines[i].Split(';');
-				if (split.Length == 1)
-				{
-					line = new ListViewItem(); //main item
-					Lista.Items.Add("");
-					line.SubItems.Add("totale prodotti:"); //sub item
-					line.SubItems.Add(lines[lines.Length-2]); //sub item
-					Lista.Items.Add(line);
-					line = new ListViewItem(); //main item
-					line.SubItems.Add("somma totale:"); //sub item
-					line.SubItems.Add(""); //sub item
-					line.SubItems.Add(lines[lines.Length-1]); //sub item
-					Lista.Items.Add(line);
-					break;
-				}
-				else
-				{
-					line = new ListViewItem(split[0]); //main item
-					for (int j = 1; j < split.Length; j++)
-						line.SubItems.Add(split[j]); //sub item
-					Lista.Items.Add(line);
-				}
-			}
-
-			index.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-			if (index.Width<44) index.Width=44;
-			name.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-			if (name.Width<46) name.Width=46;
-			amount.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-			if (amount.Width<56) amount.Width=56;
-			price.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-			if (price.Width<42) price.Width=42;
-		}
 		private void ChiudiFormButton_Click(object sender, EventArgs e)
 		{
 			File.Create(path + "\\logicRemove.csv").Close(); //svuota
@@ -335,6 +335,7 @@ namespace progetto_CRUD
 		{//???
 			File.Create(path + "\\logicRemove.csv").Close(); //svuota
 		}
+
 		private void SearchVisible(bool vis)
 		{
 			(SearchBox.Visible, SearchLabel.Visible) = (vis, vis);
@@ -396,6 +397,7 @@ namespace progetto_CRUD
 			//box ricerca index o testo
 			IndexCheckBox.Visible = fun == 2 || fun == 21;
 		}
+
 		private void AddButton_Click(object sender, EventArgs e)
 		{
 			fun = 1;
@@ -490,45 +492,39 @@ namespace progetto_CRUD
 				ConfirmButton.Visible = false;
 
 				CancelButton1.Visible = true;
-				Lista.Items.Clear();
-				NameList.Text = "Queste sono le linee rimosse";
-				ListViewItem line = new ListViewItem(); //main item
-				line.SubItems.Add("riclicca il pulsante H per ripristinare la cancellazione più recente");
-				Lista.Items.Add(line);
+				NameList.Text = "riclicca il pulsante H per ripristinare la cancellazione più recente";
 				StampaForm(FileReadAllLines(path + "\\logicRemove.csv"));
-			}
-			else
-			{
-				string[] lines = FileReadAllLines(path + "\\logicRemove.csv");
-				string[] splits = lines[0].Split(';');
-				AddButton.Visible = true;
-				AddButton_Click(sender, e);
-				AddLine(ref csvFile, splits[1], splits[2], splits[3], splits[0], path);
-				seline = int.Parse(splits[0]);
-				fun = 0;
-				NameList.Text = $"Stai modificando la linea {seline}";
-				SetVisible();
-				StampaForm(StructFileToStrings(csvFile));
 
-				if (lines.Length != 1)
-				{
-					lines[0] = "";
-					for (int i = 1; i<lines.Length; i++)
-						lines[0] += lines[i] + "\n";
-					FileWriteAllText(path + "\\logicRemove.csv", lines[0], FileMode.Truncate);
-				}
-				else
-				{
-					File.Create(path + "\\logicRemove.csv").Close(); //svuota
-					HistoryButton.Visible = false;
-				}
-			}
+				return;
+			} //else
+			string[] lines = FileReadAllLines(path + "\\logicRemove.csv");
+			string[] splits = lines[0].Split(';');
+			AddButton.Visible = true;
+			AddButton_Click(sender, e);
+			AddLine(ref csvFile, splits[1], splits[2], splits[3], splits[0], path);
+			seline = int.Parse(splits[0]);
+			fun = 0;
+			NameList.Text = $"Stai modificando la linea {seline}";
+			SetVisible();
+			StampaForm(StructFileToStrings(csvFile));
+
+			if (lines.Length != 1)
+			{
+				lines[0] = "";
+				for (int i = 1; i<lines.Length; i++)
+					lines[0] += lines[i] + "\n";
+				FileWriteAllText(path + "\\logicRemove.csv", lines[0], FileMode.Truncate);
+
+				return;
+			} //else
+			File.Create(path + "\\logicRemove.csv").Close(); //svuota
+			HistoryButton.Visible = false;
 		}
 
 		private void ConfirmButton_Click(object sender, EventArgs e)
 		{
 			bool control = true;
-			if (fun != 2) control = SwitchFun(ref fun, ref csvFile, TextBox.Text, AmountBox.Text, PriceBox.Text, SearchBox.Text, seline, path);
+			if (fun != 2 || fun != 8) control = SwitchFun(fun, ref csvFile, TextBox.Text, AmountBox.Text, PriceBox.Text, SearchBox.Text, seline, path);
 			if (control) //if SwitchFun è meno ridondante ma brutto
 			{
 				switch (fun)
@@ -551,17 +547,6 @@ namespace progetto_CRUD
 					case 7: //twin line
 						seline += 1;
 						break;
-					case 8: //remove amount
-						NameList.Text = $"Stai modificando la linea {seline}"; //?? fun 0
-						break;
-					case 84: //quando da 8remove passa a 4delete, ma era remove
-						if (seline == csvFile.totline+1) seline--;
-						if (seline == 0) seline++;
-						NameList.Text = $"Stai rimuovendo dei prodotti dalla linea {seline}:";
-                        CheckStruct(ref csvFile);
-                        fun = 8;
-						HistoryButton.Visible = true;
-						break;
 				}
 				switch (fun)
 				{
@@ -579,25 +564,41 @@ namespace progetto_CRUD
 					case 1: //addline
 					case 4: //delete line
 					case 7: //twin line
+							//case 8
 						CheckStruct(ref csvFile);
 						break;
 				}
 			}
-			if (csvFile.totline == 0 && (fun == 4 || fun == 8)) //&& fun 4 //serve quando sbagli in add con 0 linee
-				CancelButton1_Click(sender, e); //NameList.Text e fun 0
-
 			if (fun == 2)
 			{
 				NameList.Text = $"Tutte le linee trovate in ricerca(spunta index e scegli la linea da modificare):";
 				StampaForm(SelectLineResearch(csvFile, SearchBox.Text));
-			}
-			else
+				return;
+			} //else
+			if (fun == 8)
 			{
-				SetVisible();
-				StampaForm(StructFileToStrings(csvFile));
+				short check = RemoveAmount(ref csvFile, AmountBox.Text, seline, path);
+				if (check != -1) //-1 = errore in input
+					if (check == 0)
+					{//quando da 8remove passa a 4delete, ma era remove
+						if (seline == csvFile.totline+1) seline--;
+						if (seline == 0) seline++;
+						NameList.Text = $"Stai rimuovendo dei prodotti dalla linea {seline}:";
+						CheckStruct(ref csvFile);
+						HistoryButton.Visible = true;
+					}
+					else //remove amount
+						NameList.Text = $"Stai modificando la linea {seline}";
 			}
+			if (csvFile.totline == 0 && (fun == 4 || fun == 8)) //&& fun 4 //serve quando sbagli in add con 0 linee
+			{
+				CancelButton1_Click(sender, e); //NameList.Text e fun 0
+				return;
+			} //else
+			SetVisible();
+			StampaForm(StructFileToStrings(csvFile));
 		}
-		private bool SwitchFun(ref int fun, ref StructFile csvFile, string nome, string qua, string prezzo, string cerca, int seline, string path)
+		private bool SwitchFun(int fun, ref StructFile csvFile, string nome, string qua, string prezzo, string cerca, int seline, string path)
 		{
 			bool control = true; // false se qualcosa è andato storto
 			switch (fun)
@@ -622,11 +623,6 @@ namespace progetto_CRUD
 					break;
 				case 7:
 					TwinLine(ref csvFile, seline, path);
-					break;
-				case 8:
-					int amount = RemoveAmount(ref csvFile, qua, seline, path);
-					control = amount != -1; //-1 = errore in input
-					if (amount == 0) fun = 84;
 					break;
 			}
 			return control;
@@ -730,6 +726,7 @@ namespace progetto_CRUD
 			}
 			return true; //ret false = il cerca non è valido
 		}
+
 		private bool AddLine(ref StructFile csvFile, string nome, string qua, string prezzo, string cerca, string path)
 		{//fun 1
 			if (qua=="") qua = "1";
@@ -821,11 +818,11 @@ namespace progetto_CRUD
 			string logic = StructLineToString(csvFile.csvLines[seline]) + "\n";//linea da aggiungere alla cancellazione logica
 			for (int i = seline; i < csvFile.totline - 1; i++)
 			{
-                csvFile.csvLines[i] = csvFile.csvLines[i+1];
+				csvFile.csvLines[i] = csvFile.csvLines[i+1];
 				csvFile.csvLines[i].ind = i+1;
-            }
-            csvFile.totline--;
-            csvFile.csvLines[csvFile.totline] = UpdateStruct(0, null, 0, 0); //per scrupolo
+			}
+			csvFile.totline--;
+			csvFile.csvLines[csvFile.totline] = UpdateStruct(0, null, 0, 0); //per scrupolo
 
 			//stampa struct su file
 			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Truncate); //truncate perché il numero di byte è meno rispetto a prima
@@ -903,28 +900,28 @@ namespace progetto_CRUD
 			//stampa struct su file
 			FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Open);
 		}
-		private int RemoveAmount(ref StructFile csvFile, string qua, int seline, string path)
+		private short RemoveAmount(ref StructFile csvFile, string qua, int seline, string path)
 		{//fun 8
-            if (qua == "") qua = "1";
-            seline--;
+			if (qua == "") qua = "1";
+			seline--;
 
-            if (!CheckAmount(qua, csvFile.csvLines[seline].amount)) //errore in input
+			if (!CheckAmount(qua, csvFile.csvLines[seline].amount)) //errore in input
 				return -1;
 
-            if (csvFile.csvLines[seline].amount != int.Parse(qua))
+			if (csvFile.csvLines[seline].amount != int.Parse(qua))
 			{
-                csvFile.csvLines[seline].amount -= int.Parse(qua);
-                csvFile.totpro -= int.Parse(qua); //tolgo i prodotti
+				csvFile.csvLines[seline].amount -= int.Parse(qua);
+				csvFile.totpro -= int.Parse(qua); //tolgo i prodotti
 
-                FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Truncate); //truncate per il numero di byte
+				FileWriteAllText(path + "\\lista.csv", StructFileToString(csvFile), FileMode.Truncate); //truncate per il numero di byte
 
-                return csvFile.csvLines[seline].amount;
-            }
-            else
+				return 1;
+			}
+			else
 			{
-                DeleteLine(ref csvFile, seline+1, path);
-                return 0;
-            }
-		} //!! fun 84 rifare??
+				DeleteLine(ref csvFile, seline+1, path);
+				return 0;
+			}
+		}
 	}
 }

@@ -529,7 +529,6 @@ namespace progetto_CRUD
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Shortcut);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

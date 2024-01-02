@@ -13,9 +13,6 @@ using System.IO;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Text;
-using System.Diagnostics;
-using static System.Windows.Forms.LinkLabel;
-using System.Drawing.Drawing2D;
 
 namespace progetto_CRUD
 {
@@ -324,7 +321,7 @@ namespace progetto_CRUD
 			if (e.Control && e.Alt && e.KeyCode == Keys.A && AmountBox.Visible)
 				//shortcut Ctrl+Alt+ A
 				AmountBox.Focus();
-		}
+		} 
 		private void ChiudiFormButton_Click(object sender, EventArgs e)
 		{
 			File.Create(path + "\\logicRemove.csv").Close(); //svuota
